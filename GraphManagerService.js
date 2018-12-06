@@ -47,11 +47,17 @@ class GraphManagerService {
         graph: new SpinalGraph()
       } );
     }
-    this.graph = forgeFile.graph;
+    this.setGraph( forgeFile.graph );
+
   }
 
   setGraph( graph ) {
+
+    if (typeof this.graph.getId === "function" && this.nodes.hasOwnProperty( this.graph.getId().get() )) {
+      delete this.nodes[this.graph.getId().get()];
+    }
     this.graph = graph;
+    this.nodes[this.graph.getId().get()] = this.graph;
   }
 
   /**
@@ -62,7 +68,7 @@ class GraphManagerService {
   getNode( id ) {
 
     if (this.nodes.hasOwnProperty( id )) {
-      return this.nodes[id].info;
+      return this.getInfo( id );
     }
 
     return undefined;
@@ -92,32 +98,51 @@ class GraphManagerService {
   /**
    * Return all children of a node
    * @param id
+   * @param relationNames {Array}
    * @returns Promise<Array<SpinalNode>>
    */
-  getChildren( id ) {
-
+  getChildren( id, relationNames ) {
     if (!this.nodes.hasOwnProperty( id )) {
-      return Promise.reject( "Node id not found" );
+      return Promise.reject( "Node id: " + id + " not found" );
     }
 
-    const children = [];
-    if (this._areAllChildrenLoaded( id )) {
-      const childrenId = this.nodes[id].getChildrenIds();
-      for (let i = 0; i < childrenId.length; i++) {
-        children.push( this.nodes[childrenId[i]] );
-      }
 
-      return Promise.resolve( children );
+    if (this._areAllChildrenLoaded( id )) {
+      return this.nodes[id].getChildren( relationNames )
+        .then( children => {
+          const res = [];
+          for (let i = 0; i < children.length; i++) {
+            res.push( this.nodes[children[i].info.id.get()].info );
+          }
+
+          return Promise.resolve( res );
+        } );
+
     }
 
     return this.nodes[id].getChildren( [] )
       .then( ( children ) => {
+        const res = [];
         for (let i = 0; i < children.length; i++) {
           this._addNode( children[i] );
+          res.push( this.getInfo( children[i].getId().get() ) );
         }
-        return children;
+        return res;
       } );
 
+  }
+
+  getInfo( nodeId ) {
+    if (!this.nodes.hasOwnProperty( nodeId )) {
+      return;
+    }
+    const res = {};
+    const node = this.nodes[nodeId];
+    res['info'] = node.info;
+    res['info']["childrenIds"] = node.getChildrenIds();
+    res['info']['contextIds'] = node.contextIds;
+    res['info']['element'] = node.element;
+    return res['info'];
   }
 
   listOnNodeAdded( caller, callback ) {
@@ -153,11 +178,9 @@ class GraphManagerService {
    * @returns {undefined | function} return a function to allow to node unbinding if the node corresponding to nodeId exist undefined and caller is an object and callback is a function otherwise
    */
   bindNode( nodeId, caller, callback ) {
-
-    if (!this.nodes.hasOwnProperty( nodeId ) || typeof caller === 'object' || typeof callback !== 'function') {
+    if (!this.nodes.hasOwnProperty( nodeId ) || typeof caller !== 'object' || typeof callback !== 'function') {
       return undefined;
     }
-
 
     if (this.bindedNode.has( nodeId )) {
       this.bindedNode.get( nodeId ).set( caller, callback );
@@ -204,16 +227,23 @@ class GraphManagerService {
    * @param context
    * @returns {*|Promise<boolean>}
    */
-  addContext( context ) {
+  addContext( name, type, elt ) {
 
-    if (!(context instanceof SpinalContext)) {
-      return false;
-    }
-
-    this.nodes[context.getId().get()] = context;
+    const context = new SpinalContext( name, type, elt );
+    console.log( "constext", context );
+    this.nodes[context.info.id.get()] = context;
     this.graph.addContext( context );
+    console.log( "graph", this.graph );
+    return context;
+  }
 
-    return true;
+  /**
+   *
+   * @param name
+   * @returns {*}
+   */
+  getContext( name ) {
+    return this.graph.getContext( name );
   }
 
   /**
@@ -225,10 +255,10 @@ class GraphManagerService {
    */
   createNode( info, element ) {
     const node = new SpinalNode();
-    const nodeId = node.getId().get();
+    const nodeId = node.info.id.get();
 
     node.mod_attr( 'info', info );
-    node.element.set( element );
+    node.element.ptr.set( element );
     this.nodes[nodeId] = node;
 
     return nodeId;
@@ -277,10 +307,10 @@ class GraphManagerService {
    * @private
    */
   _addNode( node ) {
-    this.nodes[node.getId().get()] = node;
+    this.nodes[node.info.id.get()] = node;
 
     for (let callback of this.listeners) {
-      callback( node.getId().get() );
+      callback( node.info.id.get() );
     }
   }
 
@@ -315,6 +345,7 @@ class GraphManagerService {
     if (this.binders.has( nodeId ) || !this.nodes.hasOwnProperty( nodeId )) {
       return;
     }
+    console.log( "nodeId noe", this.nodes[nodeId] );
     this.binders.set( nodeId, this.nodes[nodeId].bind( this._bindFunc.bind( this, nodeId ) ) );
   }
 
@@ -324,9 +355,11 @@ class GraphManagerService {
    * @private
    */
   _bindFunc( nodeId ) {
+    console.log( "bind", nodeId );
     if (this.bindedNode.has( nodeId )) {
-      for (let callback of this.bindedNode.get( nodeId )) {
-        callback();
+
+      for (let callback of this.bindedNode.get( nodeId ).values()) {
+        callback( this.nodes[nodeId] );
       }
     }
   }
