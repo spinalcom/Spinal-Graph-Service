@@ -18,7 +18,7 @@ class GraphManagerService {
   /**
    * @param viewerEnv if defined load graph from getModel
    */
-  constructor( viewerEnv = "undefined" ) {
+  constructor( viewerEnv ) {
     this.bindedNode = new Map();
     this.binders = new Map();
     this.listeners = new Map();
