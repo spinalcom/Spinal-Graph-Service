@@ -103,7 +103,7 @@ class GraphManagerService {
    */
   getChildren( id, relationNames ) {
     if (!this.nodes.hasOwnProperty( id )) {
-      return Promise.reject( "Node id: " + id + " not found" );
+      return Promise.reject( Error( "Node id: " + id + " not found" ) );
     }
     if (this.nodes[id] instanceof SpinalContext) {
       return this.nodes[id].getChildrenInContext().then( children => {
@@ -203,7 +203,7 @@ class GraphManagerService {
   removeChild( nodeId, childId, relationName, relationType, stop = false ) {
 
     if (!this.nodes.hasOwnProperty( nodeId )) {
-      return Promise.reject( "nodeId unknown." );
+      return Promise.reject( Error( "nodeId unknown." ) );
     }
 
     if (this.nodes.hasOwnProperty( nodeId )) {
@@ -215,7 +215,7 @@ class GraphManagerService {
         this.nodes[nodeId].removeChild( this.nodes[childId], relationName, relationType );
         return Promise.resolve( true );
       } else {
-        return Promise.reject( "childId unknown. It might already been removed from the parent node" );
+        return Promise.reject( Error( "childId unknown. It might already been removed from the parent node" ) );
       }
     }
 
@@ -277,7 +277,7 @@ class GraphManagerService {
       return this.nodes[parentId].addChildInContext( child, relationName, relationType, context );
     }
     //TODO option parser
-    return Promise.reject( 'Node id not found' );
+    return Promise.reject( Error( 'Node id' + parentId + ' not found' ) );
   }
 
   /**
