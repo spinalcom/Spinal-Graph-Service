@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "eslint-plugin-vue": "^5.0.0",
     "spinal-core-connectorjs": "git+https://github.com/spinalcom/spinal-core-connectorjs.git",
     "spinal-model-graph": "git+https://github.com/spinalcom/spinal-model-graph.git#v02"
   }

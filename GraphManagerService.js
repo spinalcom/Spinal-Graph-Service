@@ -18,7 +18,7 @@ class GraphManagerService {
   /**
    * @param viewerEnv if defined load graph from getModel
    */
-  constructor( viewerEnv = "undefined" ) {
+  constructor( viewerEnv ) {
     this.bindedNode = new Map();
     this.binders = new Map();
     this.listeners = new Map();
@@ -230,10 +230,8 @@ class GraphManagerService {
   addContext( name, type, elt ) {
 
     const context = new SpinalContext( name, type, elt );
-    console.log( "constext", context );
     this.nodes[context.info.id.get()] = context;
     this.graph.addContext( context );
-    console.log( "graph", this.graph );
     return context;
   }
 
@@ -243,7 +241,13 @@ class GraphManagerService {
    * @returns {*}
    */
   getContext( name ) {
-    return this.graph.getContext( name );
+    for (let key in this.nodes) {
+      const node = this.nodes[key];
+      if (node instanceof SpinalContext && node.getName().get() === name) {
+        return node;
+      }
+      return;
+    }
   }
 
   /**
@@ -256,12 +260,25 @@ class GraphManagerService {
   createNode( info, element ) {
     const node = new SpinalNode();
     const nodeId = node.info.id.get();
-
+    info['id'] = nodeId;
     node.mod_attr( 'info', info );
     node.element.ptr.set( element );
     this.nodes[nodeId] = node;
 
     return nodeId;
+  }
+
+  addChildInContext( parentId, childId, contextId, relationName, relationType ) {
+    if (this.nodes.hasOwnProperty( parentId ) && this.nodes.hasOwnProperty( childId ) && this.nodes.hasOwnProperty( contextId )) {
+      const child = this.nodes[childId];
+      const context = this.nodes[contextId];
+      console.log( "child", child );
+      console.log( "context", context );
+
+      return this.nodes[parentId].addChildInContext( child, relationName, relationType, context );
+    }
+    //TODO option parser
+    return Promise.reject( 'Node id not found' );
   }
 
   /**
@@ -345,7 +362,6 @@ class GraphManagerService {
     if (this.binders.has( nodeId ) || !this.nodes.hasOwnProperty( nodeId )) {
       return;
     }
-    console.log( "nodeId noe", this.nodes[nodeId] );
     this.binders.set( nodeId, this.nodes[nodeId].bind( this._bindFunc.bind( this, nodeId ) ) );
   }
 
@@ -355,7 +371,6 @@ class GraphManagerService {
    * @private
    */
   _bindFunc( nodeId ) {
-    console.log( "bind", nodeId );
     if (this.bindedNode.has( nodeId )) {
 
       for (let callback of this.bindedNode.get( nodeId ).values()) {
