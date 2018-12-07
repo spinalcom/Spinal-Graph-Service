@@ -105,22 +105,20 @@ class GraphManagerService {
     if (!this.nodes.hasOwnProperty( id )) {
       return Promise.reject( "Node id: " + id + " not found" );
     }
+    if (this.nodes[id] instanceof SpinalContext) {
+      return this.nodes[id].getChildrenInContext().then( children => {
 
-
-    if (this._areAllChildrenLoaded( id )) {
-      return this.nodes[id].getChildren( relationNames )
-        .then( children => {
           const res = [];
           for (let i = 0; i < children.length; i++) {
-            res.push( this.nodes[children[i].info.id.get()].info );
+            this._addNode( children[i] );
+            res.push( this.getInfo( children[i].getId().get() ) );
           }
-
-          return Promise.resolve( res );
-        } );
-
+          return res;
+        }
+      );
     }
 
-    return this.nodes[id].getChildren( [] )
+    return this.nodes[id].getChildren( relationNames )
       .then( ( children ) => {
         const res = [];
         for (let i = 0; i < children.length; i++) {
@@ -133,6 +131,7 @@ class GraphManagerService {
   }
 
   getInfo( nodeId ) {
+
     if (!this.nodes.hasOwnProperty( nodeId )) {
       return;
     }
@@ -145,7 +144,7 @@ class GraphManagerService {
     return res['info'];
   }
 
-  listOnNodeAdded( caller, callback ) {
+  listenOnNodeAdded( caller, callback ) {
     this.listeners.set( caller, callback );
     return this.stopListening.bind( this, caller );
   }
@@ -259,6 +258,9 @@ class GraphManagerService {
    */
   createNode( info, element ) {
     const node = new SpinalNode();
+    if (!info.hasOwnProperty( 'type' )) {
+      info['type'] = node.getType().get();
+    }
     const nodeId = node.info.id.get();
     info['id'] = nodeId;
     node.mod_attr( 'info', info );
@@ -272,9 +274,6 @@ class GraphManagerService {
     if (this.nodes.hasOwnProperty( parentId ) && this.nodes.hasOwnProperty( childId ) && this.nodes.hasOwnProperty( contextId )) {
       const child = this.nodes[childId];
       const context = this.nodes[contextId];
-      console.log( "child", child );
-      console.log( "context", context );
-
       return this.nodes[parentId].addChildInContext( child, relationName, relationType, context );
     }
     //TODO option parser
@@ -305,7 +304,7 @@ class GraphManagerService {
    * @param parentId {string} id of the parent node
    * @param node {Object} must have an attribute 'info' and can have an attribute 'element'
    * @param relationName {string}
-   * @param relationType {string}
+   * @param relationType {Number}
    * @returns {boolean} return true if the node was created added as child to the node corresponding to the parentId successfully
    */
   addChildAndCreateNode( parentId, node, relationName, relationType ) {
@@ -324,10 +323,12 @@ class GraphManagerService {
    * @private
    */
   _addNode( node ) {
-    this.nodes[node.info.id.get()] = node;
+    if (!this.nodes.hasOwnProperty( node.getId().get() )) {
+      this.nodes[node.info.id.get()] = node;
 
-    for (let callback of this.listeners) {
-      callback( node.info.id.get() );
+      for (let callback of this.listeners.values()) {
+        callback( node.info.id.get() );
+      }
     }
   }
 
