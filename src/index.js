@@ -7,19 +7,21 @@ export {
   SpinalContext,
   SpinalNode,
   SpinalGraph
-} from 'spinal-model-graph';
+}
+  from 'spinal-model-graph';
 const G_root = typeof window == "undefined" ? global : window;
 
 if (typeof G_root.spinal === "undefined") G_root.spinal = {};
 if (typeof G_root.spinal.spinalGraphService === "undefined") {
-  G_root.spinal.spinalGraphService = new SpinalGraphServiceClass( 1 );
-  G_root.spinal.spinalGraphOrganService = new SpinalGraphServiceClass();
+  if (typeof G_root.spinal.spinalSystem !== "undefined") {
+    G_root.spinal.spinalGraphService = new SpinalGraphServiceClass(1);
+  } else {
+    G_root.spinal.spinalGraphService = new SpinalGraphServiceClass();
+  }
 }
 
 
 const SpinalGraphService = G_root.spinal.spinalGraphService;
-const SpinalGraphOrganService = G_root.spinal.spinalGraphOrganService;
 export {
-  SpinalGraphService,
-  SpinalGraphOrganService
+  SpinalGraphService
 };

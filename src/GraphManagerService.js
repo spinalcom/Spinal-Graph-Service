@@ -25,8 +25,7 @@ class GraphManagerService {
     this.nodes = {};
     this.graph = {};
 
-    if (typeof viewerEnv !== "undefined" &&
-      typeof G_root.spinal.spinalSystem !== "undefined") {
+    if (typeof viewerEnv !== "undefined") {
 
       G_root.spinal.spinalSystem.getModel()
         .then(
