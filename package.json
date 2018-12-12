@@ -1,9 +1,10 @@
 {
   "name": "spinal-env-viewer-graph-service",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
+    "build": "babel src -d build -s inline",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -12,5 +13,11 @@
   "dependencies": {
     "spinal-core-connectorjs": "git+https://github.com/spinalcom/spinal-core-connectorjs.git",
     "spinal-model-graph": "git+https://github.com/spinalcom/spinal-model-graph.git#v02"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.2",
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "jsdoc-to-markdown": "^4.0.1"
   }
 }
