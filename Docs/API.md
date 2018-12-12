@@ -18,15 +18,15 @@
     * [.setGraphFromForgeFile(forgeFile)](#GraphManagerService+setGraphFromForgeFile) ⇒ <code>\*</code>
     * [.setGraph(graph)](#GraphManagerService+setGraph) ⇒ <code>void</code>
     * [.getNode(id)](#GraphManagerService+getNode) ⇒ <code>Object</code> \| <code>undefined</code>
-    * [.getGraph()](#GraphManagerService+getGraph) ⇒ <code>Object</code> \| <code>\*</code>
+    * [.getGraph()](#GraphManagerService+getGraph) ⇒ <code>Object</code> \| <code>SpinalGraph</code>
     * [.getRealNode(id)](#GraphManagerService+getRealNode) ⇒ <code>SpinalNode</code> \| <code>undefined</code>
-    * [.getChildren(id, relationNames)](#GraphManagerService+getChildren) ⇒ <code>Promise.&lt;Array.&lt;SpinalNode&gt;&gt;</code>
+    * [.getChildren(id, relationNames)](#GraphManagerService+getChildren) ⇒ <code>Promise.&lt;Array.&lt;SpinalNodeRef&gt;&gt;</code>
     * [.getInfo(nodeId)](#GraphManagerService+getInfo) ⇒ <code>\*</code>
     * [.modifyNode(nodeId, info)](#GraphManagerService+modifyNode) ⇒ <code>boolean</code>
     * [.bindNode(nodeId, caller, callback)](#GraphManagerService+bindNode) ⇒ <code>undefined</code> \| <code>function</code>
     * [.removeChild(nodeId, childId, relationName, relationType, stop)](#GraphManagerService+removeChild) ⇒ <code>Promise.&lt;boolean&gt;</code>
     * [.addContext(context)](#GraphManagerService+addContext) ⇒ <code>Promise.&lt;SpinalContext&gt;</code>
-    * [.getContext(name)](#GraphManagerService+getContext) ⇒ <code>\*</code>
+    * [.getContext(name)](#GraphManagerService+getContext) ⇒ <code>SpinalContext</code> \| <code>undefined</code>
     * [.createNode(info, element)](#GraphManagerService+createNode) ⇒ <code>String</code>
     * [.addChild(parentId, childId, relationName, relationType)](#GraphManagerService+addChild) ⇒ <code>Promise.&lt;boolean&gt;</code>
     * [.addChildAndCreateNode(parentId, node, relationName, relationType)](#GraphManagerService+addChildAndCreateNode) ⇒ <code>boolean</code>
@@ -72,7 +72,7 @@ Return the information about the node with the given id
 
 <a name="GraphManagerService+getGraph"></a>
 
-### graphManagerService.getGraph() ⇒ <code>Object</code> \| <code>\*</code>
+### graphManagerService.getGraph() ⇒ <code>Object</code> \| <code>SpinalGraph</code>
 return the current graph
 
 **Kind**: instance method of [<code>GraphManagerService</code>](#GraphManagerService)  
@@ -89,7 +89,7 @@ Return the node with the given id
 
 <a name="GraphManagerService+getChildren"></a>
 
-### graphManagerService.getChildren(id, relationNames) ⇒ <code>Promise.&lt;Array.&lt;SpinalNode&gt;&gt;</code>
+### graphManagerService.getChildren(id, relationNames) ⇒ <code>Promise.&lt;Array.&lt;SpinalNodeRef&gt;&gt;</code>
 Return all children of a node
 
 **Kind**: instance method of [<code>GraphManagerService</code>](#GraphManagerService)  
@@ -163,7 +163,7 @@ Add a context to the graph
 
 <a name="GraphManagerService+getContext"></a>
 
-### graphManagerService.getContext(name) ⇒ <code>\*</code>
+### graphManagerService.getContext(name) ⇒ <code>SpinalContext</code> \| <code>undefined</code>
 **Kind**: instance method of [<code>GraphManagerService</code>](#GraphManagerService)  
 
 | Param |

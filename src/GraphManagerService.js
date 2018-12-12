@@ -81,7 +81,7 @@ class GraphManagerService {
 
   /**
    * return the current graph
-   * @returns {{}|*}
+   * @returns {{}|SpinalGraph}
    */
   getGraph() {
     return this.graph;
@@ -104,7 +104,7 @@ class GraphManagerService {
    * Return all children of a node
    * @param id
    * @param relationNames {Array}
-   * @returns {Promise<Array<SpinalNode>>}
+   * @returns {Promise<Array<SpinalNodeRef>>}
    */
   getChildren( id, relationNames ) {
     if (!this.nodes.hasOwnProperty( id )) {
@@ -127,7 +127,6 @@ class GraphManagerService {
         }
         return res;
       } );
-
   }
 
   /**
@@ -169,6 +168,9 @@ class GraphManagerService {
       return false;
     }
 
+    // TO DO : change the following "mod_attr
+    // to a direct "update" of the existing model.
+    // This will reduce the creation of model but
     this.nodes[nodeId].mod_attr( 'info', info );
 
     return true;
@@ -213,18 +215,18 @@ class GraphManagerService {
       return Promise.reject( Error( "nodeId unknown." ) );
     }
 
-    if (this.nodes.hasOwnProperty( nodeId )) {
-      if (!this.nodes.hasOwnProperty( childId ) && !stop) {
-        return this.getChildren( nodeId, [] )
-          .then( () => this.removeChild( nodeId, childId, relationName, relationType, true ) )
-          .catch( e => console.error( e ) );
-      } else if (this.nodes.hasOwnProperty( childId )) {
-        this.nodes[nodeId].removeChild( this.nodes[childId], relationName, relationType );
-        return Promise.resolve( true );
-      } else {
-        return Promise.reject( Error( "childId unknown. It might already been removed from the parent node" ) );
-      }
+    // if (this.nodes.hasOwnProperty( nodeId )) {
+    if (!this.nodes.hasOwnProperty( childId ) && !stop) {
+      return this.getChildren( nodeId, [] )
+        .then( () => this.removeChild( nodeId, childId, relationName, relationType, true ) )
+        .catch( e => console.error( e ) );
+    } else if (this.nodes.hasOwnProperty( childId )) {
+      return this.nodes[nodeId].removeChild( this.nodes[childId], relationName, relationType );
+      // return Promise.resolve( true );
+    } else {
+      return Promise.reject( Error( "childId unknown. It might already been removed from the parent node" ) );
     }
+    // }
   }
 
   /**
@@ -240,7 +242,7 @@ class GraphManagerService {
 
   /**
    * @param name
-   * @returns {*}
+   * @returns {SpinalContext|undefined}
    */
   getContext( name ) {
     for (let key in this.nodes) {
