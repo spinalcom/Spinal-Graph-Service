@@ -7,16 +7,16 @@ import {
 const G_root = typeof window == "undefined" ? global : window;
 
 /**
- *  @param bindedNode {Map<String, Map<Object, function>>} NodeId => Caller => Callback. All nodes that are bind
- *  @param binders {Map<String, function>} NodeId => CallBack from bind method.
- *  @param listeners {Map<Object, function>} caller => callback. List of all listeners on node added
- *  @param nodes {Object} containing all SpinalNode currently loaded
- *  @param graph {SpinalGraph}
+ *  @property {Map<String, Map<Object, function>>} bindedNode NodeId => Caller => Callback. All nodes that are bind
+ *  @property {Map<String, function>} binders NodeId => CallBack from bind method.
+ *  @property {Map<Object, function>} listeners caller => callback. List of all listeners on node added
+ *  @property {Object} nodes containing all SpinalNode currently loaded
+ *  @property {SpinalGraph} graph
  */
 class GraphManagerService {
 
   /**
-   * @param viewerEnv if defined load graph from getModel
+   * @param viewerEnv {boolean} if defined load graph from getModel
    */
   constructor( viewerEnv ) {
     this.bindedNode = new Map();
@@ -54,6 +54,7 @@ class GraphManagerService {
   /**
    *
    * @param graph {SpinalGraph}
+   * @returns {void}
    */
   setGraph( graph ) {
 
@@ -103,7 +104,7 @@ class GraphManagerService {
    * Return all children of a node
    * @param id
    * @param relationNames {Array}
-   * @returns Promise<Array<SpinalNode>>
+   * @returns {Promise<Array<SpinalNode>>}
    */
   getChildren( id, relationNames ) {
     if (!this.nodes.hasOwnProperty( id )) {
@@ -204,7 +205,7 @@ class GraphManagerService {
    * @param relationName {String}
    * @param relationType {Number}
    * @param stop
-   * @returns Promise<boolean>
+   * @returns {Promise<boolean>}
    */
   removeChild( nodeId, childId, relationName, relationType, stop = false ) {
 
