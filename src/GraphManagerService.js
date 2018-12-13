@@ -293,6 +293,16 @@ class GraphManagerService {
   }
 
   /**
+   * Remove the node refrerenced by id from th graph.
+   * @param id
+   */
+  removeFromGraph( id ) {
+    if (this.nodes.hasOwnProperty( id )) {
+      this.nodes[id].removeFromGraph();
+    }
+  }
+
+  /**
    * Create a new node.
    * The node newly created is volatile i.e it won't be store in the filesystem as long it's not added as child to another node
    * @param info {Object} information of the node
