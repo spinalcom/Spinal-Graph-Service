@@ -5,7 +5,6 @@ import {
 } from "spinal-model-graph";
 
 const G_root = typeof window == "undefined" ? global : window;
-
 /**
  *  @property {Map<String, Map<Object, function>>} bindedNode NodeId => Caller => Callback. All nodes that are bind
  *  @property {Map<String, function>} binders NodeId => CallBack from bind method.
@@ -21,7 +20,8 @@ class GraphManagerService {
   constructor( viewerEnv ) {
     this.bindedNode = new Map();
     this.binders = new Map();
-    this.listeners = new Map();
+    this.listenersOnNodeAdded = new Map();
+    this.listenerOnNodeRemove = new Map();
     this.nodes = {};
     this.graph = {};
     if (typeof viewerEnv !== "undefined") {
@@ -186,14 +186,22 @@ class GraphManagerService {
   }
 
   listenOnNodeAdded( caller, callback ) {
-    this.listeners.set( caller, callback );
-    return this.stopListening.bind( this, caller );
+    this.listenersOnNodeAdded.set( caller, callback );
+    return this.stopListeningOnNodeAdded.bind( this, caller );
   }
 
-  stopListening( caller ) {
-    return this.listeners.delete( caller );
+  listenOnNodeRemove( caller, callback ) {
+    this.listenerOnNodeRemove.set( caller, callback );
+    return this.stopListeningOnNodeRemove.bind( this, caller );
   }
 
+  stopListeningOnNodeAdded( caller ) {
+    return this.listenersOnNodeAdded.delete( caller );
+  }
+
+  stopListeningOnNodeRemove( caller ) {
+    return this.listenerOnNodeRemove.delete( caller );
+  }
   /**
    * @param nodeId id of the desired node
    * @param info new info for the node
@@ -257,6 +265,9 @@ class GraphManagerService {
         .then( () => this.removeChild( nodeId, childId, relationName, relationType, true ) )
         .catch( e => console.error( e ) );
     } else if (this.nodes.hasOwnProperty( childId )) {
+      for (let callback of this.listeners.values()) {
+        callback( nodeId );
+      }
       return this.nodes[nodeId].removeChild( this.nodes[childId], relationName, relationType );
     } else {
       return Promise.reject( Error( "childId unknown. It might already been removed from the parent node" ) );
@@ -293,7 +304,7 @@ class GraphManagerService {
   }
 
   /**
-   * Remove the node refrerenced by id from th graph.
+   * Remove the node referenced by id from th graph.
    * @param id
    */
   removeFromGraph( id ) {
