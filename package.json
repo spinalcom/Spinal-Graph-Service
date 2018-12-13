@@ -11,6 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "spinal-core-connectorjs": "git+https://github.com/spinalcom/spinal-core-connectorjs.git",
-    "spinal-model-graph": "git+https://github.com/spinalcom/spinal-model-graph.git#v02"
+    "spinal-model-graph": "git+https://github.com/spinalcom/spinal-model-graph.git"
   }
 }
