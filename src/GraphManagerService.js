@@ -24,7 +24,6 @@ class GraphManagerService {
     this.listeners = new Map();
     this.nodes = {};
     this.graph = {};
-
     if (typeof viewerEnv !== "undefined") {
 
       G_root.spinal.spinalSystem.getModel()
@@ -63,7 +62,7 @@ class GraphManagerService {
     }
     this.graph = graph;
     this.nodes[this.graph.getId().get()] = this.graph;
-    return this.getChildren( this.graph.id.get(), [] )
+    return this.getChildren( this.graph.getId().get(), [] )
       .then( () => {return this.graph.getId().get();} );
 
   }
@@ -173,6 +172,7 @@ class GraphManagerService {
     }
     const node = this.nodes[nodeId];
     const res = node.info.deep_copy();
+    res['childrenIds'] = node.getChildrenIds();
     res['contextIds'] = node.contextIds;
     res['element'] = node.element;
     res['hasChildren'] = node.children.size > 0;
