@@ -1,11 +1,9 @@
 {
   "name": "spinal-env-viewer-graph-service",
-  "version": "1.0.1",
+  "version": "0.1.0",
   "description": "",
-  "main": "build/index.js",
+  "main": "index.js",
   "scripts": {
-    "build": "babel src -d build -s inline",
-    "doc": "mkdir -p Docs && jsdoc2md src/GraphManagerService.js > Docs/API.md",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "spinal-core-connectorjs": "git+https://github.com/spinalcom/spinal-core-connectorjs.git",
-    "spinal-model-graph": "git+https://github.com/spinalcom/spinal-model-graph.git#v02"
+    "spinal-model-graph": "git+https://github.com/spinalcom/spinal-model-graph.git"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
