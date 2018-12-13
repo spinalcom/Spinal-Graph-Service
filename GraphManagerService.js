@@ -65,6 +65,12 @@ class GraphManagerService {
   }
 
   /**
+   * Return all loaded Nodes
+   */
+  getNodes() {
+    return this.nodes;
+  }
+  /**
    * Return the information about the node with the given id
    * @param id of the wanted node
    * @returns {Object | undefined}
@@ -105,7 +111,7 @@ class GraphManagerService {
    * @param relationNames {Array}
    * @returns Promise<Array<SpinalNode>>
    */
-  getChildren( id, relationNames ) {
+  getChildren( id, relationNames = [] ) {
     if (!this.nodes.hasOwnProperty( id )) {
       return Promise.reject( Error( "Node id: " + id + " not found" ) );
     }
@@ -139,13 +145,12 @@ class GraphManagerService {
     if (!this.nodes.hasOwnProperty( nodeId )) {
       return;
     }
-    const res = {};
     const node = this.nodes[nodeId];
-    res['info'] = node.info;
-    res['info']["childrenIds"] = node.getChildrenIds();
-    res['info']['contextIds'] = node.contextIds;
-    res['info']['element'] = node.element;
-    return res['info'];
+    const res = node.info.get();
+    res["childrenIds"] = node.getChildrenIds();
+    res['contextIds'] = node.contextIds;
+    res['element'] = node.element;
+    return res;
   }
 
   listenOnNodeAdded( caller, callback ) {
@@ -218,8 +223,7 @@ class GraphManagerService {
           .then( () => this.removeChild( nodeId, childId, relationName, relationType, true ) )
           .catch( e => console.error( e ) );
       } else if (this.nodes.hasOwnProperty( childId )) {
-        this.nodes[nodeId].removeChild( this.nodes[childId], relationName, relationType );
-        return Promise.resolve( true );
+        return this.nodes[nodeId].removeChild( this.nodes[childId], relationName, relationType );
       } else {
         return Promise.reject( Error( "childId unknown. It might already been removed from the parent node" ) );
       }
@@ -248,7 +252,6 @@ class GraphManagerService {
         return node;
       }
     }
-
   }
 
   /**
