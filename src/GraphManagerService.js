@@ -388,7 +388,7 @@ class GraphManagerService {
     if (!this.nodes.hasOwnProperty( node.getId().get() )) {
       this.nodes[node.info.id.get()] = node;
 
-      for (let callback of this.listeners.values()) {
+      for (let callback of this.listenersOnNodeAdded.values()) {
         callback( node.info.id.get() );
       }
     }
