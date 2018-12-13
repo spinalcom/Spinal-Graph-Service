@@ -38,7 +38,7 @@ class GraphManagerService {
   /**
    * Change the current graph with the one of the forgeFile if there is one create one if note
    * @param forgeFile
-   * @returns {*}
+   * @returns {Promise<String>} the id of the graph
    */
   setGraphFromForgeFile( forgeFile ) {
 
@@ -47,14 +47,14 @@ class GraphManagerService {
         graph: new SpinalGraph()
       } );
     }
-    this.setGraph( forgeFile.graph );
+    return this.setGraph( forgeFile.graph );
 
   }
 
   /**
    *
    * @param graph {SpinalGraph}
-   * @returns {void}
+   * @returns {Promise<String>} the id of the graph
    */
   setGraph( graph ) {
 
@@ -63,6 +63,9 @@ class GraphManagerService {
     }
     this.graph = graph;
     this.nodes[this.graph.getId().get()] = this.graph;
+    return this.getChildren( this.graph.id.get(), [] )
+      .then( () => {return this.graph.getId().get();} );
+
   }
 
   /**
@@ -71,6 +74,7 @@ class GraphManagerService {
   getNodes() {
     return this.nodes;
   }
+
   /**
    * Return the information about the node with the given id
    * @param id of the wanted node
@@ -135,6 +139,28 @@ class GraphManagerService {
       } );
   }
 
+
+  /**
+   * Return the children of the node that are registered in the context
+   * @param parentId {String} id of the parent node
+   * @param contextId {String} id of the context node
+   * @returns {Promise<Array<Object>>} The info of the children that were found
+   */
+  getChildrenInContext( parentId, contextId ) {
+    if (this.nodes.hasOwnProperty( parentId ) && this.nodes.hasOwnProperty( contextId )) {
+      return this.nodes[parentId].getChildrenInContext( this.nodes[contextId] ).then( children => {
+        const res = [];
+
+        for (let i = 0; i < children.length; i++) {
+          this._addNode( children[i] );
+          res.push( this.getInfo( children[i].getId().get() ) );
+        }
+
+        return res;
+      } );
+    }
+  }
+
   /**
    * Return the node info aggregated with its childrenIds, contextIds and element
    * @param nodeId
@@ -147,10 +173,16 @@ class GraphManagerService {
     }
     const node = this.nodes[nodeId];
     const res = node.info.deep_copy();
-    res["childrenIds"] = node.getChildrenIds();
     res['contextIds'] = node.contextIds;
     res['element'] = node.element;
+    res['hasChildren'] = node.children.size > 0;
     return res;
+  }
+
+  getChildrenIds( nodeId ) {
+    if (this.nodes.hasOwnProperty( nodeId )) {
+      return this.nodes[nodeId].getChildrenIds();
+    }
   }
 
   listenOnNodeAdded( caller, callback ) {
@@ -220,14 +252,12 @@ class GraphManagerService {
       return Promise.reject( Error( "nodeId unknown." ) );
     }
 
-    // if (this.nodes.hasOwnProperty( nodeId )) {
     if (!this.nodes.hasOwnProperty( childId ) && !stop) {
       return this.getChildren( nodeId, [] )
         .then( () => this.removeChild( nodeId, childId, relationName, relationType, true ) )
         .catch( e => console.error( e ) );
     } else if (this.nodes.hasOwnProperty( childId )) {
       return this.nodes[nodeId].removeChild( this.nodes[childId], relationName, relationType );
-      // return Promise.resolve( true );
     } else {
       return Promise.reject( Error( "childId unknown. It might already been removed from the parent node" ) );
     }
@@ -235,7 +265,9 @@ class GraphManagerService {
 
   /**
    * Add a context to the graph
-   * @param context
+   * @param name {String} of the context
+   * @param type {String} of the context
+   * @param elt {Model} element of the context if needed
    * @returns {Promise<SpinalContext>}
    */
   addContext( name, type, elt ) {
@@ -250,9 +282,11 @@ class GraphManagerService {
    */
   getContext( name ) {
     for (let key in this.nodes) {
-      const node = this.nodes[key];
-      if (node instanceof SpinalContext && node.getName().get() === name) {
-        return node;
+      if (this.nodes.hasOwnProperty( key )) {
+        const node = this.nodes[key];
+        if (node instanceof SpinalContext && node.getName().get() === name) {
+          return node;
+        }
       }
     }
 
