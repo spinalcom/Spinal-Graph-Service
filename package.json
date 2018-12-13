@@ -4,7 +4,7 @@
   "description": "",
   "main": "build/index.js",
   "scripts": {
-    "build": "babel --configFile='myBabel' src -d build -s inline",
+    "build": "babel --config-file ./myBabel src -d build -s inline",
     "doc": "mkdir -p Docs && jsdoc2md src/GraphManagerService.js > Docs/API.md",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
