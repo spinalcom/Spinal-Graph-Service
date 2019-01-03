@@ -1,3 +1,27 @@
+/*
+ * Copyright 2019 SpinalCom - www.spinalcom.com
+ *
+ *  This file is part of SpinalCore.
+ *
+ *  Please read all of the following terms and conditions
+ *  of the Free Software license Agreement ("Agreement")
+ *  carefully.
+ *
+ *  This Agreement is a legally binding contract between
+ *  the Licensee (as defined below) and SpinalCom that
+ *  sets forth the terms and conditions that govern your
+ *  use of the Program. By installing and/or using the
+ *  Program, you agree to abide by all the terms and
+ *  conditions stated or referenced herein.
+ *
+ *  If you do not agree to abide by these terms and
+ *  conditions, do not demonstrate your acceptance and do
+ *  not install or use the Program.
+ *  You should have received a copy of the license along
+ *  with this file. If not, see
+ *  <http://resources.spinalcom.com/licenses.pdf>.
+ */
+
 import {
   SpinalContext,
   SpinalGraph,
@@ -107,6 +131,21 @@ class GraphManagerService {
     }
 
     return undefined;
+  }
+
+  /**
+   * Return all the relation names of the node coresponding to id
+   * @param id {String} of the node
+   * @returns {Array<String>}
+   */
+  getRelationNames( id ) {
+    const relationNames = [];
+    if (this.nodes.hasOwnProperty( id )) {
+      for (let relationMap of this.nodes[id].children) {
+        relationNames.push( ...relationMap.keys() );
+      }
+    }
+    return relationNames;
   }
 
   /**
@@ -282,8 +321,12 @@ class GraphManagerService {
    * @returns {Promise<SpinalContext>}
    */
   addContext( name, type, elt ) {
+    console.log( "qsdqsd", this );
     const context = new SpinalContext( name, type, elt );
     this.nodes[context.info.id.get()] = context;
+    if (typeof this.graph.addContext === 'function') {
+      console.log( 'hqhqhqhhq' );
+    }
     return this.graph.addContext( context );
   }
 
