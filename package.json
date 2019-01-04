@@ -13,12 +13,18 @@
   "license": "ISC",
   "dependencies": {
     "spinal-core-connectorjs": "git+https://github.com/spinalcom/spinal-core-connectorjs.git",
-    "spinal-model-graph": "git+https://github.com/spinalcom/spinal-model-graph.git#v02"
+    "spinal-model-graph": "git+https://github.com/spinalcom/spinal-model-graph.git#v02",
+    "spinal-core-connectorjs_type": "git+https://github.com/spinalcom/spinal-core-connectorjs_type.git"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
-    "jsdoc-to-markdown": "^4.0.1"
+    "jsdoc-to-markdown": "^4.0.1",
+    "tsc": "^1.20150623.0",
+    "tslint": "^5.11.0",
+    "tslint-config-airbnb": "^5.11.1",
+    "typescript": "^3.2.2",
+    "typescript-eslint-parser": "^21.0.2"
   }
 }

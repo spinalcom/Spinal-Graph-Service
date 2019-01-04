@@ -321,12 +321,9 @@ class GraphManagerService {
    * @returns {Promise<SpinalContext>}
    */
   addContext( name, type, elt ) {
-    console.log( "qsdqsd", this );
     const context = new SpinalContext( name, type, elt );
     this.nodes[context.info.id.get()] = context;
-    if (typeof this.graph.addContext === 'function') {
-      console.log( 'hqhqhqhhq' );
-    }
+  
     return this.graph.addContext( context );
   }
 
