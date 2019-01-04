@@ -304,7 +304,7 @@ class GraphManagerService {
         .then( () => this.removeChild( nodeId, childId, relationName, relationType, true ) )
         .catch( e => console.error( e ) );
     } else if (this.nodes.hasOwnProperty( childId )) {
-      for (let callback of this.listeners.values()) {
+      for (let callback of this.listenerOnNodeRemove.values()) {
         callback( nodeId );
       }
       return this.nodes[nodeId].removeChild( this.nodes[childId], relationName, relationType );
