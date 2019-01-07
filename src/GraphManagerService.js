@@ -29,6 +29,7 @@ import {
 } from "spinal-model-graph";
 
 const G_root = typeof window == "undefined" ? global : window;
+
 /**
  *  @property {Map<String, Map<Object, function>>} bindedNode NodeId => Caller => Callback. All nodes that are bind
  *  @property {Map<String, function>} binders NodeId => CallBack from bind method.
@@ -241,6 +242,7 @@ class GraphManagerService {
   stopListeningOnNodeRemove( caller ) {
     return this.listenerOnNodeRemove.delete( caller );
   }
+  
   /**
    * @param nodeId id of the desired node
    * @param info new info for the node
@@ -282,6 +284,27 @@ class GraphManagerService {
     }
 
     return this._unBind.bind( this, nodeId, caller );
+  }
+  
+  moveChild( fromId, toId, childId, relationName, relationType ) {
+    if (!this.nodes.hasOwnProperty( fromId )) {
+      return Promise.reject( 'fromId: ' + fromId + ' not found' );
+    }
+    if (!this.nodes.hasOwnProperty( toId )) {
+      return Promise.reject( 'toId: ' + toId + ' not found' );
+    }
+    if (!this.nodes.hasOwnProperty( childId )) {
+      return Promise.reject( 'childId: ' + childId + ' not found' );
+    }
+    
+    return this.nodes[fromId].removeChild( this.nodes[childId], relationName, relationType ).then( () => {
+      
+      return this.nodes[toId].addChild( this.nodes[childId], relationName, relationType ).then( () => {
+        return true;
+      } );
+      
+    } );
+    
   }
 
   /**
