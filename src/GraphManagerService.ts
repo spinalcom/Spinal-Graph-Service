@@ -33,7 +33,7 @@ import SpinalNodePointer from 'spinal-model-graph/build/SpinalNodePointer';
 interface SpinalNodeRef {
   childrenIds: string[];
   contextIds: string[];
-  element: SpinalNodePointer;
+  element: SpinalNodePointer<spinal.Model>;
   hasChildren: boolean;
   [key: string]: any;
 }
