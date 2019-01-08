@@ -1,8 +1,9 @@
 import { SpinalContext, SpinalGraph, SpinalNode } from 'spinal-model-graph';
+import SpinalNodePointer from 'spinal-model-graph/build/SpinalNodePointer';
 interface SpinalNodeRef {
     childrenIds: string[];
     contextIds: string[];
-    element: spinal.Ptr<spinal.Model>;
+    element: SpinalNodePointer;
     hasChildren: boolean;
     [key: string]: any;
 }
