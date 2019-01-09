@@ -1,20 +1,24 @@
 import { SpinalContext, SpinalGraph, SpinalNode } from 'spinal-model-graph';
 import SpinalNodePointer from 'spinal-model-graph/build/SpinalNodePointer';
-interface SpinalNodeRef {
+interface SpinalNodeRef extends spinal.Model {
     childrenIds: string[];
     contextIds: string[];
-    element: SpinalNodePointer;
+    element: SpinalNodePointer<spinal.Model>;
     hasChildren: boolean;
     [key: string]: any;
 }
+interface InfoModel extends spinal.Model {
+    id: string | spinal.Str;
+    [key: string]: any;
+}
 interface SpinalNodeObject {
-    info: {
-        id: string | spinal.Str;
-        [key: string]: any;
-    } | spinal.Model;
+    info: InfoModel;
     element?: spinal.Model;
     [key: string]: any;
 }
+/**
+ * @type (...args: any[]) => any
+ */
 declare type callback = (...args: any[]) => any;
 /**
  *  @property {Map<string, Map<any, Callback>>} bindedNode
