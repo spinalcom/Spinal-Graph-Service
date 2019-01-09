@@ -30,18 +30,19 @@ import {
 } from 'spinal-model-graph';
 import SpinalNodePointer from 'spinal-model-graph/build/SpinalNodePointer';
 
-interface SpinalNodeRef {
+interface SpinalNodeRef extends spinal.Model {
   childrenIds: string[];
   contextIds: string[];
   element: SpinalNodePointer<spinal.Model>;
   hasChildren: boolean;
   [key: string]: any;
 }
+interface InfoModel extends spinal.Model {
+  id: string|spinal.Str;
+  [key: string]: any;
+}
 interface SpinalNodeObject {
-  info: {
-    id: string|spinal.Str;
-    [key: string]: any;
-  } | spinal.Model;
+  info: InfoModel;
   element?: spinal.Model;
   [key: string]: any;
 }
@@ -50,7 +51,6 @@ const G_ROOT = typeof window === 'undefined' ? global : window;
 /**
  * @type (...args: any[]) => any
  */
-type Callback = (...args: any[]) => any;
 type callback = (...args: any[]) => any;
 
 /**
