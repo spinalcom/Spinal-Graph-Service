@@ -33,6 +33,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const spinal_model_graph_1 = require("spinal-model-graph");
+/**
+ * @class SpinalNodeRef
+ * @extends {spinal.Model}
+ * @template T
+ */
+class SpinalNodeRef extends spinal.Model {
+    constructor(model, childrenIds, contextIds, element, hasChildren) {
+        super();
+        for (let index = 0; index < model._attribute_names.length; index += 1) {
+            const key = model._attribute_names[index];
+            this.add_attr(key, model[key].deep_copy());
+        }
+        this.childrenIds = childrenIds;
+        this.contextIds = contextIds;
+        this.element = element;
+        this.hasChildren = hasChildren;
+    }
+}
 const G_ROOT = typeof window === 'undefined' ? global : window;
 /**
  *  @property {Map<string, Map<any, Callback>>} bindedNode
@@ -45,7 +63,9 @@ const G_ROOT = typeof window === 'undefined' ? global : window;
  */
 class GraphManagerService {
     /**
-     * @param viewerEnv {boolean} if defined load graph from getModel
+     *Creates an instance of GraphManagerService.
+     * @param {number} [viewerEnv] if defined load graph from getModel
+     * @memberof GraphManagerService
      */
     constructor(viewerEnv) {
         this.bindedNode = new Map();
@@ -53,7 +73,7 @@ class GraphManagerService {
         this.listenersOnNodeAdded = new Map();
         this.listenerOnNodeRemove = new Map();
         this.nodes = {};
-        this.graph = {};
+        this.graph = null;
         if (typeof viewerEnv !== 'undefined') {
             G_ROOT.spinal.spinalSystem.getModel()
                 .then((forgeFile) => this.setGraphFromForgeFile(forgeFile))
@@ -61,8 +81,9 @@ class GraphManagerService {
         }
     }
     /**
-     * Change the current graph with the one of the forgeFile if there is one create one if note
-     * @param {*} forgeFile
+     * Change the current graph with the one of the forgeFile
+     * if there is one create one if note
+     * @param {spinal.Model} forgeFile
      * @returns {Promise<String>}
      * @memberof GraphManagerService
      */
@@ -75,13 +96,13 @@ class GraphManagerService {
         return this.setGraph(forgeFile.graph);
     }
     /**
-     * @param {SpinalGraph} graph
+     * @param {SpinalGraph<any>} graph
      * @returns {Promise<String>} the id of the graph
      * @memberof GraphManagerService
      */
     setGraph(graph) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (typeof this.graph.getId === 'function' &&
+            if (this.graph && typeof this.graph.getId === 'function' &&
                 this.nodes.hasOwnProperty(this.graph.getId().get())) {
                 delete this.nodes[this.graph.getId().get()];
             }
@@ -93,7 +114,7 @@ class GraphManagerService {
     }
     /**
      * Return all loaded Nodes
-     * @returns {{[nodeId: string]: SpinalNode}}
+     * @returns {ObjectKeyNode<any>}
      * @memberof GraphManagerService
      */
     getNodes() {
@@ -101,8 +122,10 @@ class GraphManagerService {
     }
     /**
      * Return the information about the node with the given id
-     * @param id of the wanted node
-     * @returns {SpinalNodeRef | undefined}
+     * @template T extends spinal.Model = Eleemnt
+     * @param {string} id of the wanted node
+     * @returns {SpinalNodeRef<T>}
+     * @memberof GraphManagerService
      */
     getNode(id) {
         if (this.nodes.hasOwnProperty(id)) {
@@ -112,15 +135,17 @@ class GraphManagerService {
     }
     /**
      * return the current graph
-     * @returns {{}|SpinalGraph}
+     * @returns {(SpinalGraph<any>|{})}
+     * @memberof GraphManagerService
      */
     getGraph() {
-        return this.graph;
+        return this.graph || {};
     }
     /**
      * Return the node with the given id
+     * @template T extends spinal.Model = Eleemnt
      * @param {string} id of the wanted node
-     * @returns {SpinalNode}
+     * @returns {SpinalNode<T>}
      * @memberof GraphManagerService
      */
     getRealNode(id) {
@@ -148,7 +173,7 @@ class GraphManagerService {
      * Return all children of a node
      * @param {string} id
      * @param {string[]} [relationNames=[]]
-     * @returns {Promise<SpinalNodeRef[]>}
+     * @returns {Promise<Array<SpinalNodeRef<any>>>}
      * @memberof GraphManagerService
      */
     getChildren(id, relationNames = []) {
@@ -156,7 +181,7 @@ class GraphManagerService {
             return Promise.reject(Error(`Node id: ${id} not found`));
         }
         if (relationNames.length === 0) {
-            for (const relationMap of this.nodes[id].children) {
+            for (const [, relationMap] of this.nodes[id].children) {
                 relationNames.push(...relationMap.keys());
             }
         }
@@ -201,16 +226,12 @@ class GraphManagerService {
             return;
         }
         const node = this.nodes[nodeId];
-        const res = node.info.deep_copy();
-        res['childrenIds'] = node.getChildrenIds();
-        res['contextIds'] = node.contextIds;
-        res['element'] = node.element;
-        res['hasChildren'] = node.children.size > 0;
+        const res = new SpinalNodeRef(node.info, node.getChildrenIds(), node.contextIds, node.element, node.children.size > 0);
         return res;
     }
     /**
      * @param {string} nodeId
-     * @returns {Promise<string[]>}
+     * @returns {string[]}
      * @memberof GraphManagerService
      */
     getChildrenIds(nodeId) {
@@ -351,7 +372,7 @@ class GraphManagerService {
                 for (const callback of this.listenerOnNodeRemove.values()) {
                     callback(nodeId);
                 }
-                return this.nodes[nodeId].removeChild(this.nodes[childId], relationName, relationType);
+                return this.nodes[nodeId].removeChild(this.nodes[childId], relationName, relationType).then(() => true);
             }
             return Promise.reject(Error('childId unknown. It might already been removed from the parent node'));
         });
@@ -399,7 +420,7 @@ class GraphManagerService {
      * Create a new node.
      * The node newly created is volatile
      * i.e it won't be store in the filesystem as long it's not added as child to another node
-     * @param {{[key: string]: any}} info information of the node
+     * @param {ICreateNodeInfo} info information of the node
      * @param {spinal.Model} element element pointed by the node
      * @returns {string} return the child identifier
      * @memberof GraphManagerService
@@ -420,8 +441,8 @@ class GraphManagerService {
      * @param {string} childId
      * @param {string} contextId
      * @param {string} relationName
-     * @param {number} relationType
-     * @returns {Promise<SpinalNode>}
+     * @param {string} relationType
+     * @returns {Promise<SpinalNode<any>>}
      * @memberof GraphManagerService
      */
     addChildInContext(parentId, childId, contextId, relationName, relationType) {
@@ -441,7 +462,7 @@ class GraphManagerService {
      * @param {string} parentId
      * @param {string} childId
      * @param {string} relationName
-     * @param {number} relationType
+     * @param {string} relationType
      * @returns {Promise<boolean>} return true if the child could be added false otherwise.
      * @memberof GraphManagerService
      */
@@ -457,10 +478,11 @@ class GraphManagerService {
     /**
      *
      * Create a node and add it as child to the parentId.
+     * @template T
      * @param {string} parentId id of the parent node
-     * @param {SpinalNodeObject} node must have an attr. 'info' and can have an attr. 'element'
+     * @param {SpinalNodeObject<T>} node must have an attr. 'info' and can have an attr. 'element'
      * @param {string} relationName
-     * @param {number} relationType
+     * @param {string} relationType
      * @returns {Promise<boolean>} return true if the node was created added as child
      * to the node corresponding to the parentId successfully
      * @memberof GraphManagerService

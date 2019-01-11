@@ -1,21 +1,35 @@
 import { SpinalContext, SpinalGraph, SpinalNode } from 'spinal-model-graph';
-import SpinalNodePointer from 'spinal-model-graph/build/SpinalNodePointer';
-interface SpinalNodeRef extends spinal.Model {
+import { SpinalNodePointer } from 'spinal-model-graph/build/SpinalNodePointer';
+import { SpinalSet } from 'spinal-model-graph/build/SpinalSet';
+/**
+ * @class SpinalNodeRef
+ * @extends {spinal.Model}
+ * @template T
+ */
+declare class SpinalNodeRef<T extends spinal.Model> extends spinal.Model {
     childrenIds: string[];
-    contextIds: string[];
-    element: SpinalNodePointer<spinal.Model>;
+    contextIds: SpinalSet;
+    element: SpinalNodePointer<T>;
     hasChildren: boolean;
-    [key: string]: any;
+    constructor(model: spinal.Model, childrenIds: string[], contextIds: SpinalSet, element: SpinalNodePointer<T>, hasChildren: boolean);
 }
 interface InfoModel extends spinal.Model {
     id: string | spinal.Str;
     [key: string]: any;
 }
-interface SpinalNodeObject {
+interface SpinalNodeObject<T extends spinal.Model> {
     info: InfoModel;
-    element?: spinal.Model;
+    element?: T;
     [key: string]: any;
 }
+interface ICreateNodeInfo {
+    type?: string | spinal.Str;
+    id?: string | spinal.Str;
+    [key: string]: any;
+}
+declare type ObjectKeyNode<T extends spinal.Model> = {
+    [nodeId: string]: SpinalNode<T>;
+};
 /**
  * @type (...args: any[]) => any
  */
@@ -31,56 +45,59 @@ declare type callback = (...args: any[]) => any;
  */
 declare class GraphManagerService {
     bindedNode: Map<string, Map<any, callback>>;
-    binders: Map<String, callback>;
+    binders: Map<String, spinal.Process>;
     listenersOnNodeAdded: Map<string, callback>;
     listenerOnNodeRemove: Map<string, callback>;
-    nodes: {
-        [nodeId: string]: SpinalNode;
-    };
-    graph: SpinalGraph;
+    nodes: ObjectKeyNode<any>;
+    graph: SpinalGraph<any>;
     /**
-     * @param viewerEnv {boolean} if defined load graph from getModel
+     *Creates an instance of GraphManagerService.
+     * @param {number} [viewerEnv] if defined load graph from getModel
+     * @memberof GraphManagerService
      */
     constructor(viewerEnv?: number);
     /**
-     * Change the current graph with the one of the forgeFile if there is one create one if note
-     * @param {*} forgeFile
+     * Change the current graph with the one of the forgeFile
+     * if there is one create one if note
+     * @param {spinal.Model} forgeFile
      * @returns {Promise<String>}
      * @memberof GraphManagerService
      */
     setGraphFromForgeFile(forgeFile: spinal.Model): Promise<String>;
     /**
-     * @param {SpinalGraph} graph
+     * @param {SpinalGraph<any>} graph
      * @returns {Promise<String>} the id of the graph
      * @memberof GraphManagerService
      */
-    setGraph(graph: SpinalGraph): Promise<String>;
+    setGraph(graph: SpinalGraph<any>): Promise<String>;
     /**
      * Return all loaded Nodes
-     * @returns {{[nodeId: string]: SpinalNode}}
+     * @returns {ObjectKeyNode<any>}
      * @memberof GraphManagerService
      */
-    getNodes(): {
-        [nodeId: string]: SpinalNode;
-    };
+    getNodes(): ObjectKeyNode<any>;
     /**
      * Return the information about the node with the given id
-     * @param id of the wanted node
-     * @returns {SpinalNodeRef | undefined}
-     */
-    getNode(id: string): SpinalNodeRef;
-    /**
-     * return the current graph
-     * @returns {{}|SpinalGraph}
-     */
-    getGraph(): SpinalGraph;
-    /**
-     * Return the node with the given id
+     * @template T extends spinal.Model = Eleemnt
      * @param {string} id of the wanted node
-     * @returns {SpinalNode}
+     * @returns {SpinalNodeRef<T>}
      * @memberof GraphManagerService
      */
-    getRealNode(id: string): SpinalNode;
+    getNode<T extends spinal.Model>(id: string): SpinalNodeRef<T>;
+    /**
+     * return the current graph
+     * @returns {(SpinalGraph<any>|{})}
+     * @memberof GraphManagerService
+     */
+    getGraph(): SpinalGraph<any> | {};
+    /**
+     * Return the node with the given id
+     * @template T extends spinal.Model = Eleemnt
+     * @param {string} id of the wanted node
+     * @returns {SpinalNode<T>}
+     * @memberof GraphManagerService
+     */
+    getRealNode<T extends spinal.Model>(id: string): SpinalNode<T>;
     /**
      * Return all the relation names of the node coresponding to id
      * @param {string} id of the node
@@ -92,10 +109,10 @@ declare class GraphManagerService {
      * Return all children of a node
      * @param {string} id
      * @param {string[]} [relationNames=[]]
-     * @returns {Promise<SpinalNodeRef[]>}
+     * @returns {Promise<Array<SpinalNodeRef<any>>>}
      * @memberof GraphManagerService
      */
-    getChildren(id: string, relationNames?: string[]): Promise<SpinalNodeRef[]>;
+    getChildren(id: string, relationNames?: string[]): Promise<SpinalNodeRef<any>[]>;
     /**
      * Return the children of the node that are registered in the context
      * @param {string} parentId id of the parent node
@@ -103,20 +120,20 @@ declare class GraphManagerService {
      * @returns {Promise<SpinalNodeRef[]>} The info of the children that were found
      * @memberof GraphManagerService
      */
-    getChildrenInContext(parentId: string, contextId: string): Promise<SpinalNodeRef[]>;
+    getChildrenInContext(parentId: string, contextId: string): Promise<SpinalNodeRef<any>[]>;
     /**
      * Return the node info aggregated with its childrenIds, contextIds and element
      * @param {string} nodeId
      * @returns {SpinalNodeRef}
      * @memberof GraphManagerService
      */
-    getInfo(nodeId: string): SpinalNodeRef;
+    getInfo<T extends spinal.Model>(nodeId: string): SpinalNodeRef<T>;
     /**
      * @param {string} nodeId
-     * @returns {Promise<string[]>}
+     * @returns {string[]}
      * @memberof GraphManagerService
      */
-    getChildrenIds(nodeId: string): Promise<string[]>;
+    getChildrenIds(nodeId: string): string[];
     /**
      * @param {string} caller
      * @param {callback} callback
@@ -151,7 +168,7 @@ declare class GraphManagerService {
      * @returns {boolean} return true if the node corresponding to nodeId is Loaded false otherwise
      * @memberof GraphManagerService
      */
-    modifyNode(nodeId: string, info: SpinalNodeRef): boolean;
+    modifyNode<T extends spinal.Model>(nodeId: string, info: SpinalNodeRef<T>): boolean;
     /**
      * Bind a node and return a function to unbind the same node
      * @param {string} nodeId
@@ -172,7 +189,7 @@ declare class GraphManagerService {
      * @returns
      * @memberof GraphManagerService
      */
-    moveChild(fromId: string, toId: string, childId: string, relationName: number, relationType: string): Promise<boolean>;
+    moveChild(fromId: string, toId: string, childId: string, relationName: string, relationType: string): Promise<boolean>;
     /**
      * Remoce the child corresponding to childId from the node corresponding to parentId.
      * @param nodeId {String}
@@ -182,7 +199,7 @@ declare class GraphManagerService {
      * @param stop
      * @returns {Promise<boolean>}
      */
-    removeChild(nodeId: string, childId: string, relationName: string, relationType: number, stop?: boolean): Promise<boolean>;
+    removeChild(nodeId: string, childId: string, relationName: string, relationType: string, stop?: boolean): Promise<boolean>;
     /**
      * Add a context to the graph
      * @param {string} name of the context
@@ -191,13 +208,13 @@ declare class GraphManagerService {
      * @returns {Promise<SpinalContext>}
      * @memberof GraphManagerService
      */
-    addContext(name: string, type: string, elt: spinal.Model): Promise<SpinalContext>;
+    addContext(name: string, type: string, elt: spinal.Model): Promise<SpinalContext<any>>;
     /**
      * @param {string} name
      * @returns {SpinalContext}
      * @memberof GraphManagerService
      */
-    getContext(name: string): SpinalContext;
+    getContext<T extends spinal.Model>(name: string): SpinalContext<T>;
     /**
      * Remove the node referenced by id from th graph.
      * @param {string} id
@@ -209,47 +226,46 @@ declare class GraphManagerService {
      * Create a new node.
      * The node newly created is volatile
      * i.e it won't be store in the filesystem as long it's not added as child to another node
-     * @param {{[key: string]: any}} info information of the node
+     * @param {ICreateNodeInfo} info information of the node
      * @param {spinal.Model} element element pointed by the node
      * @returns {string} return the child identifier
      * @memberof GraphManagerService
      */
-    createNode(info: {
-        [key: string]: any;
-    }, element: spinal.Model): string;
+    createNode<T extends spinal.Model>(info: ICreateNodeInfo, element: T): string;
     /**
      * @param {string} parentId
      * @param {string} childId
      * @param {string} contextId
      * @param {string} relationName
-     * @param {number} relationType
-     * @returns {Promise<SpinalNode>}
+     * @param {string} relationType
+     * @returns {Promise<SpinalNode<any>>}
      * @memberof GraphManagerService
      */
-    addChildInContext(parentId: string, childId: string, contextId: string, relationName: string, relationType: number): Promise<SpinalNode>;
+    addChildInContext(parentId: string, childId: string, contextId: string, relationName: string, relationType: string): Promise<SpinalNode<any>>;
     /**
      *
      * Add the node corresponding to childId as child to the node corresponding to the parentId
      * @param {string} parentId
      * @param {string} childId
      * @param {string} relationName
-     * @param {number} relationType
+     * @param {string} relationType
      * @returns {Promise<boolean>} return true if the child could be added false otherwise.
      * @memberof GraphManagerService
      */
-    addChild(parentId: string, childId: string, relationName: string, relationType: number): Promise<boolean>;
+    addChild(parentId: string, childId: string, relationName: string, relationType: string): Promise<boolean>;
     /**
      *
      * Create a node and add it as child to the parentId.
+     * @template T
      * @param {string} parentId id of the parent node
-     * @param {SpinalNodeObject} node must have an attr. 'info' and can have an attr. 'element'
+     * @param {SpinalNodeObject<T>} node must have an attr. 'info' and can have an attr. 'element'
      * @param {string} relationName
-     * @param {number} relationType
+     * @param {string} relationType
      * @returns {Promise<boolean>} return true if the node was created added as child
      * to the node corresponding to the parentId successfully
      * @memberof GraphManagerService
      */
-    addChildAndCreateNode(parentId: string, node: SpinalNodeObject, relationName: string, relationType: number): Promise<boolean>;
+    addChildAndCreateNode<T extends spinal.Model>(parentId: string, node: SpinalNodeObject<T>, relationName: string, relationType: string): Promise<boolean>;
     /**
      * add a node to the set of node
      * @private
