@@ -40,6 +40,15 @@ const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
  * @template T
  */
 class SpinalNodeRef extends spinal_core_connectorjs_type_1.Model {
+    /**
+     *Creates an instance of SpinalNodeRef.
+     * @param {spinal.Model} model
+     * @param {Array<string>} childrenIds
+     * @param {SpinalSet} contextIds
+     * @param {SpinalNodePointer<T>} element
+     * @param {boolean} hasChildren
+     * @memberof SpinalNodeRef
+     */
     constructor(model, childrenIds, contextIds, element, hasChildren) {
         super();
         for (let index = 0; index < model._attribute_names.length; index += 1) {

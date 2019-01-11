@@ -12,7 +12,16 @@ declare class SpinalNodeRef<T extends spinal.Model> extends Model {
     contextIds: SpinalSet;
     element: SpinalNodePointer<T>;
     hasChildren: boolean;
-    constructor(model: spinal.Model, childrenIds: string[], contextIds: SpinalSet, element: SpinalNodePointer<T>, hasChildren: boolean);
+    /**
+     *Creates an instance of SpinalNodeRef.
+     * @param {spinal.Model} model
+     * @param {Array<string>} childrenIds
+     * @param {SpinalSet} contextIds
+     * @param {SpinalNodePointer<T>} element
+     * @param {boolean} hasChildren
+     * @memberof SpinalNodeRef
+     */
+    constructor(model: spinal.Model, childrenIds: Array<string>, contextIds: SpinalSet, element: SpinalNodePointer<T>, hasChildren: boolean);
 }
 interface InfoModel extends spinal.Model {
     id: string | spinal.Str;

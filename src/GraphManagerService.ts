@@ -42,6 +42,15 @@ class SpinalNodeRef<T extends spinal.Model> extends Model {
   contextIds: SpinalSet;
   element: SpinalNodePointer<T>;
   hasChildren: boolean;
+  /**
+   *Creates an instance of SpinalNodeRef.
+   * @param {spinal.Model} model object to deepcopy
+   * @param {Array<string>} childrenIds
+   * @param {SpinalSet} contextIds
+   * @param {SpinalNodePointer<T>} element
+   * @param {boolean} hasChildren
+   * @memberof SpinalNodeRef
+   */
   constructor(
               model: spinal.Model,
               childrenIds: string[],
@@ -84,9 +93,6 @@ type ObjectKeyNode<T extends spinal.Model> = {[nodeId: string]: SpinalNode<T>};
 
 const G_ROOT = typeof window === 'undefined' ? global : window;
 
-/**
- * @type (...args: any[]) => any
- */
 type callback = (...args: any[]) => any;
 
 /**
@@ -131,8 +137,6 @@ class GraphManagerService {
   /**
    * Change the current graph with the one of the forgeFile
    * if there is one create one if note
-   * @param {spinal.Model} forgeFile
-   * @returns {Promise<String>}
    * @memberof GraphManagerService
    */
   setGraphFromForgeFile(forgeFile: spinal.Model): Promise<String> {
@@ -260,7 +264,7 @@ class GraphManagerService {
    * Return the children of the node that are registered in the context
    * @param {string} parentId id of the parent node
    * @param {string} contextId id of the context node
-   * @returns {Promise<SpinalNodeRef[]>} The info of the children that were found
+   * @returns {Promise<Array<SpinalNodeRef<any>>>} The info of the children that were found
    * @memberof GraphManagerService
    */
   async getChildrenInContext(parentId: string, contextId: string): Promise<SpinalNodeRef<any>[]> {
@@ -279,8 +283,9 @@ class GraphManagerService {
 
   /**
    * Return the node info aggregated with its childrenIds, contextIds and element
+   * @template T
    * @param {string} nodeId
-   * @returns {SpinalNodeRef}
+   * @returns {SpinalNodeRef<T>}
    * @memberof GraphManagerService
    */
   getInfo<T extends spinal.Model>(nodeId: string): SpinalNodeRef<T> {
@@ -300,7 +305,7 @@ class GraphManagerService {
 
   /**
    * @param {string} nodeId
-   * @returns {Array<string>}
+   * @returns {string[]}
    * @memberof GraphManagerService
    */
   getChildrenIds(nodeId: string): string[] {
@@ -321,7 +326,7 @@ class GraphManagerService {
   }
 
   /**
-   * @param {string} caller
+   * @param {*} caller
    * @param {callback} callback
    * @returns {boolean}
    * @memberof GraphManagerService
@@ -332,7 +337,7 @@ class GraphManagerService {
   }
 
   /**
-   * @param {string} caller
+   * @param {*} caller
    * @returns {boolean}
    * @memberof GraphManagerService
    */
@@ -341,7 +346,7 @@ class GraphManagerService {
   }
 
   /**
-   * @param {string} caller
+   * @param {*} caller
    * @returns {boolean}
    * @memberof GraphManagerService
    */
@@ -350,11 +355,10 @@ class GraphManagerService {
   }
 
   /**
-   */
-  /**
-   * @param nodeId id of the desired node
-   * @param info new info for the node
-   * @returns {boolean} return true if the node corresponding to nodeId is Loaded false otherwise
+   * @template T
+   * @param {string} nodeId id of the desired node
+   * @param {SpinalNodeRef<T>} info new info for the node
+   * @returns {boolean}
    * @memberof GraphManagerService
    */
   modifyNode<T extends spinal.Model>(nodeId: string, info: SpinalNodeRef<T>): boolean {
@@ -406,9 +410,9 @@ class GraphManagerService {
    * @param {string} fromId
    * @param {string} toId
    * @param {string} childId
-   * @param {number} relationName
+   * @param {string} relationName
    * @param {string} relationType
-   * @returns
+   * @returns {Promise<boolean>}
    * @memberof GraphManagerService
    */
   async moveChild(fromId: string, toId: string, childId: string,
@@ -429,13 +433,13 @@ class GraphManagerService {
   }
 
   /**
-   * Remoce the child corresponding to childId from the node corresponding to parentId.
-   * @param nodeId {String}
-   * @param childId {String}
-   * @param relationName {String}
-   * @param relationType {Number}
-   * @param stop
+   * @param {string} nodeId
+   * @param {string} childId
+   * @param {string} relationName
+   * @param {string} relationType
+   * @param {boolean} [stop=false]
    * @returns {Promise<boolean>}
+   * @memberof GraphManagerService
    */
   async removeChild(nodeId: string, childId: string, relationName: string,
                     relationType: string, stop: boolean = false): Promise<boolean> {
@@ -468,7 +472,7 @@ class GraphManagerService {
    * @param {string} name of the context
    * @param {string} type of the context
    * @param {spinal.Model} elt element of the context if needed
-   * @returns {Promise<SpinalContext>}
+   * @returns {Promise<SpinalContext<any>>}
    * @memberof GraphManagerService
    */
   addContext(name: string, type: string, elt: spinal.Model): Promise<SpinalContext<any>> {
@@ -479,8 +483,9 @@ class GraphManagerService {
   }
 
   /**
+   * @template T
    * @param {string} name
-   * @returns {SpinalContext}
+   * @returns {SpinalContext<T>}
    * @memberof GraphManagerService
    */
   getContext<T extends spinal.Model>(name: string): SpinalContext<T> {
@@ -511,8 +516,9 @@ class GraphManagerService {
    * Create a new node.
    * The node newly created is volatile
    * i.e it won't be store in the filesystem as long it's not added as child to another node
+   * @template T
    * @param {ICreateNodeInfo} info information of the node
-   * @param {spinal.Model} element element pointed by the node
+   * @param {T} element element pointed by the node
    * @returns {string} return the child identifier
    * @memberof GraphManagerService
    */
@@ -599,7 +605,8 @@ class GraphManagerService {
   /**
    * add a node to the set of node
    * @private
-   * @param {SpinalNode} node
+   * @template T
+   * @param {SpinalNode<T>} node
    * @memberof GraphManagerService
    */
   private _addNode<T extends spinal.Model>(node: SpinalNode<T>) {
