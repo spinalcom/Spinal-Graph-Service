@@ -1,12 +1,13 @@
 import { SpinalContext, SpinalGraph, SpinalNode } from 'spinal-model-graph';
 import { SpinalNodePointer } from 'spinal-model-graph/build/SpinalNodePointer';
 import { SpinalSet } from 'spinal-model-graph/build/SpinalSet';
+import { Model } from 'spinal-core-connectorjs_type';
 /**
  * @class SpinalNodeRef
- * @extends {spinal.Model}
+ * @extends {Model}
  * @template T
  */
-declare class SpinalNodeRef<T extends spinal.Model> extends spinal.Model {
+declare class SpinalNodeRef<T extends spinal.Model> extends Model {
     childrenIds: string[];
     contextIds: SpinalSet;
     element: SpinalNodePointer<T>;
@@ -35,19 +36,19 @@ declare type ObjectKeyNode<T extends spinal.Model> = {
  */
 declare type callback = (...args: any[]) => any;
 /**
- *  @property {Map<string, Map<any, Callback>>} bindedNode
+ *  @property {Map<string, Map<any, callback>>} bindedNode
  *    NodeId => Caller => Callback. All nodes that are bind
- *  @property {Map<String, callback>} binders NodeId => CallBack from bind method.
- *  @property {Map<any, callback>} listeners
- *    caller => callback. List of all listeners on node added
- *  @property {{[nodeId: string]: SpinalNode}} nodes containing all SpinalNode currently loaded
- *  @property {SpinalGraph} graph
+ *  @property {Map<String, spinal.Process>} binders NodeId => CallBack from bind method.
+ *  @property {Map<any, callback>} listenersOnNodeAdded
+ *  @property {Map<any, callback>} listenerOnNodeRemove
+ *  @property {ObjectKeyNode<any>} nodes containing all SpinalNode currently loaded
+ *  @property {SpinalGraph<any>} graph
  */
 declare class GraphManagerService {
     bindedNode: Map<string, Map<any, callback>>;
     binders: Map<String, spinal.Process>;
-    listenersOnNodeAdded: Map<string, callback>;
-    listenerOnNodeRemove: Map<string, callback>;
+    listenersOnNodeAdded: Map<any, callback>;
+    listenerOnNodeRemove: Map<any, callback>;
     nodes: ObjectKeyNode<any>;
     graph: SpinalGraph<any>;
     /**
@@ -130,36 +131,36 @@ declare class GraphManagerService {
     getInfo<T extends spinal.Model>(nodeId: string): SpinalNodeRef<T>;
     /**
      * @param {string} nodeId
-     * @returns {string[]}
+     * @returns {Array<string>}
      * @memberof GraphManagerService
      */
     getChildrenIds(nodeId: string): string[];
     /**
+     * @param {any} caller
+     * @param {callback} callback
+     * @returns {boolean}
+     * @memberof GraphManagerService
+     */
+    listenOnNodeAdded(caller: any, callback: callback): boolean;
+    /**
      * @param {string} caller
      * @param {callback} callback
      * @returns {boolean}
      * @memberof GraphManagerService
      */
-    listenOnNodeAdded(caller: string, callback: callback): boolean;
-    /**
-     * @param {string} caller
-     * @param {callback} callback
-     * @returns {boolean}
-     * @memberof GraphManagerService
-     */
-    listenOnNodeRemove(caller: string, callback: callback): boolean;
+    listenOnNodeRemove(caller: any, callback: callback): boolean;
     /**
      * @param {string} caller
      * @returns {boolean}
      * @memberof GraphManagerService
      */
-    stopListeningOnNodeAdded(caller: string): boolean;
+    stopListeningOnNodeAdded(caller: any): boolean;
     /**
      * @param {string} caller
      * @returns {boolean}
      * @memberof GraphManagerService
      */
-    stopListeningOnNodeRemove(caller: string): boolean;
+    stopListeningOnNodeRemove(caller: any): boolean;
     /**
      */
     /**

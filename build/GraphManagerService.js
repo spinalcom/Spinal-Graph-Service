@@ -22,7 +22,6 @@
  *  with this file. If not, see
  *  <http://resources.spinalcom.com/licenses.pdf>.
  */
-// tslint:disable:function-name
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -32,13 +31,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// tslint:disable:function-name
 const spinal_model_graph_1 = require("spinal-model-graph");
+const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
 /**
  * @class SpinalNodeRef
- * @extends {spinal.Model}
+ * @extends {Model}
  * @template T
  */
-class SpinalNodeRef extends spinal.Model {
+class SpinalNodeRef extends spinal_core_connectorjs_type_1.Model {
     constructor(model, childrenIds, contextIds, element, hasChildren) {
         super();
         for (let index = 0; index < model._attribute_names.length; index += 1) {
@@ -51,15 +52,16 @@ class SpinalNodeRef extends spinal.Model {
         this.hasChildren = hasChildren;
     }
 }
+spinal_core_connectorjs_type_1.spinalCore.register_models([SpinalNodeRef]);
 const G_ROOT = typeof window === 'undefined' ? global : window;
 /**
- *  @property {Map<string, Map<any, Callback>>} bindedNode
+ *  @property {Map<string, Map<any, callback>>} bindedNode
  *    NodeId => Caller => Callback. All nodes that are bind
- *  @property {Map<String, callback>} binders NodeId => CallBack from bind method.
- *  @property {Map<any, callback>} listeners
- *    caller => callback. List of all listeners on node added
- *  @property {{[nodeId: string]: SpinalNode}} nodes containing all SpinalNode currently loaded
- *  @property {SpinalGraph} graph
+ *  @property {Map<String, spinal.Process>} binders NodeId => CallBack from bind method.
+ *  @property {Map<any, callback>} listenersOnNodeAdded
+ *  @property {Map<any, callback>} listenerOnNodeRemove
+ *  @property {ObjectKeyNode<any>} nodes containing all SpinalNode currently loaded
+ *  @property {SpinalGraph<any>} graph
  */
 class GraphManagerService {
     /**
@@ -231,7 +233,7 @@ class GraphManagerService {
     }
     /**
      * @param {string} nodeId
-     * @returns {string[]}
+     * @returns {Array<string>}
      * @memberof GraphManagerService
      */
     getChildrenIds(nodeId) {
@@ -240,7 +242,7 @@ class GraphManagerService {
         }
     }
     /**
-     * @param {string} caller
+     * @param {any} caller
      * @param {callback} callback
      * @returns {boolean}
      * @memberof GraphManagerService
@@ -287,10 +289,16 @@ class GraphManagerService {
         if (!this.nodes.hasOwnProperty(nodeId)) {
             return false;
         }
-        // TO DO : change the following "mod_attr
-        // to a direct "update" of the existing model.
-        // This will reduce the creation of model but
-        this.nodes[nodeId].mod_attr('info', info);
+        for (const key in info) {
+            if (!this.nodes[nodeId].info.hasOwnProperty(key) && info.hasOwnProperty(key)) {
+                const tmp = {};
+                tmp[key] = info[key];
+                this.nodes[nodeId].info.add_attr(tmp);
+            }
+            else if (info.hasOwnProperty(key)) {
+                this.nodes[nodeId].info.mod_attr(key, info[key]);
+            }
+        }
         return true;
     }
     /**
@@ -372,7 +380,8 @@ class GraphManagerService {
                 for (const callback of this.listenerOnNodeRemove.values()) {
                     callback(nodeId);
                 }
-                return this.nodes[nodeId].removeChild(this.nodes[childId], relationName, relationType).then(() => true);
+                return this.nodes[nodeId].removeChild(this.nodes[childId], relationName, relationType)
+                    .then(() => true);
             }
             return Promise.reject(Error('childId unknown. It might already been removed from the parent node'));
         });
@@ -446,15 +455,18 @@ class GraphManagerService {
      * @memberof GraphManagerService
      */
     addChildInContext(parentId, childId, contextId, relationName, relationType) {
-        if (this.nodes.hasOwnProperty(parentId) &&
-            this.nodes.hasOwnProperty(childId) &&
-            this.nodes.hasOwnProperty(contextId)) {
-            const child = this.nodes[childId];
-            const context = this.nodes[contextId];
-            return this.nodes[parentId].addChildInContext(child, relationName, relationType, context);
+        if (!this.nodes.hasOwnProperty(parentId)) {
+            return Promise.reject(Error(`Node parent id ${parentId} not found`));
         }
-        // TODO option parser
-        return Promise.reject(Error(`Node id ${parentId} not found`));
+        if (!this.nodes.hasOwnProperty(childId)) {
+            return Promise.reject(Error(`Node child id ${childId} not found`));
+        }
+        if (!this.nodes.hasOwnProperty(contextId)) {
+            return Promise.reject(Error(`Node context id ${contextId} not found`));
+        }
+        const child = this.nodes[childId];
+        const context = this.nodes[contextId];
+        return this.nodes[parentId].addChildInContext(child, relationName, relationType, context);
     }
     /**
      *

@@ -21,8 +21,8 @@
  *  with this file. If not, see
  *  <http://resources.spinalcom.com/licenses.pdf>.
  */
-  // tslint:disable:function-name
 
+// tslint:disable:function-name
 import {
   SpinalContext,
   SpinalGraph,
@@ -30,13 +30,14 @@ import {
 } from 'spinal-model-graph';
 import { SpinalNodePointer } from 'spinal-model-graph/build/SpinalNodePointer';
 import { SpinalSet } from 'spinal-model-graph/build/SpinalSet';
+import { spinalCore, Model } from 'spinal-core-connectorjs_type';
 
 /**
  * @class SpinalNodeRef
- * @extends {spinal.Model}
+ * @extends {Model}
  * @template T
  */
-class SpinalNodeRef<T extends spinal.Model> extends spinal.Model {
+class SpinalNodeRef<T extends spinal.Model> extends Model {
   childrenIds: string[];
   contextIds: SpinalSet;
   element: SpinalNodePointer<T>;
@@ -60,6 +61,7 @@ class SpinalNodeRef<T extends spinal.Model> extends spinal.Model {
     this.hasChildren = hasChildren;
   }
 }
+spinalCore.register_models([SpinalNodeRef]);
 
 interface InfoModel extends spinal.Model {
   id: string|spinal.Str;
@@ -88,19 +90,19 @@ const G_ROOT = typeof window === 'undefined' ? global : window;
 type callback = (...args: any[]) => any;
 
 /**
- *  @property {Map<string, Map<any, Callback>>} bindedNode
+ *  @property {Map<string, Map<any, callback>>} bindedNode
  *    NodeId => Caller => Callback. All nodes that are bind
- *  @property {Map<String, callback>} binders NodeId => CallBack from bind method.
- *  @property {Map<any, callback>} listeners
- *    caller => callback. List of all listeners on node added
- *  @property {{[nodeId: string]: SpinalNode}} nodes containing all SpinalNode currently loaded
- *  @property {SpinalGraph} graph
+ *  @property {Map<String, spinal.Process>} binders NodeId => CallBack from bind method.
+ *  @property {Map<any, callback>} listenersOnNodeAdded
+ *  @property {Map<any, callback>} listenerOnNodeRemove
+ *  @property {ObjectKeyNode<any>} nodes containing all SpinalNode currently loaded
+ *  @property {SpinalGraph<any>} graph
  */
 class GraphManagerService {
   bindedNode : Map<string, Map<any, callback>>;
   binders : Map<String, spinal.Process>;
-  listenersOnNodeAdded : Map<string, callback>;
-  listenerOnNodeRemove : Map<string, callback>;
+  listenersOnNodeAdded : Map<any, callback>;
+  listenerOnNodeRemove : Map<any, callback>;
   nodes : ObjectKeyNode<any>;
   graph: SpinalGraph<any>;
 
@@ -151,7 +153,7 @@ class GraphManagerService {
   async setGraph(graph: SpinalGraph<any>): Promise<String> {
 
     if (this.graph && typeof this.graph.getId === 'function' &&
-    this.nodes.hasOwnProperty(this.graph.getId().get())) {
+      this.nodes.hasOwnProperty(this.graph.getId().get())) {
       delete this.nodes[this.graph.getId().get()];
     }
     this.graph = graph;
@@ -298,7 +300,7 @@ class GraphManagerService {
 
   /**
    * @param {string} nodeId
-   * @returns {string[]}
+   * @returns {Array<string>}
    * @memberof GraphManagerService
    */
   getChildrenIds(nodeId: string): string[] {
@@ -308,12 +310,12 @@ class GraphManagerService {
   }
 
   /**
-   * @param {string} caller
+   * @param {any} caller
    * @param {callback} callback
    * @returns {boolean}
    * @memberof GraphManagerService
    */
-  listenOnNodeAdded(caller: string, callback: callback): boolean {
+  listenOnNodeAdded(caller: any, callback: callback): boolean {
     this.listenersOnNodeAdded.set(caller, callback);
     return this.stopListeningOnNodeAdded.bind(this, caller);
   }
@@ -324,7 +326,7 @@ class GraphManagerService {
    * @returns {boolean}
    * @memberof GraphManagerService
    */
-  listenOnNodeRemove(caller: string, callback: callback): boolean {
+  listenOnNodeRemove(caller: any, callback: callback): boolean {
     this.listenerOnNodeRemove.set(caller, callback);
     return this.stopListeningOnNodeRemove.bind(this, caller);
   }
@@ -334,7 +336,7 @@ class GraphManagerService {
    * @returns {boolean}
    * @memberof GraphManagerService
    */
-  stopListeningOnNodeAdded(caller: string): boolean {
+  stopListeningOnNodeAdded(caller: any): boolean {
     return this.listenersOnNodeAdded.delete(caller);
   }
 
@@ -343,7 +345,7 @@ class GraphManagerService {
    * @returns {boolean}
    * @memberof GraphManagerService
    */
-  stopListeningOnNodeRemove(caller: string): boolean {
+  stopListeningOnNodeRemove(caller: any): boolean {
     return this.listenerOnNodeRemove.delete(caller);
   }
 
@@ -356,16 +358,18 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   modifyNode<T extends spinal.Model>(nodeId: string, info: SpinalNodeRef<T>): boolean {
-
     if (!this.nodes.hasOwnProperty(nodeId)) {
       return false;
     }
-
-    // TO DO : change the following "mod_attr
-    // to a direct "update" of the existing model.
-    // This will reduce the creation of model but
-    this.nodes[nodeId].mod_attr('info', info);
-
+    for (const key in info) {
+      if (!this.nodes[nodeId].info.hasOwnProperty(key) && info.hasOwnProperty(key)) {
+        const tmp = {};
+        tmp[key] = info[key];
+        this.nodes[nodeId].info.add_attr(tmp);
+      } else if (info.hasOwnProperty(key)) {
+        this.nodes[nodeId].info.mod_attr(key, info[key]);
+      }
+    }
     return true;
   }
 
@@ -381,8 +385,8 @@ class GraphManagerService {
    */
   bindNode(nodeId: string, caller: any, callback: callback): Function {
     if (!this.nodes.hasOwnProperty(nodeId) ||
-        typeof caller !== 'object' ||
-        typeof callback !== 'function') {
+      typeof caller !== 'object' ||
+      typeof callback !== 'function') {
       return undefined;
     }
 
@@ -390,7 +394,7 @@ class GraphManagerService {
       this.bindedNode.get(nodeId).set(caller, callback);
     } else {
       this.bindedNode.set(nodeId, new Map([
-          [caller, callback],
+        [caller, callback],
       ]));
       this._bindNode(nodeId);
     }
@@ -446,17 +450,17 @@ class GraphManagerService {
       } catch (e) {
         console.error(e);
       }
-    } if (this.nodes.hasOwnProperty(childId)) {
+    }
+    if (this.nodes.hasOwnProperty(childId)) {
       for (const callback of this.listenerOnNodeRemove.values()) {
         callback(nodeId);
       }
-      return this.nodes[nodeId].removeChild(
-          this.nodes[childId], relationName, relationType,
-          ).then(() => true);
+      return this.nodes[nodeId].removeChild(this.nodes[childId], relationName, relationType)
+        .then(() => true);
     }
     return Promise.reject(
-        Error('childId unknown. It might already been removed from the parent node'),
-      );
+      Error('childId unknown. It might already been removed from the parent node'),
+    );
   }
 
   /**
@@ -535,15 +539,19 @@ class GraphManagerService {
    */
   addChildInContext(parentId: string, childId: string, contextId: string,
                     relationName: string, relationType: string): Promise<SpinalNode<any>> {
-    if (this.nodes.hasOwnProperty(parentId) &&
-      this.nodes.hasOwnProperty(childId) &&
-      this.nodes.hasOwnProperty(contextId)) {
-      const child = this.nodes[childId];
-      const context = this.nodes[contextId];
-      return this.nodes[parentId].addChildInContext(child, relationName, relationType, context);
+    if (!this.nodes.hasOwnProperty(parentId)) {
+      return Promise.reject(Error(`Node parent id ${parentId} not found`));
     }
-      // TODO option parser
-    return Promise.reject(Error(`Node id ${parentId} not found`));
+    if (!this.nodes.hasOwnProperty(childId)) {
+      return Promise.reject(Error(`Node child id ${childId} not found`));
+    }
+    if (!this.nodes.hasOwnProperty(contextId)) {
+      return Promise.reject(Error(`Node context id ${contextId} not found`));
+    }
+
+    const child = this.nodes[childId];
+    const context = this.nodes[contextId];
+    return this.nodes[parentId].addChildInContext(child, relationName, relationType, context);
   }
 
   /**
@@ -638,8 +646,7 @@ class GraphManagerService {
     if (this.binders.has(nodeId) || !this.nodes.hasOwnProperty(nodeId)) {
       return;
     }
-    this.binders.set(nodeId,
-                     this.nodes[nodeId].bind(this._bindFunc.bind(this, nodeId)));
+    this.binders.set(nodeId, this.nodes[nodeId].bind(this._bindFunc.bind(this, nodeId)));
   }
 
   /**
@@ -666,7 +673,7 @@ class GraphManagerService {
    * @returns {boolean}
    * @memberof GraphManagerService
    */
-  private _unBind(nodeId: string, binder: any) : boolean {
+  private _unBind(nodeId: string, binder: any): boolean {
 
     if (!this.bindedNode.has(nodeId)) {
       return false;
