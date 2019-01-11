@@ -1,58 +1,58 @@
 "use strict";
 
-Object.defineProperty( exports, "__esModule", {
+Object.defineProperty(exports, "__esModule", {
   value: true
-} );
-Object.defineProperty( exports, "SPINAL_RELATION_TYPE", {
+});
+Object.defineProperty(exports, "SPINAL_RELATION_TYPE", {
   enumerable: true,
   get: function get() {
     return _spinalModelGraph.SPINAL_RELATION_TYPE;
   }
-} );
-Object.defineProperty( exports, "SPINAL_RELATION_LST_PTR_TYPE", {
+});
+Object.defineProperty(exports, "SPINAL_RELATION_LST_PTR_TYPE", {
   enumerable: true,
   get: function get() {
     return _spinalModelGraph.SPINAL_RELATION_LST_PTR_TYPE;
   }
-} );
-Object.defineProperty( exports, "SPINAL_RELATION_PTR_LST_TYPE", {
+});
+Object.defineProperty(exports, "SPINAL_RELATION_PTR_LST_TYPE", {
   enumerable: true,
   get: function get() {
     return _spinalModelGraph.SPINAL_RELATION_PTR_LST_TYPE;
   }
-} );
-Object.defineProperty( exports, "SpinalContext", {
+});
+Object.defineProperty(exports, "SpinalContext", {
   enumerable: true,
   get: function get() {
     return _spinalModelGraph.SpinalContext;
   }
-} );
-Object.defineProperty( exports, "SpinalNode", {
+});
+Object.defineProperty(exports, "SpinalNode", {
   enumerable: true,
   get: function get() {
     return _spinalModelGraph.SpinalNode;
   }
-} );
-Object.defineProperty( exports, "SpinalGraph", {
+});
+Object.defineProperty(exports, "SpinalGraph", {
   enumerable: true,
   get: function get() {
     return _spinalModelGraph.SpinalGraph;
   }
-} );
+});
 exports.SpinalGraphService = void 0;
 
-var _GraphManagerService = _interopRequireDefault( require( "./GraphManagerService" ) );
+var _GraphManagerService = _interopRequireDefault(require("./GraphManagerService"));
 
-var _spinalModelGraph = require( "spinal-model-graph" );
+var _spinalModelGraph = require("spinal-model-graph");
 
-function _interopRequireDefault( obj ) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const G_root = typeof window == "undefined" ? global : window;
 if (typeof G_root.spinal === "undefined") G_root.spinal = {};
 
 if (typeof G_root.spinal.spinalGraphService === "undefined") {
   if (typeof G_root.spinal.spinalSystem !== "undefined") {
-    G_root.spinal.spinalGraphService = new _GraphManagerService.default( 1 );
+    G_root.spinal.spinalGraphService = new _GraphManagerService.default(1);
   } else {
     G_root.spinal.spinalGraphService = new _GraphManagerService.default();
   }

@@ -242,22 +242,28 @@ class GraphManagerService {
   stopListeningOnNodeRemove( caller ) {
     return this.listenerOnNodeRemove.delete( caller );
   }
-  
+
   /**
    * @param nodeId id of the desired node
    * @param info new info for the node
    * @returns {boolean} return true if the node corresponding to nodeId is Loaded false otherwise
    */
   modifyNode( nodeId, info ) {
-
     if (!this.nodes.hasOwnProperty( nodeId )) {
       return false;
     }
 
-    // TO DO : change the following "mod_attr
-    // to a direct "update" of the existing model.
-    // This will reduce the creation of model but
-    this.nodes[nodeId].mod_attr( 'info', info );
+
+    for (let key in info) {
+      if (!this.nodes[nodeId].info.hasOwnProperty( key ) && info.hasOwnProperty( key )) {
+        const tmp = {};
+        tmp[key] = info[key];
+        this.nodes[nodeId].info.add_attr( tmp );
+      } else if (info.hasOwnProperty( key )) {
+        this.nodes[nodeId].info.mod_attr( key, info[key] );
+      }
+    }
+    //this.nodes[nodeId].mod_attr( 'info', info );
 
     return true;
   }
@@ -285,7 +291,17 @@ class GraphManagerService {
 
     return this._unBind.bind( this, nodeId, caller );
   }
-  
+
+  /**
+   *
+   * @param fromId {string} node id of the node where the child is first located
+   * @param toId {string} node id of the node where the child is going to be
+   * located
+   * @param childId {string} node id of the node which is moving
+   * @param relationName {string} name of the relation between the node
+   * @param relationType {string} type of relation
+   * @return {*}
+   */
   moveChild( fromId, toId, childId, relationName, relationType ) {
     if (!this.nodes.hasOwnProperty( fromId )) {
       return Promise.reject( 'fromId: ' + fromId + ' not found' );
@@ -296,15 +312,15 @@ class GraphManagerService {
     if (!this.nodes.hasOwnProperty( childId )) {
       return Promise.reject( 'childId: ' + childId + ' not found' );
     }
-    
+
     return this.nodes[fromId].removeChild( this.nodes[childId], relationName, relationType ).then( () => {
-      
+
       return this.nodes[toId].addChild( this.nodes[childId], relationName, relationType ).then( () => {
         return true;
       } );
-      
+
     } );
-    
+
   }
 
   /**
@@ -346,7 +362,7 @@ class GraphManagerService {
   addContext( name, type, elt ) {
     const context = new SpinalContext( name, type, elt );
     this.nodes[context.info.id.get()] = context;
-  
+
     return this.graph.addContext( context );
   }
 
@@ -396,13 +412,22 @@ class GraphManagerService {
   }
 
   addChildInContext( parentId, childId, contextId, relationName, relationType ) {
-    if (this.nodes.hasOwnProperty( parentId ) && this.nodes.hasOwnProperty( childId ) && this.nodes.hasOwnProperty( contextId )) {
-      const child = this.nodes[childId];
-      const context = this.nodes[contextId];
-      return this.nodes[parentId].addChildInContext( child, relationName, relationType, context );
+    //TODO OPTION PARSER
+    if (!this.nodes.hasOwnProperty( parentId )) {
+      return Promise.reject( Error( 'Node parent id ' + parentId + ' not' +
+        ' found' ) );
     }
-    //TODO option parser
-    return Promise.reject( Error( 'Node id' + parentId + ' not found' ) );
+    if (!this.nodes.hasOwnProperty( childId )) {
+      return Promise.reject( Error( 'Node child id ' + childId + ' not found' ) );
+    }
+    if (!this.nodes.hasOwnProperty( contextId )) {
+      return Promise.reject( Error( 'Node context id ' + contextId + ' not' +
+        ' found' ) );
+    }
+
+    const child = this.nodes[childId];
+    const context = this.nodes[contextId];
+    return this.nodes[parentId].addChildInContext( child, relationName, relationType, context );
   }
 
   /**
