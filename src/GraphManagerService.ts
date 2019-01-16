@@ -23,7 +23,7 @@
  */
 // tslint:disable:function-name
 
-import { SpinalContext, SpinalGraph, SpinalNode, } from 'spinal-model-graph';
+import { SpinalContext, SpinalGraph, SpinalNode } from 'spinal-model-graph';
 import SpinalNodePointer from 'spinal-model-graph/build/SpinalNodePointer';
 
 interface SpinalNodeRef extends spinal.Model {

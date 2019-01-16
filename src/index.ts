@@ -8,6 +8,15 @@ export {
   SpinalGraph,
 } from 'spinal-model-graph';
 
+import SpinalSet from 'spinal-model-graph/build/SpinalSet';
+import SpinalNodePointer from 'spinal-model-graph/build/SpinalNodePointer';
+import SpinalMap from 'spinal-model-graph/build/SpinalMap';
+export {
+  SpinalSet,
+  SpinalNodePointer,
+  SpinalMap,
+};
+
 // little hack to include spinal in window / global
 interface GRoot {
   [key: string]: any;

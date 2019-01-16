@@ -8,6 +8,12 @@ exports.SPINAL_RELATION_PTR_LST_TYPE = spinal_model_graph_1.SPINAL_RELATION_PTR_
 exports.SpinalContext = spinal_model_graph_1.SpinalContext;
 exports.SpinalNode = spinal_model_graph_1.SpinalNode;
 exports.SpinalGraph = spinal_model_graph_1.SpinalGraph;
+const SpinalSet_1 = require("spinal-model-graph/build/SpinalSet");
+exports.SpinalSet = SpinalSet_1.default;
+const SpinalNodePointer_1 = require("spinal-model-graph/build/SpinalNodePointer");
+exports.SpinalNodePointer = SpinalNodePointer_1.default;
+const SpinalMap_1 = require("spinal-model-graph/build/SpinalMap");
+exports.SpinalMap = SpinalMap_1.default;
 const G_ROOT = typeof window === 'undefined' ? global : window;
 if (typeof G_ROOT.spinal === 'undefined')
     G_ROOT.spinal = {};
