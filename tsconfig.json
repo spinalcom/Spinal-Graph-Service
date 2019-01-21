@@ -2,9 +2,11 @@
   "compilerOptions": {
     "target": "es2015",
     "module": "commonjs",
-    "outDir": "build",
+    "outDir": "dist",
     "declaration": true,
-    "sourceMap": true
+    "declarationDir": "./declarations",
+    "sourceMap": true,
+    "moduleResolution": "node"
   },
   "files": [
     "./node_modules/@types/node/index.d.ts",

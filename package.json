@@ -2,20 +2,20 @@
   "name": "spinal-env-viewer-graph-service",
   "version": "1.0.5",
   "description": "",
-  "main": "build/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "build": "rm -fr build && tsc",
+    "build": "rm -fr dist declarations && tsc",
     "dev": "rm -fr build && tsc --watch & nodemon build",
-    "doc": "mkdir -p Docs && jsdoc2md src/GraphManagerService.js > Docs/API.md",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "doc": "mkdir -p Docs && jsdoc2md src/GraphManagerService.js > Docs/API.md"
   },
-  "types": "./build/index.d.ts",
+  "types": "./declarations/index.d.ts",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "spinal-model-graph": "git+https://github.com/spinalcom/spinal-model-graph.git#v02",
-    "spinal-core-connectorjs_type": "git+https://github.com/spinalcom/spinal-core-connectorjs_type.git"
+    "qrcode-generator": "^1.4.1",
+    "spinal-core-connectorjs_type": "git+https://github.com/spinalcom/spinal-core-connectorjs_type.git",
+    "spinal-model-graph": "git+https://github.com/spinalcom/spinal-model-graph.git#v02"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.5",
