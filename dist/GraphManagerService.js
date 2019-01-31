@@ -477,6 +477,9 @@ class GraphManagerService {
      */
     removeFromGraph(id) {
         if (this.nodes.hasOwnProperty(id)) {
+            for (const callback of this.listenerOnNodeRemove.values()) {
+                callback(id);
+            }
             return this.nodes[id].removeFromGraph();
         }
     }
@@ -642,6 +645,20 @@ class GraphManagerService {
             this.bindedNode.delete(nodeId);
         }
         return res;
+    }
+    hasChildInContext(nodeId, contextId) {
+        if (contextId === nodeId)
+            return true;
+        if (this.nodes.hasOwnProperty(nodeId)) {
+            const mapMap = this.nodes[nodeId].children;
+            for (const map of mapMap) {
+                for (const rela of map) {
+                    if (rela.contextIds.has(contextId))
+                        return true;
+                }
+            }
+        }
+        return false;
     }
 }
 exports.GraphManagerService = GraphManagerService;

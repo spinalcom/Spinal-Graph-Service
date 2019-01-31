@@ -319,6 +319,7 @@ declare class GraphManagerService {
      * @memberof GraphManagerService
      */
     private _unBind;
+    hasChildInContext(nodeId: string, contextId: string): boolean;
 }
 export default GraphManagerService;
 export { GraphManagerService };

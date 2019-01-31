@@ -32,6 +32,7 @@ interface SpinalNodeRef extends spinal.Model {
   contextIds: string[];
   element: SpinalNodePointer<spinal.Model>;
   hasChildren: boolean;
+
   [key: string]: any;
 }
 
@@ -155,6 +156,7 @@ class GraphManagerService {
   getNodesInfo(): { [nodeId: string]: SpinalNodeRef } {
     return this.nodesInfo;
   }
+
   /**
    * Return the information about the node with the given id
    * @param id of the wanted node
@@ -212,6 +214,7 @@ class GraphManagerService {
       }
     });
   }
+
   /**
    * return the current graph
    * @returns {{}|SpinalGraph}
@@ -550,6 +553,9 @@ class GraphManagerService {
    */
   removeFromGraph(id: string): Promise<void> {
     if (this.nodes.hasOwnProperty(id)) {
+      for (const callback of this.listenerOnNodeRemove.values()) {
+        callback(id);
+      }
       return this.nodes[id].removeFromGraph();
     }
   }
@@ -741,6 +747,23 @@ class GraphManagerService {
     }
 
     return res;
+  }
+
+  public hasChildInContext(nodeId: string, contextId: string) {
+
+    if (contextId === nodeId)
+      return true;
+
+    if (this.nodes.hasOwnProperty(nodeId)) {
+      const mapMap = this.nodes[nodeId].children;
+      for (const map of mapMap) {
+        for (const rela of map) {
+          if (rela.contextIds.has(contextId))
+            return true;
+        }
+      }
+    }
+    return false;
   }
 }
 
