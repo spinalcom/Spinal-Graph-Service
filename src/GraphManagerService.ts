@@ -665,7 +665,7 @@ class GraphManagerService {
         callback(node.info.id.get());
       }
     } else {
-      this.setInfo(node.id.get());
+      this.setInfo(node.info.id.get());
     }
   }
 
