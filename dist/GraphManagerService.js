@@ -580,7 +580,7 @@ class GraphManagerService {
             }
         }
         else {
-            this.setInfo(node.id.get());
+            this.setInfo(node.info.id.get());
         }
     }
     /**
