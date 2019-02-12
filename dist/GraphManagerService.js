@@ -579,6 +579,9 @@ class GraphManagerService {
                 callback(node.info.id.get());
             }
         }
+        else {
+            this.setInfo(node.id.get());
+        }
     }
     /**
      * Check if all children from a node are loaded
@@ -618,9 +621,9 @@ class GraphManagerService {
      * @memberof GraphManagerService
      */
     _bindFunc(nodeId) {
+        this.setInfo(nodeId);
         if (this.bindedNode.has(nodeId)) {
             for (const callback of this.bindedNode.get(nodeId).values()) {
-                this.setInfo(nodeId);
                 callback(this.getInfo(nodeId));
             }
         }
@@ -647,14 +650,16 @@ class GraphManagerService {
         return res;
     }
     hasChildInContext(nodeId, contextId) {
-        if (contextId === nodeId)
+        if (contextId === nodeId) {
             return true;
+        }
         if (this.nodes.hasOwnProperty(nodeId)) {
             const mapMap = this.nodes[nodeId].children;
             for (const map of mapMap) {
                 for (const rela of map) {
-                    if (rela.contextIds.has(contextId))
+                    if (rela.contextIds.has(contextId)) {
                         return true;
+                    }
                 }
             }
         }

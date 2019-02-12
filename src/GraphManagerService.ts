@@ -349,7 +349,6 @@ class GraphManagerService {
     this.nodesInfo[nodeId] = res;
   }
 
-
   /**
    * @param {string} nodeId
    * @returns {Promise<string[]>}
@@ -665,6 +664,8 @@ class GraphManagerService {
       for (const callback of this.listenersOnNodeAdded.values()) {
         callback(node.info.id.get());
       }
+    } else {
+      this.setInfo(node.id.get());
     }
   }
 
@@ -714,10 +715,9 @@ class GraphManagerService {
    */
   private _bindFunc(nodeId: string): void {
 
+    this.setInfo(nodeId);
     if (this.bindedNode.has(nodeId)) {
-
       for (const callback of this.bindedNode.get(nodeId).values()) {
-        this.setInfo(nodeId);
         callback(this.getInfo(nodeId));
       }
     }
@@ -751,15 +751,17 @@ class GraphManagerService {
 
   public hasChildInContext(nodeId: string, contextId: string) {
 
-    if (contextId === nodeId)
+    if (contextId === nodeId) {
       return true;
+    }
 
     if (this.nodes.hasOwnProperty(nodeId)) {
       const mapMap = this.nodes[nodeId].children;
       for (const map of mapMap) {
         for (const rela of map) {
-          if (rela.contextIds.has(contextId))
+          if (rela.contextIds.has(contextId)) {
             return true;
+          }
         }
       }
     }
