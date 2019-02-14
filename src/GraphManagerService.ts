@@ -479,6 +479,36 @@ class GraphManagerService {
   }
 
   /**
+   * @param {string} fromId
+   * @param {string} toId
+   * @param {string} childId
+   * @param {string} contextId
+   * @param {number} relationName
+   * @param {string} relationType
+   * @returns
+   * @memberof GraphManagerService
+   */
+  async moveChildInContext(fromId: string,
+                  toId: string,
+                  childId: string,
+                  contextId: string,
+                  relationName: number,
+                  relationType: string): Promise<boolean> {
+    if (!this.nodes.hasOwnProperty(fromId)) {
+      return Promise.reject(`fromId: ${fromId} not found`);
+    }
+    if (!this.nodes.hasOwnProperty(toId)) {
+      return Promise.reject(`toId: ${toId} not found`);
+    }
+    if (!this.nodes.hasOwnProperty(childId)) {
+      return Promise.reject(`childId: ${childId} not found`);
+    }
+
+    await this.nodes[fromId].removeChild(this.nodes[childId], relationName, relationType);
+    await this.nodes[toId].addChildInContext(this.nodes[childId], relationName, relationType, this.nodes[contextId]);
+    return true;
+  }
+  /**
    * Remoce the child corresponding to childId from the node corresponding to parentId.
    * @param nodeId {String}
    * @param childId {String}
