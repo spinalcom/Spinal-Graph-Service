@@ -93,6 +93,58 @@ class GraphManagerService {
             return this.graph.getId().get();
         });
     }
+    /**
+     * Find a node with it id
+     * @param id
+     * @param stop
+     */
+    findNode(id, stop = false) {
+        const promises = [];
+        if (this.nodes.hasOwnProperty(id)) {
+            return Promise.resolve(this.getInfo(id));
+        }
+        for (const key in this.nodes) {
+            if (this.nodes.hasOwnProperty(key)) {
+                promises.push(this.getChildren(this.nodes[key].getId().get(), []));
+            }
+        }
+        if (stop) {
+            Promise.resolve('node not found');
+        }
+        return Promise.all(promises).then((childrens) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const res = yield this.findNode(id, true);
+                return Promise.resolve(res);
+            }
+            catch (e) {
+                return Promise.resolve(e);
+            }
+        }));
+    }
+    /**
+     * Find all the nodes that validate the predicate
+     *
+     * @param startId {String} starting point of the search if note found the
+     * search will start at the beginning of the graph
+     * @param relationNames {String[]} the relations that will be follow
+     * during the search if empty follow all relations
+     * @param predicate {(node) => boolean} function that return true if the
+     * node if valid
+     * @return all node that validate the predicate
+     */
+    findNodes(startId, relationNames, predicate) {
+        let node = this.graph;
+        if (this.nodes.hasOwnProperty(startId)) {
+            node = this.nodes[startId];
+        }
+        const found = node.find(relationNames, predicate);
+        for (let i = 0; i < found.length; i++) {
+            if (this.nodes.hasOwnProperty(found[i].info.id.get())) {
+                this._addNode(found[i]);
+            }
+        }
+        return found;
+    }
     generateQRcode(nodeId) {
         const typeNumber = 0;
         const errorCorrectionLevel = 'L';
@@ -140,34 +192,6 @@ class GraphManagerService {
             .catch(() => {
             return undefined;
         });
-    }
-    /**
-     * Find a node with it id
-     * @param id
-     * @param stop
-     */
-    findNode(id, stop = false) {
-        const promises = [];
-        if (this.nodes.hasOwnProperty(id)) {
-            return Promise.resolve(this.getInfo(id));
-        }
-        for (const key in this.nodes) {
-            if (this.nodes.hasOwnProperty(key)) {
-                promises.push(this.getChildren(this.nodes[key].getId().get(), []));
-            }
-        }
-        if (stop) {
-            Promise.resolve('node not found');
-        }
-        return Promise.all(promises).then((childrens) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const res = yield this.findNode(id, true);
-                return Promise.resolve(res);
-            }
-            catch (e) {
-                return Promise.resolve(e);
-            }
-        }));
     }
     /**
      * return the current graph
