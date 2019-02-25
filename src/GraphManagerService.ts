@@ -172,14 +172,14 @@ class GraphManagerService {
    * node if valid
    * @return all node that validate the predicate
    */
-  findNodes(startId : string, relationNames: string[], predicate: (node)=> boolean) : SpinalNodeRef[] {
+  findNodes(startId: string, relationNames: string[], predicate: (node) => boolean): SpinalNodeRef[] {
     let node = this.graph;
-    if (this.nodes.hasOwnProperty(startId)){
+    if (this.nodes.hasOwnProperty(startId)) {
       node = this.nodes[startId];
     }
     const found = node.find(relationNames, predicate);
     for (let i = 0; i < found.length; i++) {
-      if (this.nodes.hasOwnProperty(found[i].info.id.get())){
+      if (this.nodes.hasOwnProperty(found[i].info.id.get())) {
         this._addNode(found[i]);
       }
     }
@@ -516,11 +516,11 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   async moveChildInContext(fromId: string,
-                  toId: string,
-                  childId: string,
-                  contextId: string,
-                  relationName: number,
-                  relationType: string): Promise<boolean> {
+                           toId: string,
+                           childId: string,
+                           contextId: string,
+                           relationName: number,
+                           relationType: string): Promise<boolean> {
     if (!this.nodes.hasOwnProperty(fromId)) {
       return Promise.reject(`fromId: ${fromId} not found`);
     }
@@ -535,6 +535,7 @@ class GraphManagerService {
     await this.nodes[toId].addChildInContext(this.nodes[childId], relationName, relationType, this.nodes[contextId]);
     return true;
   }
+
   /**
    * Remoce the child corresponding to childId from the node corresponding to parentId.
    * @param nodeId {String}
@@ -546,6 +547,7 @@ class GraphManagerService {
    */
   async removeChild(nodeId: string, childId: string, relationName: string,
                     relationType: number, stop: boolean = false): Promise<boolean> {
+    console.log(' ppppplplplplpl remove child', childId)
     if (!this.nodes.hasOwnProperty(nodeId)) {
       return Promise.reject(Error('nodeId unknown.'));
     }
@@ -562,7 +564,12 @@ class GraphManagerService {
       for (const callback of this.listenerOnNodeRemove.values()) {
         callback(nodeId);
       }
-      return this.nodes[nodeId].removeChild(this.nodes[childId], relationName, relationType);
+      return this.nodes[nodeId].removeChild(this.nodes[childId], relationName, relationType).then(
+        () => {
+          console.log('remove chhild', this.nodes[childId]);
+          return true;
+        }
+      );
     }
     return Promise.reject(
       Error('childId unknown. It might already been removed from the parent node'),
@@ -665,6 +672,7 @@ class GraphManagerService {
 
   }
 
+
   /**
    *
    * Add the node corresponding to childId as child to the node corresponding to the parentId
@@ -706,6 +714,26 @@ class GraphManagerService {
 
     const nodeId = this.createNode(node.info, node.element);
     return this.addChild(parentId, nodeId, relationName, relationType);
+  }
+
+  isChild(parentId: string, childId: string, linkRelationName: string[]) {
+    if (!this.nodes.hasOwnProperty(parentId)) {
+      return Promise.resolve(false);
+    }
+    return this.nodes[parentId].getChildren(linkRelationName)
+      .then(children => {
+
+        let res = false;
+        for (let i = 0; i < children.length; i++) {
+          console.log('loris', children[i]);
+          this._addNode(children[i]);
+          if (children[i].info.id.get() === childId)
+            res = true;
+
+        }
+
+        return res;
+      })
   }
 
   /**

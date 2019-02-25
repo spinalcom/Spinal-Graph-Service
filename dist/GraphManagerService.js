@@ -470,6 +470,7 @@ class GraphManagerService {
      */
     removeChild(nodeId, childId, relationName, relationType, stop = false) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(' ppppplplplplpl remove child', childId);
             if (!this.nodes.hasOwnProperty(nodeId)) {
                 return Promise.reject(Error('nodeId unknown.'));
             }
@@ -486,7 +487,10 @@ class GraphManagerService {
                 for (const callback of this.listenerOnNodeRemove.values()) {
                     callback(nodeId);
                 }
-                return this.nodes[nodeId].removeChild(this.nodes[childId], relationName, relationType);
+                return this.nodes[nodeId].removeChild(this.nodes[childId], relationName, relationType).then(() => {
+                    console.log('remove chhild', this.nodes[childId]);
+                    return true;
+                });
             }
             return Promise.reject(Error('childId unknown. It might already been removed from the parent node'));
         });
@@ -615,6 +619,22 @@ class GraphManagerService {
         }
         const nodeId = this.createNode(node.info, node.element);
         return this.addChild(parentId, nodeId, relationName, relationType);
+    }
+    isChild(parentId, childId, linkRelationName) {
+        if (!this.nodes.hasOwnProperty(parentId)) {
+            return Promise.resolve(false);
+        }
+        return this.nodes[parentId].getChildren(linkRelationName)
+            .then(children => {
+            let res = false;
+            for (let i = 0; i < children.length; i++) {
+                console.log('loris', children[i]);
+                this._addNode(children[i]);
+                if (children[i].info.id.get() === childId)
+                    res = true;
+            }
+            return res;
+        });
     }
     /**
      * add a node to the set of node
