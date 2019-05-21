@@ -58,7 +58,12 @@ class GraphManagerService {
         this.nodesInfo = {};
         if (typeof viewerEnv !== 'undefined') {
             G_ROOT.spinal.spinalSystem.getModel()
-                .then((forgeFile) => this.setGraphFromForgeFile(forgeFile))
+                .then((obj) => {
+                if (obj instanceof spinal_model_graph_1.SpinalGraph)
+                    this.setGraph(obj);
+                else
+                    this.setGraphFromForgeFile(obj);
+            })
                 .catch((e) => console.error(e));
         }
     }
@@ -69,6 +74,7 @@ class GraphManagerService {
      * @memberof GraphManagerService
      */
     setGraphFromForgeFile(forgeFile) {
+        console.warn('deprecated use set graph instead');
         if (!forgeFile.hasOwnProperty('graph')) {
             forgeFile.add_attr({
                 graph: new spinal_model_graph_1.SpinalGraph(),
@@ -82,16 +88,28 @@ class GraphManagerService {
      * @memberof GraphManagerService
      */
     setGraph(graph) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (typeof this.graph.getId === 'function' &&
-                this.nodes.hasOwnProperty(this.graph.getId().get())) {
-                delete this.nodes[this.graph.getId().get()];
-            }
-            this.graph = graph;
-            this.nodes[this.graph.getId().get()] = this.graph;
-            yield this.getChildren(this.graph.getId().get(), []);
+        if (typeof this.graph.getId === 'function' &&
+            this.nodes.hasOwnProperty(this.graph.getId().get())) {
+            delete this.nodes[this.graph.getId().get()];
+        }
+        this.graph = graph;
+        this.nodes[this.graph.getId().get()] = this.graph;
+        return this.getChildren(this.graph.getId().get(), [])
+            .then(() => {
             return this.graph.getId().get();
         });
+    }
+    waitForInitialization() {
+        if (typeof this.initialized === "undefined")
+            this.initialized = new Promise(resolve => {
+                const interval = setInterval(() => {
+                    if (typeof this.graph !== "undefined") {
+                        clearInterval(interval);
+                        resolve(true);
+                    }
+                }, 1000);
+            });
+        return this.initialized;
     }
     /**
      * Find a node with it id
@@ -103,13 +121,13 @@ class GraphManagerService {
         if (this.nodes.hasOwnProperty(id)) {
             return Promise.resolve(this.getInfo(id));
         }
+        if (stop) {
+            Promise.resolve('node not found');
+        }
         for (const key in this.nodes) {
             if (this.nodes.hasOwnProperty(key)) {
                 promises.push(this.getChildren(this.nodes[key].getId().get(), []));
             }
-        }
-        if (stop) {
-            Promise.resolve('node not found');
         }
         return Promise.all(promises).then((childrens) => __awaiter(this, void 0, void 0, function* () {
             try {
@@ -175,6 +193,7 @@ class GraphManagerService {
      * @returns {SpinalNodeRef | undefined}
      */
     getNode(id) {
+        console.warn('deprecated use getNodeAsync instead');
         if (this.nodes.hasOwnProperty(id)) {
             return this.getInfo(id);
         }
@@ -522,6 +541,39 @@ class GraphManagerService {
                 }
             }
         }
+    }
+    /**
+     * Return all context with type
+     * @param type
+     */
+    getContextWithType(type) {
+        const res = [];
+        for (const key in this.nodes) {
+            if (this.nodes.hasOwnProperty(key)) {
+                const node = this.nodes[key];
+                if (node instanceof spinal_model_graph_1.SpinalContext
+                    && node.getType().get() == type) {
+                    res.push(node);
+                }
+            }
+        }
+        return res;
+    }
+    /**
+     * Retr
+     * @param type
+     */
+    getNodeByType(type) {
+        const res = [];
+        for (const key in this.nodes) {
+            if (this.nodes.hasOwnProperty(key)) {
+                const node = this.nodes[key];
+                if (node.getType().get() == type) {
+                    res.push(node);
+                }
+            }
+        }
+        return res;
     }
     /**
      * Remove the node referenced by id from th graph.

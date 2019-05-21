@@ -15,7 +15,8 @@
   "dependencies": {
     "qrcode-generator": "^1.4.1",
     "spinal-core-connectorjs_type": "git+https://github.com/spinalcom/spinal-core-connectorjs_type.git",
-    "spinal-model-graph": "git+https://github.com/spinalcom/spinal-model-graph.git#v02"
+    "spinal-model-graph": "git+https://github.com/spinalcom/spinal-model-graph.git#v02",
+    "vue-slide-bar": "^1.1.9"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.5",

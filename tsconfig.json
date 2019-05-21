@@ -8,12 +8,13 @@
     "sourceMap": true,
     "moduleResolution": "node"
   },
+  "types": ["forge-viewer"],
   "files": [
     "./node_modules/@types/node/index.d.ts",
     "./node_modules/spinal-core-connectorjs_type/declarations/SpinalModel.d.ts"
     ],
   "include": [
-    "src/**/*.ts",
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules"

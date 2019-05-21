@@ -72,7 +72,7 @@ class GraphManagerService {
   binders: Map<String, callback>;
   listenersOnNodeAdded: Map<any, callback>;
   listenerOnNodeRemove: Map<any, callback>;
-
+  initialized: Promise<boolean>;
   nodes: { [nodeId: string]: SpinalNode };
   nodesInfo: { [nodeId: string]: SpinalNodeRef };
   graph: SpinalGraph;
@@ -93,11 +93,18 @@ class GraphManagerService {
 
       (<any>G_ROOT).spinal.spinalSystem.getModel()
         .then(
-          (forgeFile: any) => this.setGraphFromForgeFile(forgeFile),
+          (obj: any) => {
+            if (obj instanceof SpinalGraph)
+              this.setGraph(obj);
+            else
+              this.setGraphFromForgeFile(obj);
+          },
         )
         .catch((e: Error) => console.error(e));
     }
   }
+
+
 
   /**
    * Change the current graph with the one of the forgeFile if there is one create one if note
@@ -106,7 +113,7 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   setGraphFromForgeFile(forgeFile: spinal.Model): Promise<String> {
-
+    console.warn('deprecated use set graph instead');
     if (!forgeFile.hasOwnProperty('graph')) {
       forgeFile.add_attr({
         graph: new SpinalGraph(),
@@ -120,7 +127,7 @@ class GraphManagerService {
    * @returns {Promise<String>} the id of the graph
    * @memberof GraphManagerService
    */
-  async setGraph(graph: SpinalGraph): Promise<String> {
+  setGraph(graph: SpinalGraph): Promise<String> {
 
     if (typeof this.graph.getId === 'function' &&
       this.nodes.hasOwnProperty(this.graph.getId().get())) {
@@ -128,10 +135,26 @@ class GraphManagerService {
     }
     this.graph = graph;
     this.nodes[this.graph.getId().get()] = this.graph;
-    await this.getChildren(this.graph.getId().get(), []);
-    return this.graph.getId().get();
+    return this.getChildren(this.graph.getId().get(), [])
+      .then(()=> {
+
+        return this.graph.getId().get();
+      });
   }
 
+  waitForInitialization(){
+    if (typeof this.initialized === "undefined")
+      this.initialized = new Promise( resolve => {
+        const interval = setInterval(()=> {
+          if (typeof this.graph !== "undefined")
+          {
+            clearInterval(interval);
+            resolve(true)
+          }
+        }, 1000)
+      });
+    return this.initialized;
+  }
   /**
    * Find a node with it id
    * @param id
@@ -143,14 +166,16 @@ class GraphManagerService {
       return Promise.resolve(this.getInfo(id));
     }
 
+    if (stop) {
+      Promise.resolve('node not found');
+    }
+
     for (const key in this.nodes) {
       if (this.nodes.hasOwnProperty(key)) {
         promises.push(this.getChildren(this.nodes[key].getId().get(), []));
       }
     }
-    if (stop) {
-      Promise.resolve('node not found');
-    }
+
     return Promise.all(promises).then(async (childrens) => {
       try {
         const res = await this.findNode(id, true);
@@ -160,6 +185,7 @@ class GraphManagerService {
       }
     });
   }
+
 
   /**
    * Find all the nodes that validate the predicate
@@ -201,6 +227,7 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   getNodes(): { [nodeId: string]: SpinalNode } {
+
     return this.nodes;
   }
 
@@ -219,7 +246,7 @@ class GraphManagerService {
    * @returns {SpinalNodeRef | undefined}
    */
   getNode(id: string): SpinalNodeRef {
-
+    console.warn('deprecated use getNodeAsync instead');
     if (this.nodes.hasOwnProperty(id)) {
       return this.getInfo(id);
     }
@@ -605,8 +632,45 @@ class GraphManagerService {
         }
       }
     }
-
   }
+
+  /**
+   * Return all context with type
+   * @param type
+   */
+  getContextWithType(type: string){
+    const res = [];
+    for (const key in this.nodes) {
+      if (this.nodes.hasOwnProperty(key)) {
+        const node = this.nodes[key];
+        if (
+          node instanceof SpinalContext
+          && node.getType().get() == type
+        ) {
+          res.push(node);
+        }
+      }
+    }
+    return res;
+  }
+
+  /**
+   * Retr
+   * @param type
+   */
+  getNodeByType(type: string){
+    const res = [];
+    for (const key in this.nodes) {
+      if (this.nodes.hasOwnProperty(key)) {
+        const node = this.nodes[key];
+        if (node.getType().get() == type) {
+          res.push(node);
+        }
+      }
+    }
+    return res;
+  }
+
 
   /**
    * Remove the node referenced by id from th graph.

@@ -34,6 +34,7 @@ declare class GraphManagerService {
     binders: Map<String, callback>;
     listenersOnNodeAdded: Map<any, callback>;
     listenerOnNodeRemove: Map<any, callback>;
+    initialized: Promise<boolean>;
     nodes: {
         [nodeId: string]: SpinalNode;
     };
@@ -58,6 +59,25 @@ declare class GraphManagerService {
      * @memberof GraphManagerService
      */
     setGraph(graph: SpinalGraph): Promise<String>;
+    waitForInitialization(): Promise<boolean>;
+    /**
+     * Find a node with it id
+     * @param id
+     * @param stop
+     */
+    findNode(id: string, stop?: boolean): Promise<SpinalNodeRef>;
+    /**
+     * Find all the nodes that validate the predicate
+     *
+     * @param startId {String} starting point of the search if note found the
+     * search will start at the beginning of the graph
+     * @param relationNames {String[]} the relations that will be follow
+     * during the search if empty follow all relations
+     * @param predicate {(node) => boolean} function that return true if the
+     * node if valid
+     * @return all node that validate the predicate
+     */
+    findNodes(startId: string, relationNames: string[], predicate: (node: any) => boolean): SpinalNodeRef[];
     generateQRcode(nodeId: string): string;
     /**
      * Return all loaded Nodes
@@ -87,12 +107,6 @@ declare class GraphManagerService {
      * @returns {SpinalNodeRef | undefined}
      */
     getNodeAsync(id: string): Promise<SpinalNodeRef>;
-    /**
-     * Find a node with it id
-     * @param id
-     * @param stop
-     */
-    findNode(id: string, stop?: boolean): Promise<SpinalNodeRef>;
     /**
      * return the current graph
      * @returns {{}|SpinalGraph}
@@ -203,6 +217,17 @@ declare class GraphManagerService {
      */
     moveChild(fromId: string, toId: string, childId: string, relationName: number, relationType: string): Promise<boolean>;
     /**
+     * @param {string} fromId
+     * @param {string} toId
+     * @param {string} childId
+     * @param {string} contextId
+     * @param {number} relationName
+     * @param {string} relationType
+     * @returns
+     * @memberof GraphManagerService
+     */
+    moveChildInContext(fromId: string, toId: string, childId: string, contextId: string, relationName: number, relationType: string): Promise<boolean>;
+    /**
      * Remoce the child corresponding to childId from the node corresponding to parentId.
      * @param nodeId {String}
      * @param childId {String}
@@ -227,6 +252,16 @@ declare class GraphManagerService {
      * @memberof GraphManagerService
      */
     getContext(name: string): SpinalContext;
+    /**
+     * Return all context with type
+     * @param type
+     */
+    getContextWithType(type: string): any[];
+    /**
+     * Retr
+     * @param type
+     */
+    getNodeByType(type: string): any[];
     /**
      * Remove the node referenced by id from th graph.
      * @param {string} id
@@ -279,6 +314,7 @@ declare class GraphManagerService {
      * @memberof GraphManagerService
      */
     addChildAndCreateNode(parentId: string, node: SpinalNodeObject, relationName: string, relationType: string): Promise<boolean>;
+    isChild(parentId: string, childId: string, linkRelationName: string[]): any;
     /**
      * add a node to the set of node
      * @private
