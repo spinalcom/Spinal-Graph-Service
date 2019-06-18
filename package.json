@@ -4,9 +4,10 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rm -fr dist declarations && tsc",
+    "build": "rm -fr build && tsc",
     "dev": "rm -fr build && tsc --watch & nodemon build",
-    "doc": "mkdir -p Docs && jsdoc2md src/GraphManagerService.js > Docs/API.md"
+    "docs": "jsdoc2md --no-cache --files 'src/**/*.ts' --configure jsdoc2md.json --template 'Markdown Templates/README.hbs' > README.md && doctoc README.md",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "types": "./declarations/index.d.ts",
   "keywords": [],
