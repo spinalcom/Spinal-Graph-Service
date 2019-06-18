@@ -1,6 +1,6 @@
 {
   "name": "spinal-env-viewer-graph-service",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -15,9 +15,8 @@
   "license": "ISC",
   "dependencies": {
     "qrcode-generator": "^1.4.1",
-    "spinal-core-connectorjs_type": "git+https://github.com/spinalcom/spinal-core-connectorjs_type.git",
-    "spinal-model-graph": "git+https://github.com/spinalcom/spinal-model-graph.git#v02",
-    "vue-slide-bar": "^1.1.9"
+    "spinal-core-connectorjs": "git+https://github.com/spinalcom/spinal-core-connector-typescript.git",
+    "spinal-model-graph": "git+https://github.com/spinalcom/spinal-model-graph.git"
   },
   "devDependencies": {
     "@types/mocha": "^5.2.5",
