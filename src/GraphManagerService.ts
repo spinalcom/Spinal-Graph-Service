@@ -466,9 +466,7 @@ class GraphManagerService {
     }
     for (const key in info) {
       if (!this.nodes[nodeId].info.hasOwnProperty(key) && info.hasOwnProperty(key)) {
-        const tmp = {};
-        tmp[key] = info[key];
-        this.nodes[nodeId].info.add_attr(tmp);
+        this.nodes[nodeId].info.add_attr(key, info[key]);
       } else if (info.hasOwnProperty(key)) {
         this.nodes[nodeId].info.mod_attr(key, info[key]);
       }
