@@ -103,7 +103,9 @@ class GraphManagerService {
         if (typeof this.initialized === "undefined")
             this.initialized = new Promise(resolve => {
                 const interval = setInterval(() => {
-                    if (typeof this.graph !== "undefined") {
+                    if ((typeof this.graph !== "undefined")
+                        && (this.graph.hasOwnProperty('info'))
+                        && (typeof this.graph.getId !== "undefined")) {
                         clearInterval(interval);
                         resolve(true);
                     }
