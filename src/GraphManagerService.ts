@@ -105,7 +105,6 @@ class GraphManagerService {
   }
 
 
-
   /**
    * Change the current graph with the one of the forgeFile if there is one create one if note
    * @param {*} forgeFile
@@ -136,18 +135,21 @@ class GraphManagerService {
     this.graph = graph;
     this.nodes[this.graph.getId().get()] = this.graph;
     return this.getChildren(this.graph.getId().get(), [])
-      .then(()=> {
+      .then(() => {
 
         return this.graph.getId().get();
       });
   }
 
-  waitForInitialization(){
+  waitForInitialization() {
     if (typeof this.initialized === "undefined")
-      this.initialized = new Promise( resolve => {
-        const interval = setInterval(()=> {
-          if (typeof this.graph !== "undefined")
-          {
+      this.initialized = new Promise(resolve => {
+        const interval = setInterval(() => {
+          if (
+            (typeof this.graph !== "undefined")
+            && (this.graph.hasOwnProperty('info'))
+            && (typeof this.graph.getId !== "undefined")
+          ) {
             clearInterval(interval);
             resolve(true)
           }
@@ -155,6 +157,7 @@ class GraphManagerService {
       });
     return this.initialized;
   }
+
   /**
    * Find a node with it id
    * @param id
@@ -638,7 +641,7 @@ class GraphManagerService {
    * Return all context with type
    * @param type
    */
-  getContextWithType(type: string){
+  getContextWithType(type: string) {
     const res = [];
     for (const key in this.nodes) {
       if (this.nodes.hasOwnProperty(key)) {
@@ -658,7 +661,7 @@ class GraphManagerService {
    * Retr
    * @param type
    */
-  getNodeByType(type: string){
+  getNodeByType(type: string) {
     const res = [];
     for (const key in this.nodes) {
       if (this.nodes.hasOwnProperty(key)) {
