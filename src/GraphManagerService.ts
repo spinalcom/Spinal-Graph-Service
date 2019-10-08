@@ -355,9 +355,11 @@ class GraphManagerService {
     return this.nodes[parentId].getChildrenInContext(this.nodes[contextId])
       .then((children) => {
         const res = [];
-        for (let i = 0; i < children.length; i = i + 1) {
-          this._addNode(children[i]);
-          res.push(this.getInfo(children[i].getId().get()));
+        if (children != undefined) {
+          for (let i = 0; i < children.length; i = i + 1) {
+            this._addNode(children[i]);
+            res.push(this.getInfo(children[i].getId().get()));
+          }
         }
         return res;
       });
@@ -519,7 +521,7 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   async moveChild(fromId: string, toId: string, childId: string,
-                  relationName: number, relationType: string): Promise<boolean> {
+    relationName: number, relationType: string): Promise<boolean> {
     if (!this.nodes.hasOwnProperty(fromId)) {
       return Promise.reject(`fromId: ${fromId} not found`);
     }
@@ -546,11 +548,11 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   async moveChildInContext(fromId: string,
-                           toId: string,
-                           childId: string,
-                           contextId: string,
-                           relationName: number,
-                           relationType: string): Promise<boolean> {
+    toId: string,
+    childId: string,
+    contextId: string,
+    relationName: number,
+    relationType: string): Promise<boolean> {
     if (!this.nodes.hasOwnProperty(fromId)) {
       return Promise.reject(`fromId: ${fromId} not found`);
     }
@@ -576,7 +578,7 @@ class GraphManagerService {
    * @returns {Promise<boolean>}
    */
   async removeChild(nodeId: string, childId: string, relationName: string,
-                    relationType: number, stop: boolean = false): Promise<boolean> {
+    relationType: number, stop: boolean = false): Promise<boolean> {
     console.log(' ppppplplplplpl remove child', childId)
     if (!this.nodes.hasOwnProperty(nodeId)) {
       return Promise.reject(Error('nodeId unknown.'));
@@ -721,7 +723,7 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   addChildInContext(parentId: string, childId: string, contextId: string,
-                    relationName: string, relationType: string): Promise<SpinalNode> {
+    relationName: string, relationType: string): Promise<SpinalNode> {
 
     if (!this.nodes.hasOwnProperty(parentId)) {
       return Promise.reject(Error(`Node parent id ${parentId} not found`));
@@ -774,7 +776,7 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   addChildAndCreateNode(parentId: string, node: SpinalNodeObject,
-                        relationName: string, relationType: string): Promise<boolean> {
+    relationName: string, relationType: string): Promise<boolean> {
     if (!node.hasOwnProperty('info')) {
       return Promise.reject(false);
     }

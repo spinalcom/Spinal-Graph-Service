@@ -289,9 +289,11 @@ class GraphManagerService {
             return this.nodes[parentId].getChildrenInContext(this.nodes[contextId])
                 .then((children) => {
                 const res = [];
-                for (let i = 0; i < children.length; i = i + 1) {
-                    this._addNode(children[i]);
-                    res.push(this.getInfo(children[i].getId().get()));
+                if (children != undefined) {
+                    for (let i = 0; i < children.length; i = i + 1) {
+                        this._addNode(children[i]);
+                        res.push(this.getInfo(children[i].getId().get()));
+                    }
                 }
                 return res;
             });
