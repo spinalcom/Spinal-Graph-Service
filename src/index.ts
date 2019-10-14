@@ -1,7 +1,9 @@
 import { GraphManagerService as GraphManagerServiceClass } from './GraphManagerService';
-import SpinalSet from 'spinal-model-graph/build/SpinalSet';
-import SpinalNodePointer from 'spinal-model-graph/build/SpinalNodePointer';
-import SpinalMap from 'spinal-model-graph/build/SpinalMap';
+import {
+  SpinalSet,
+  SpinalNodePointer,
+  SpinalMap,
+} from 'spinal-model-graph';
 
 export {
   SPINAL_RELATION_TYPE,

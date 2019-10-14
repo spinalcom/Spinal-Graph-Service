@@ -1,5 +1,5 @@
 import { SpinalContext, SpinalGraph, SpinalNode } from 'spinal-model-graph';
-import SpinalNodePointer from 'spinal-model-graph/build/SpinalNodePointer';
+import { SpinalNodePointer } from 'spinal-model-graph';
 interface SpinalNodeRef extends spinal.Model {
     childrenIds: string[];
     contextIds: string[];
