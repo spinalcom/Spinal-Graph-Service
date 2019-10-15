@@ -142,20 +142,20 @@ class GraphManagerService {
   }
 
   waitForInitialization() {
-    if (typeof this.initialized === "undefined")
-      this.initialized = new Promise(resolve => {
-        const interval = setInterval(() => {
-          if (
-            (typeof this.graph !== "undefined")
-            && (this.graph.hasOwnProperty('info'))
-            && (typeof this.graph.getId !== "undefined")
-          ) {
-            clearInterval(interval);
-            resolve(true)
-          }
-        }, 1000)
-      });
-    return this.initialized;
+    if (typeof this.initialized === 'undefined') {
+    this.initialized = new Promise((resolve) => {
+      const interval = setInterval(() => {
+        if (
+          (typeof this.graph !== 'undefined')
+          && (this.graph.hasOwnProperty('info'))
+          && (typeof this.graph.getId !== 'undefined')
+        ) {
+          clearInterval(interval);
+          resolve(true)
+        }
+      }, 1000)
+    });
+    } return this.initialized;
   }
 
   /**
@@ -302,7 +302,7 @@ class GraphManagerService {
   getRelationNames(id: string): string[] {
     const relationNames = [];
     if (this.nodes.hasOwnProperty(id)) {
-      for (const relationMap of this.nodes[id].children) {
+      for (const [, relationMap] of this.nodes[id].children) {
         relationNames.push(...relationMap.keys());
       }
     }
@@ -323,7 +323,7 @@ class GraphManagerService {
 
     if (relationNames.length === 0) {
 
-      for (const relationMap of this.nodes[id].children) {
+      for (const [, relationMap] of this.nodes[id].children) {
         relationNames.push(...relationMap.keys());
       }
     }
@@ -911,8 +911,8 @@ class GraphManagerService {
 
     if (this.nodes.hasOwnProperty(nodeId)) {
       const mapMap = this.nodes[nodeId].children;
-      for (const map of mapMap) {
-        for (const rela of map) {
+      for (const [, map] of mapMap) {
+        for (const [, rela] of map) {
           if (rela.contextIds.has(contextId)) {
             return true;
           }
