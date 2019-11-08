@@ -24,10 +24,11 @@
  */
 // tslint:disable:function-name
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -59,10 +60,12 @@ class GraphManagerService {
         if (typeof viewerEnv !== 'undefined') {
             G_ROOT.spinal.spinalSystem.getModel()
                 .then((obj) => {
-                if (obj instanceof spinal_model_graph_1.SpinalGraph)
+                if (obj instanceof spinal_model_graph_1.SpinalGraph) {
                     this.setGraph(obj);
-                else
+                }
+                else {
                     this.setGraphFromForgeFile(obj);
+                }
             })
                 .catch((e) => console.error(e));
         }
@@ -687,8 +690,9 @@ class GraphManagerService {
             for (let i = 0; i < children.length; i++) {
                 console.log('loris', children[i]);
                 this._addNode(children[i]);
-                if (children[i].info.id.get() === childId)
+                if (children[i].info.id.get() === childId) {
                     res = true;
+                }
             }
             return res;
         });

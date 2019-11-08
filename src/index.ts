@@ -1,4 +1,5 @@
 import { GraphManagerService as GraphManagerServiceClass } from './GraphManagerService';
+export { SpinalNodeRef, InfoModel, SpinalNodeObject } from './GraphManagerService';
 import {
   SpinalSet,
   SpinalNodePointer,

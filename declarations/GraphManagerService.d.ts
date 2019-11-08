@@ -1,5 +1,4 @@
-import { SpinalContext, SpinalGraph, SpinalNode } from 'spinal-model-graph';
-import { SpinalNodePointer } from 'spinal-model-graph';
+import { SpinalContext, SpinalGraph, SpinalNode, SpinalNodePointer } from 'spinal-model-graph';
 interface SpinalNodeRef extends spinal.Model {
     childrenIds: string[];
     contextIds: string[];
@@ -358,4 +357,4 @@ declare class GraphManagerService {
     hasChildInContext(nodeId: string, contextId: string): boolean;
 }
 export default GraphManagerService;
-export { GraphManagerService };
+export { GraphManagerService, SpinalNodeRef, InfoModel, SpinalNodeObject };
