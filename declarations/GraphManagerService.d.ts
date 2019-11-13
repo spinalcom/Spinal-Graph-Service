@@ -361,4 +361,4 @@ declare class GraphManagerService {
     hasChildInContext(nodeId: string, contextId: string): boolean;
 }
 export default GraphManagerService;
-export { GraphManagerService };
+export { GraphManagerService, SpinalNodeRef, InfoModel, SpinalNodeObject };

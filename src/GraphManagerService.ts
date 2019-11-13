@@ -26,6 +26,7 @@
 import { SpinalContext, SpinalGraph, SpinalNode, SpinalNodePointer } from 'spinal-model-graph';
 import * as qrcode from 'qrcode-generator';
 import * as q from 'q';
+
 interface SpinalNodeRef extends spinal.Model {
   childrenIds: string[];
   contextIds: string[];
@@ -893,4 +894,4 @@ class GraphManagerService {
 }
 
 export default GraphManagerService;
-export { GraphManagerService };
+export { GraphManagerService, SpinalNodeRef, InfoModel, SpinalNodeObject };
