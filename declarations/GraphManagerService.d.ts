@@ -1,5 +1,5 @@
-import { SpinalContext, SpinalGraph, SpinalNode } from 'spinal-model-graph';
-import { SpinalNodePointer } from 'spinal-model-graph';
+import { SpinalContext, SpinalGraph, SpinalNode, SpinalNodePointer } from 'spinal-model-graph';
+import * as q from 'q';
 interface SpinalNodeRef extends spinal.Model {
     childrenIds: string[];
     contextIds: string[];
@@ -19,29 +19,30 @@ interface SpinalNodeObject {
 /**
  * @type (...args: any[]) => any
  */
-declare type callback = Function;
+declare type callback = (...args: any[]) => any;
 /**
  *  @property {Map<string, Map<any, Callback>>} bindedNode
  *    NodeId => Caller => Callback. All nodes that are bind
  *  @property {Map<String, callback>} binders NodeId => CallBack from bind method.
  *  @property {Map<any, callback>} listeners
  *    caller => callback. List of all listeners on node added
- *  @property {{[nodeId: string]: SpinalNode}} nodes containing all SpinalNode currently loaded
- *  @property {SpinalGraph} graph
+ *  @property {{[nodeId: string]: SpinalNode<any>}} nodes containing all SpinalNode currently loaded
+ *  @property {SpinalGraph<any>} graph
  */
 declare class GraphManagerService {
     bindedNode: Map<string, Map<any, callback>>;
-    binders: Map<String, callback>;
+    binders: Map<String, spinal.BindProcess>;
     listenersOnNodeAdded: Map<any, callback>;
     listenerOnNodeRemove: Map<any, callback>;
     initialized: Promise<boolean>;
     nodes: {
-        [nodeId: string]: SpinalNode;
+        [nodeId: string]: SpinalNode<any>;
     };
     nodesInfo: {
         [nodeId: string]: SpinalNodeRef;
     };
-    graph: SpinalGraph;
+    graph: SpinalGraph<any>;
+    initProm: q.Deferred<SpinalGraph<any>>;
     /**
      * @param viewerEnv {boolean} if defined load graph from getModel
      */
@@ -54,12 +55,16 @@ declare class GraphManagerService {
      */
     setGraphFromForgeFile(forgeFile: spinal.Model): Promise<String>;
     /**
-     * @param {SpinalGraph} graph
+     * @param {SpinalGraph<any>} graph
      * @returns {Promise<String>} the id of the graph
      * @memberof GraphManagerService
      */
-    setGraph(graph: SpinalGraph): Promise<String>;
-    waitForInitialization(): Promise<boolean>;
+    setGraph(graph: SpinalGraph<any>): Promise<String>;
+    /**
+     * @returns {q.Promise<SpinalGraph<any>>}
+     * @memberof GraphManagerService
+     */
+    waitForInitialization(): q.Promise<SpinalGraph<any>>;
     /**
      * Find a node with it id
      * @param id
@@ -77,15 +82,15 @@ declare class GraphManagerService {
      * node if valid
      * @return all node that validate the predicate
      */
-    findNodes(startId: string, relationNames: string[], predicate: (node: any) => boolean): SpinalNodeRef[];
+    findNodes(startId: string, relationNames: string[], predicate: (node: any) => boolean): Promise<SpinalNodeRef[]>;
     generateQRcode(nodeId: string): string;
     /**
      * Return all loaded Nodes
-     * @returns {{[nodeId: string]: SpinalNode}}
+     * @returns {{[nodeId: string]: SpinalNode<any>}}
      * @memberof GraphManagerService
      */
     getNodes(): {
-        [nodeId: string]: SpinalNode;
+        [nodeId: string]: SpinalNode<any>;
     };
     /**
      * Return all loaded Nodes
@@ -109,16 +114,16 @@ declare class GraphManagerService {
     getNodeAsync(id: string): Promise<SpinalNodeRef>;
     /**
      * return the current graph
-     * @returns {{}|SpinalGraph}
+     * @returns {undefined|SpinalNode<any>}
      */
-    getGraph(): SpinalGraph;
+    getGraph(): SpinalGraph<any>;
     /**
      * Return the node with the given id
      * @param {string} id of the wanted node
-     * @returns {SpinalNode}
+     * @returns {SpinalNode<any>}
      * @memberof GraphManagerService
      */
-    getRealNode(id: string): SpinalNode;
+    getRealNode(id: string): SpinalNode<any>;
     /**
      * Return all the relation names of the node coresponding to id
      * @param {string} id of the node
@@ -158,10 +163,10 @@ declare class GraphManagerService {
     setInfo(nodeId: string): void;
     /**
      * @param {string} nodeId
-     * @returns {Promise<string[]>}
+     * @returns {string[]}
      * @memberof GraphManagerService
      */
-    getChildrenIds(nodeId: string): Promise<string[]>;
+    getChildrenIds(nodeId: string): string[];
     /**
      * @param {any} caller
      * @param {callback} callback
@@ -210,12 +215,12 @@ declare class GraphManagerService {
      * @param {string} fromId
      * @param {string} toId
      * @param {string} childId
-     * @param {number} relationName
+     * @param {string} relationName
      * @param {string} relationType
      * @returns
      * @memberof GraphManagerService
      */
-    moveChild(fromId: string, toId: string, childId: string, relationName: number, relationType: string): Promise<boolean>;
+    moveChild(fromId: string, toId: string, childId: string, relationName: string, relationType: string): Promise<boolean>;
     /**
      * @param {string} fromId
      * @param {string} toId
@@ -226,17 +231,17 @@ declare class GraphManagerService {
      * @returns
      * @memberof GraphManagerService
      */
-    moveChildInContext(fromId: string, toId: string, childId: string, contextId: string, relationName: number, relationType: string): Promise<boolean>;
+    moveChildInContext(fromId: string, toId: string, childId: string, contextId: string, relationName: string, relationType: string): Promise<boolean>;
     /**
-     * Remoce the child corresponding to childId from the node corresponding to parentId.
+     * Remove the child corresponding to childId from the node corresponding to parentId.
      * @param nodeId {String}
      * @param childId {String}
      * @param relationName {String}
-     * @param relationType {Number}
+     * @param relationType {string}
      * @param stop
      * @returns {Promise<boolean>}
      */
-    removeChild(nodeId: string, childId: string, relationName: string, relationType: number, stop?: boolean): Promise<boolean>;
+    removeChild(nodeId: string, childId: string, relationName: string, relationType: string, stop?: boolean): Promise<boolean>;
     /**
      * Add a context to the graph
      * @param {string} name of the context
@@ -245,13 +250,13 @@ declare class GraphManagerService {
      * @returns {Promise<SpinalContext>}
      * @memberof GraphManagerService
      */
-    addContext(name: string, type?: string, elt?: spinal.Model): Promise<SpinalContext>;
+    addContext(name: string, type?: string, elt?: spinal.Model): Promise<SpinalContext<any>>;
     /**
      * @param {string} name
      * @returns {SpinalContext}
      * @memberof GraphManagerService
      */
-    getContext(name: string): SpinalContext;
+    getContext(name: string): SpinalContext<any>;
     /**
      * Return all context with type
      * @param type
@@ -287,10 +292,10 @@ declare class GraphManagerService {
      * @param {string} contextId
      * @param {string} relationName
      * @param {number} relationType
-     * @returns {Promise<SpinalNode>}
+     * @returns {Promise<SpinalNode<any>>}
      * @memberof GraphManagerService
      */
-    addChildInContext(parentId: string, childId: string, contextId: string, relationName: string, relationType: string): Promise<SpinalNode>;
+    addChildInContext(parentId: string, childId: string, contextId: string, relationName: string, relationType: string): Promise<SpinalNode<any>>;
     /**
      *
      * Add the node corresponding to childId as child to the node corresponding to the parentId
@@ -314,11 +319,11 @@ declare class GraphManagerService {
      * @memberof GraphManagerService
      */
     addChildAndCreateNode(parentId: string, node: SpinalNodeObject, relationName: string, relationType: string): Promise<boolean>;
-    isChild(parentId: string, childId: string, linkRelationName: string[]): any;
+    isChild(parentId: string, childId: string, linkRelationName: string[]): Promise<boolean>;
     /**
      * add a node to the set of node
      * @private
-     * @param {SpinalNode} node
+     * @param {SpinalNode<any>} node
      * @memberof GraphManagerService
      */
     private _addNode;
@@ -346,8 +351,6 @@ declare class GraphManagerService {
      */
     private _bindFunc;
     /**
-     *
-     *
      * @private
      * @param {string} nodeId
      * @param {*} binder

@@ -23,17 +23,10 @@
  *  <http://resources.spinalcom.com/licenses.pdf>.
  */
 // tslint:disable:function-name
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const spinal_model_graph_1 = require("spinal-model-graph");
 const qrcode = require("qrcode-generator");
+const q = require("q");
 const G_ROOT = typeof window === 'undefined' ? global : window;
 /**
  *  @property {Map<string, Map<any, Callback>>} bindedNode
@@ -41,8 +34,8 @@ const G_ROOT = typeof window === 'undefined' ? global : window;
  *  @property {Map<String, callback>} binders NodeId => CallBack from bind method.
  *  @property {Map<any, callback>} listeners
  *    caller => callback. List of all listeners on node added
- *  @property {{[nodeId: string]: SpinalNode}} nodes containing all SpinalNode currently loaded
- *  @property {SpinalGraph} graph
+ *  @property {{[nodeId: string]: SpinalNode<any>}} nodes containing all SpinalNode currently loaded
+ *  @property {SpinalGraph<any>} graph
  */
 class GraphManagerService {
     /**
@@ -53,16 +46,19 @@ class GraphManagerService {
         this.binders = new Map();
         this.listenersOnNodeAdded = new Map();
         this.listenerOnNodeRemove = new Map();
+        this.initProm = q.defer();
         this.nodes = {};
-        this.graph = {};
+        this.graph = undefined;
         this.nodesInfo = {};
         if (typeof viewerEnv !== 'undefined') {
             G_ROOT.spinal.spinalSystem.getModel()
                 .then((obj) => {
-                if (obj instanceof spinal_model_graph_1.SpinalGraph)
+                if (obj instanceof spinal_model_graph_1.SpinalGraph) {
                     this.setGraph(obj);
-                else
+                }
+                else {
                     this.setGraphFromForgeFile(obj);
+                }
             })
                 .catch((e) => console.error(e));
         }
@@ -83,7 +79,7 @@ class GraphManagerService {
         return this.setGraph(forgeFile.graph);
     }
     /**
-     * @param {SpinalGraph} graph
+     * @param {SpinalGraph<any>} graph
      * @returns {Promise<String>} the id of the graph
      * @memberof GraphManagerService
      */
@@ -96,23 +92,16 @@ class GraphManagerService {
         this.nodes[this.graph.getId().get()] = this.graph;
         return this.getChildren(this.graph.getId().get(), [])
             .then(() => {
+            this.initProm.resolve(this.graph);
             return this.graph.getId().get();
         });
     }
+    /**
+     * @returns {q.Promise<SpinalGraph<any>>}
+     * @memberof GraphManagerService
+     */
     waitForInitialization() {
-        if (typeof this.initialized === 'undefined') {
-            this.initialized = new Promise((resolve) => {
-                const interval = setInterval(() => {
-                    if ((typeof this.graph !== 'undefined')
-                        && (this.graph.hasOwnProperty('info'))
-                        && (typeof this.graph.getId !== 'undefined')) {
-                        clearInterval(interval);
-                        resolve(true);
-                    }
-                }, 1000);
-            });
-        }
-        return this.initialized;
+        return this.initProm.promise;
     }
     /**
      * Find a node with it id
@@ -125,22 +114,16 @@ class GraphManagerService {
             return Promise.resolve(this.getInfo(id));
         }
         if (stop) {
-            Promise.resolve('node not found');
+            Promise.resolve(undefined);
         }
         for (const key in this.nodes) {
             if (this.nodes.hasOwnProperty(key)) {
                 promises.push(this.getChildren(this.nodes[key].getId().get(), []));
             }
         }
-        return Promise.all(promises).then((childrens) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const res = yield this.findNode(id, true);
-                return Promise.resolve(res);
-            }
-            catch (e) {
-                return Promise.resolve(e);
-            }
-        }));
+        return Promise.all(promises).then(() => {
+            return this.findNode(id, true);
+        });
     }
     /**
      * Find all the nodes that validate the predicate
@@ -158,13 +141,12 @@ class GraphManagerService {
         if (this.nodes.hasOwnProperty(startId)) {
             node = this.nodes[startId];
         }
-        const found = node.find(relationNames, predicate);
-        for (let i = 0; i < found.length; i++) {
-            if (this.nodes.hasOwnProperty(found[i].info.id.get())) {
-                this._addNode(found[i]);
-            }
-        }
-        return found;
+        return node.find(relationNames, predicate).then((found) => {
+            return found.map((n) => {
+                this._addNode(n);
+                return this.getInfo[n.info.id.get()];
+            });
+        });
     }
     generateQRcode(nodeId) {
         const typeNumber = 0;
@@ -176,7 +158,7 @@ class GraphManagerService {
     }
     /**
      * Return all loaded Nodes
-     * @returns {{[nodeId: string]: SpinalNode}}
+     * @returns {{[nodeId: string]: SpinalNode<any>}}
      * @memberof GraphManagerService
      */
     getNodes() {
@@ -217,7 +199,7 @@ class GraphManagerService {
     }
     /**
      * return the current graph
-     * @returns {{}|SpinalGraph}
+     * @returns {undefined|SpinalNode<any>}
      */
     getGraph() {
         return this.graph;
@@ -225,7 +207,7 @@ class GraphManagerService {
     /**
      * Return the node with the given id
      * @param {string} id of the wanted node
-     * @returns {SpinalNode}
+     * @returns {SpinalNode<any>}
      * @memberof GraphManagerService
      */
     getRealNode(id) {
@@ -267,12 +249,10 @@ class GraphManagerService {
         }
         return this.nodes[id].getChildren(relationNames)
             .then((children) => {
-            const res = [];
-            for (let i = 0; i < children.length; i += 1) {
-                this._addNode(children[i]);
-                res.push(this.getInfo(children[i].getId().get()));
-            }
-            return res;
+            return children.map((n) => {
+                this._addNode(n);
+                return this.getInfo[n.info.id.get()];
+            });
         });
     }
     /**
@@ -283,20 +263,14 @@ class GraphManagerService {
      * @memberof GraphManagerService
      */
     getChildrenInContext(parentId, contextId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.nodes.hasOwnProperty(parentId) || !this.nodes.hasOwnProperty(contextId)) {
-                throw new Error('parentId or contextId not found');
-            }
-            return this.nodes[parentId].getChildrenInContext(this.nodes[contextId])
-                .then((children) => {
-                const res = [];
-                if (children != undefined) {
-                    for (let i = 0; i < children.length; i = i + 1) {
-                        this._addNode(children[i]);
-                        res.push(this.getInfo(children[i].getId().get()));
-                    }
-                }
-                return res;
+        if (!this.nodes.hasOwnProperty(parentId) || !this.nodes.hasOwnProperty(contextId)) {
+            throw new Error('parentId or contextId not found');
+        }
+        return this.nodes[parentId].getChildrenInContext(this.nodes[contextId])
+            .then((children) => {
+            return children.map((n) => {
+                this._addNode(n);
+                return this.getInfo[n.info.id.get()];
             });
         });
     }
@@ -339,7 +313,7 @@ class GraphManagerService {
     }
     /**
      * @param {string} nodeId
-     * @returns {Promise<string[]>}
+     * @returns {string[]}
      * @memberof GraphManagerService
      */
     getChildrenIds(nodeId) {
@@ -436,26 +410,25 @@ class GraphManagerService {
      * @param {string} fromId
      * @param {string} toId
      * @param {string} childId
-     * @param {number} relationName
+     * @param {string} relationName
      * @param {string} relationType
      * @returns
      * @memberof GraphManagerService
      */
     moveChild(fromId, toId, childId, relationName, relationType) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.nodes.hasOwnProperty(fromId)) {
-                return Promise.reject(`fromId: ${fromId} not found`);
-            }
-            if (!this.nodes.hasOwnProperty(toId)) {
-                return Promise.reject(`toId: ${toId} not found`);
-            }
-            if (!this.nodes.hasOwnProperty(childId)) {
-                return Promise.reject(`childId: ${childId} not found`);
-            }
-            yield this.nodes[fromId].removeChild(this.nodes[childId], relationName, relationType);
-            yield this.nodes[toId].addChild(this.nodes[childId], relationName, relationType);
-            return true;
-        });
+        if (!this.nodes.hasOwnProperty(fromId)) {
+            return Promise.reject(`fromId: ${fromId} not found`);
+        }
+        if (!this.nodes.hasOwnProperty(toId)) {
+            return Promise.reject(`toId: ${toId} not found`);
+        }
+        if (!this.nodes.hasOwnProperty(childId)) {
+            return Promise.reject(`childId: ${childId} not found`);
+        }
+        return this.nodes[fromId].removeChild(this.nodes[childId], relationName, relationType)
+            .then(() => {
+            return this.nodes[toId].addChild(this.nodes[childId], relationName, relationType);
+        }).then(() => true);
     }
     /**
      * @param {string} fromId
@@ -468,56 +441,53 @@ class GraphManagerService {
      * @memberof GraphManagerService
      */
     moveChildInContext(fromId, toId, childId, contextId, relationName, relationType) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.nodes.hasOwnProperty(fromId)) {
-                return Promise.reject(`fromId: ${fromId} not found`);
-            }
-            if (!this.nodes.hasOwnProperty(toId)) {
-                return Promise.reject(`toId: ${toId} not found`);
-            }
-            if (!this.nodes.hasOwnProperty(childId)) {
-                return Promise.reject(`childId: ${childId} not found`);
-            }
-            yield this.nodes[fromId].removeChild(this.nodes[childId], relationName, relationType);
-            yield this.nodes[toId].addChildInContext(this.nodes[childId], relationName, relationType, this.nodes[contextId]);
-            return true;
-        });
+        if (!this.nodes.hasOwnProperty(fromId)) {
+            return Promise.reject(`fromId: ${fromId} not found`);
+        }
+        if (!this.nodes.hasOwnProperty(toId)) {
+            return Promise.reject(`toId: ${toId} not found`);
+        }
+        if (!this.nodes.hasOwnProperty(childId)) {
+            return Promise.reject(`childId: ${childId} not found`);
+        }
+        return this.nodes[fromId].removeChild(this.nodes[childId], relationName, relationType)
+            .then(() => {
+            return this.nodes[toId].addChildInContext(this.nodes[childId], relationName, relationType, this.nodes[contextId]);
+        }).then(() => true);
     }
     /**
-     * Remoce the child corresponding to childId from the node corresponding to parentId.
+     * Remove the child corresponding to childId from the node corresponding to parentId.
      * @param nodeId {String}
      * @param childId {String}
      * @param relationName {String}
-     * @param relationType {Number}
+     * @param relationType {string}
      * @param stop
      * @returns {Promise<boolean>}
      */
     removeChild(nodeId, childId, relationName, relationType, stop = false) {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log(' ppppplplplplpl remove child', childId);
-            if (!this.nodes.hasOwnProperty(nodeId)) {
-                return Promise.reject(Error('nodeId unknown.'));
-            }
-            if (!this.nodes.hasOwnProperty(childId) && !stop) {
-                try {
-                    yield this.getChildren(nodeId, []);
+        if (!this.nodes.hasOwnProperty(nodeId)) {
+            return Promise.reject(Error('nodeId unknown.'));
+        }
+        if (!this.nodes.hasOwnProperty(childId) && !stop) {
+            try {
+                return this.getChildren(nodeId, []).then(() => {
                     return this.removeChild(nodeId, childId, relationName, relationType, true);
-                }
-                catch (e) {
-                    console.error(e);
-                }
-            }
-            if (this.nodes.hasOwnProperty(childId)) {
-                for (const callback of this.listenerOnNodeRemove.values()) {
-                    callback(nodeId);
-                }
-                return this.nodes[nodeId].removeChild(this.nodes[childId], relationName, relationType).then(() => {
-                    console.log('remove chhild', this.nodes[childId]);
-                    return true;
                 });
             }
-            return Promise.reject(Error('childId unknown. It might already been removed from the parent node'));
-        });
+            catch (e) {
+                console.error(e);
+            }
+        }
+        if (this.nodes.hasOwnProperty(childId)) {
+            for (const callback of this.listenerOnNodeRemove.values()) {
+                callback(nodeId);
+            }
+            return this.nodes[nodeId].removeChild(this.nodes[childId], relationName, relationType).then(() => {
+                console.log('remove child', this.nodes[childId]);
+                return true;
+            });
+        }
+        return Promise.reject(Error('childId unknown. It might already been removed from the parent node'));
     }
     /**
      * Add a context to the graph
@@ -556,8 +526,7 @@ class GraphManagerService {
         for (const key in this.nodes) {
             if (this.nodes.hasOwnProperty(key)) {
                 const node = this.nodes[key];
-                if (node instanceof spinal_model_graph_1.SpinalContext
-                    && node.getType().get() == type) {
+                if (node instanceof spinal_model_graph_1.SpinalContext && node.getType().get() === type) {
                     res.push(node);
                 }
             }
@@ -573,7 +542,7 @@ class GraphManagerService {
         for (const key in this.nodes) {
             if (this.nodes.hasOwnProperty(key)) {
                 const node = this.nodes[key];
-                if (node.getType().get() == type) {
+                if (node.getType().get() === type) {
                     res.push(node);
                 }
             }
@@ -620,7 +589,7 @@ class GraphManagerService {
      * @param {string} contextId
      * @param {string} relationName
      * @param {number} relationType
-     * @returns {Promise<SpinalNode>}
+     * @returns {Promise<SpinalNode<any>>}
      * @memberof GraphManagerService
      */
     addChildInContext(parentId, childId, contextId, relationName, relationType) {
@@ -648,16 +617,14 @@ class GraphManagerService {
      * @memberof GraphManagerService
      */
     addChild(parentId, childId, relationName, relationType) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!this.nodes.hasOwnProperty(parentId)) {
-                return Promise.resolve(false);
-            }
-            if (!this.nodes.hasOwnProperty(childId)) {
-                return Promise.resolve(false);
-            }
-            yield this.nodes[parentId].addChild(this.nodes[childId], relationName, relationType);
-            return true;
-        });
+        if (!this.nodes.hasOwnProperty(parentId)) {
+            return Promise.resolve(false);
+        }
+        if (!this.nodes.hasOwnProperty(childId)) {
+            return Promise.resolve(false);
+        }
+        return this.nodes[parentId].addChild(this.nodes[childId], relationName, relationType)
+            .then(() => true);
     }
     /**
      *
@@ -682,13 +649,13 @@ class GraphManagerService {
             return Promise.resolve(false);
         }
         return this.nodes[parentId].getChildren(linkRelationName)
-            .then(children => {
+            .then((children) => {
             let res = false;
-            for (let i = 0; i < children.length; i++) {
-                console.log('loris', children[i]);
-                this._addNode(children[i]);
-                if (children[i].info.id.get() === childId)
+            for (const child of children) {
+                this._addNode(child);
+                if (child.info.id.get() === childId) {
                     res = true;
+                }
             }
             return res;
         });
@@ -696,7 +663,7 @@ class GraphManagerService {
     /**
      * add a node to the set of node
      * @private
-     * @param {SpinalNode} node
+     * @param {SpinalNode<any>} node
      * @memberof GraphManagerService
      */
     _addNode(node) {
@@ -756,8 +723,6 @@ class GraphManagerService {
         }
     }
     /**
-     *
-     *
      * @private
      * @param {string} nodeId
      * @param {*} binder
