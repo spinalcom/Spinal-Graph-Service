@@ -55,8 +55,6 @@ const G_ROOT = typeof window === 'undefined' ? global : window;
  */
 type callback = (...args: any[]) => any;
 
-type predicat = (node) => boolean;
-
 /**
  *  @property {Map<string, Map<any, Callback>>} bindedNode
  *    NodeId => Caller => Callback. All nodes that are bind
