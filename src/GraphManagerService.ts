@@ -185,16 +185,16 @@ class GraphManagerService {
    * @return all node that validate the predicate
    */
   findNodes(startId: string, relationNames: string[], predicate: (node) => boolean)
-    : Promise<SpinalNodeRef[]> {
+    : Promise<SpinalNode[]> {
     let node: SpinalNode<any> = this.graph;
     if (this.nodes.hasOwnProperty(startId)) {
       node = this.nodes[startId];
     }
     return node.find(relationNames, predicate).then((found) => {
-      return found.map((n) => {
+      for (const n of found) {
         this._addNode(n);
-        return this.getInfo[n.info.id.get()];
-      });
+      }
+      return found;
     });
   }
 

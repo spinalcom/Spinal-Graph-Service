@@ -82,7 +82,7 @@ declare class GraphManagerService {
      * node if valid
      * @return all node that validate the predicate
      */
-    findNodes(startId: string, relationNames: string[], predicate: (node: any) => boolean): Promise<SpinalNodeRef[]>;
+    findNodes(startId: string, relationNames: string[], predicate: (node: any) => boolean): Promise<SpinalNode[]>;
     generateQRcode(nodeId: string): string;
     /**
      * Return all loaded Nodes

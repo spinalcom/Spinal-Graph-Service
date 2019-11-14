@@ -1,4 +1,4 @@
-[spinal-env-viewer-graph-service](../globals.md) › ["GraphManagerService"](../modules/_graphmanagerservice_.md) › [InfoModel](_graphmanagerservice_.infomodel.md)
+[spinal-env-viewer-graph-service](../README.md) › [Globals](../globals.md) › ["GraphManagerService"](../modules/_graphmanagerservice_.md) › [InfoModel](_graphmanagerservice_.infomodel.md)
 
 # Interface: InfoModel
 
@@ -64,7 +64,7 @@ Name | Type |
 
 • **id**: *string | Str*
 
-*Defined in [GraphManagerService.ts:40](https://github.com/spinalcom/Spinal-Graph-Service/blob/14b94f7/src/GraphManagerService.ts#L40)*
+*Defined in [GraphManagerService.ts:40](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L40)*
 
 ## Methods
 

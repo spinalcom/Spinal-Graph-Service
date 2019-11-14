@@ -1,4 +1,4 @@
-[spinal-env-viewer-graph-service](../globals.md) › ["GraphManagerService"](../modules/_graphmanagerservice_.md) › [SpinalNodeRef](_graphmanagerservice_.spinalnoderef.md)
+[spinal-env-viewer-graph-service](../README.md) › [Globals](../globals.md) › ["GraphManagerService"](../modules/_graphmanagerservice_.md) › [SpinalNodeRef](_graphmanagerservice_.spinalnoderef.md)
 
 # Interface: SpinalNodeRef
 
@@ -67,7 +67,7 @@ Name | Type |
 
 • **childrenIds**: *string[]*
 
-*Defined in [GraphManagerService.ts:31](https://github.com/spinalcom/Spinal-Graph-Service/blob/14b94f7/src/GraphManagerService.ts#L31)*
+*Defined in [GraphManagerService.ts:31](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L31)*
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 • **contextIds**: *string[]*
 
-*Defined in [GraphManagerService.ts:32](https://github.com/spinalcom/Spinal-Graph-Service/blob/14b94f7/src/GraphManagerService.ts#L32)*
+*Defined in [GraphManagerService.ts:32](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L32)*
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 • **element**: *SpinalNodePointer‹Model›*
 
-*Defined in [GraphManagerService.ts:33](https://github.com/spinalcom/Spinal-Graph-Service/blob/14b94f7/src/GraphManagerService.ts#L33)*
+*Defined in [GraphManagerService.ts:33](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L33)*
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 • **hasChildren**: *boolean*
 
-*Defined in [GraphManagerService.ts:34](https://github.com/spinalcom/Spinal-Graph-Service/blob/14b94f7/src/GraphManagerService.ts#L34)*
+*Defined in [GraphManagerService.ts:34](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L34)*
 
 ## Methods
 

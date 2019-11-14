@@ -1,4 +1,4 @@
-[spinal-env-viewer-graph-service](../globals.md) › ["GraphManagerService"](../modules/_graphmanagerservice_.md) › [SpinalNodeObject](_graphmanagerservice_.spinalnodeobject.md)
+[spinal-env-viewer-graph-service](../README.md) › [Globals](../globals.md) › ["GraphManagerService"](../modules/_graphmanagerservice_.md) › [SpinalNodeObject](_graphmanagerservice_.spinalnodeobject.md)
 
 # Interface: SpinalNodeObject
 
@@ -23,7 +23,7 @@
 
 • **element**? : *Model*
 
-*Defined in [GraphManagerService.ts:47](https://github.com/spinalcom/Spinal-Graph-Service/blob/14b94f7/src/GraphManagerService.ts#L47)*
+*Defined in [GraphManagerService.ts:47](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L47)*
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 • **info**: *[InfoModel](_graphmanagerservice_.infomodel.md)*
 
-*Defined in [GraphManagerService.ts:46](https://github.com/spinalcom/Spinal-Graph-Service/blob/14b94f7/src/GraphManagerService.ts#L46)*
+*Defined in [GraphManagerService.ts:46](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L46)*

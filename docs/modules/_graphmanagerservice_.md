@@ -1,4 +1,4 @@
-[spinal-env-viewer-graph-service](../globals.md) › ["GraphManagerService"](_graphmanagerservice_.md)
+[spinal-env-viewer-graph-service](../README.md) › [Globals](../globals.md) › ["GraphManagerService"](_graphmanagerservice_.md)
 
 # External module: "GraphManagerService"
 
@@ -28,7 +28,7 @@
 
 Ƭ **callback**: *function*
 
-*Defined in [GraphManagerService.ts:57](https://github.com/spinalcom/Spinal-Graph-Service/blob/14b94f7/src/GraphManagerService.ts#L57)*
+*Defined in [GraphManagerService.ts:57](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L57)*
 
 **`type`** (node: string | SpinalNodeRef) => any
 
@@ -48,4 +48,4 @@ Name | Type |
 
 • **G_ROOT**: *Window & globalThis | Global* =  typeof window === 'undefined' ? global : window
 
-*Defined in [GraphManagerService.ts:52](https://github.com/spinalcom/Spinal-Graph-Service/blob/14b94f7/src/GraphManagerService.ts#L52)*
+*Defined in [GraphManagerService.ts:52](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L52)*

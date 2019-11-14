@@ -1,4 +1,4 @@
-[spinal-env-viewer-graph-service](globals.md)
+[spinal-env-viewer-graph-service](README.md) › [Globals](globals.md)
 
 # spinal-env-viewer-graph-service
 

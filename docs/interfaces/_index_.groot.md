@@ -1,4 +1,4 @@
-[spinal-env-viewer-graph-service](../globals.md) › ["index"](../modules/_index_.md) › [GRoot](_index_.groot.md)
+[spinal-env-viewer-graph-service](../README.md) › [Globals](../globals.md) › ["index"](../modules/_index_.md) › [GRoot](_index_.groot.md)
 
 # Interface: GRoot
 
@@ -22,7 +22,7 @@
 
 • **spinal**? : *object*
 
-*Defined in [index.ts:27](https://github.com/spinalcom/Spinal-Graph-Service/blob/14b94f7/src/index.ts#L27)*
+*Defined in [index.ts:27](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/index.ts#L27)*
 
 #### Type declaration:
 

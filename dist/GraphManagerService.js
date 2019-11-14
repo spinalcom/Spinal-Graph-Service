@@ -142,10 +142,10 @@ class GraphManagerService {
             node = this.nodes[startId];
         }
         return node.find(relationNames, predicate).then((found) => {
-            return found.map((n) => {
+            for (const n of found) {
                 this._addNode(n);
-                return this.getInfo[n.info.id.get()];
-            });
+            }
+            return found;
         });
     }
     generateQRcode(nodeId) {
