@@ -52,9 +52,9 @@ interface SpinalNodeObject {
 const G_ROOT = typeof window === 'undefined' ? global : window;
 
 /**
- * @type (...args: any[]) => any
+ * @type (node: string | SpinalNodeRef) => any
  */
-type callback = (...args: any[]) => any;
+type callback = (node: string | SpinalNodeRef) => any;
 
 /**
  *  @property {Map<string, Map<any, Callback>>} bindedNode

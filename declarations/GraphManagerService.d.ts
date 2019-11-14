@@ -17,9 +17,9 @@ interface SpinalNodeObject {
     [key: string]: any;
 }
 /**
- * @type (...args: any[]) => any
+ * @type (node: string | SpinalNodeRef) => any
  */
-declare type callback = (...args: any[]) => any;
+declare type callback = (node: string | SpinalNodeRef) => any;
 /**
  *  @property {Map<string, Map<any, Callback>>} bindedNode
  *    NodeId => Caller => Callback. All nodes that are bind
@@ -319,7 +319,7 @@ declare class GraphManagerService {
      * @memberof GraphManagerService
      */
     addChildAndCreateNode(parentId: string, node: SpinalNodeObject, relationName: string, relationType: string): Promise<boolean>;
-    isChild(parentId: string, childId: string, linkRelationName: string[]): Promise<boolean>;
+    isChild(parentId: string, childId: string, linkRelationName: string[]): any;
     /**
      * add a node to the set of node
      * @private

@@ -1,12 +1,12 @@
 {
   "name": "spinal-env-viewer-graph-service",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
     "build": "rm -fr build && tsc",
     "dev": "rm -fr build && tsc --watch & nodemon build",
-    "docs": "jsdoc2md --no-cache --files 'src/**/*.ts' --configure jsdoc2md.json --template 'Markdown Templates/README.hbs' > README.md && doctoc README.md",
+    "docs": "./node_modules/.bin/typedoc --theme markdown --out docs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "types": "./declarations/index.d.ts",
@@ -23,12 +23,13 @@
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.12",
     "@types/q": "^1.5.2",
-    "jsdoc-to-markdown": "^4.0.1",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.8",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "tslint-config-airbnb": "^5.11.1",
+    "typedoc": "^0.15.1",
+    "typedoc-plugin-markdown": "^2.2.11",
     "typescript": "^3.2.2",
     "typescript-eslint-parser": "^21.0.2"
   }
