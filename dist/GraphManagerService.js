@@ -84,7 +84,7 @@ class GraphManagerService {
      * @memberof GraphManagerService
      */
     setGraph(graph) {
-        if (typeof this.graph.getId === 'function' &&
+        if (this.graph && typeof this.graph.getId === 'function' &&
             this.nodes.hasOwnProperty(this.graph.getId().get())) {
             delete this.nodes[this.graph.getId().get()];
         }
