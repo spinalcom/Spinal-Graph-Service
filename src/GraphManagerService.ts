@@ -316,7 +316,7 @@ class GraphManagerService {
       .then((children: SpinalNode<any>[]) => {
         return children.map((n) => {
           this._addNode(n);
-          return this.getInfo[n.info.id.get()];
+          return this.getInfo(n.info.id.get());
         });
       });
   }
@@ -338,7 +338,7 @@ class GraphManagerService {
       .then((children) => {
         return children.map((n) => {
           this._addNode(n);
-          return this.getInfo[n.info.id.get()];
+          return this.getInfo(n.info.id.get());
         });
 
       });
