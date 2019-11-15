@@ -71,6 +71,8 @@ class GraphManagerService {
      */
     setGraphFromForgeFile(forgeFile) {
         console.warn('deprecated use set graph instead');
+        if (forgeFile instanceof spinal_model_graph_1.SpinalNode)
+            return this.setGraph(forgeFile);
         if (!forgeFile.hasOwnProperty('graph')) {
             forgeFile.add_attr({
                 graph: new spinal_model_graph_1.SpinalGraph(),
