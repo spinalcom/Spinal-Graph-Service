@@ -82,7 +82,7 @@ declare class GraphManagerService {
      * node if valid
      * @return all node that validate the predicate
      */
-    findNodes(startId: string, relationNames: string[], predicate: (node: any) => boolean): Promise<SpinalNode[]>;
+    findNodes(startId: string, relationNames: string[], predicate: (node: any) => boolean): Promise<SpinalNode<any>[]>;
     generateQRcode(nodeId: string): string;
     /**
      * Return all loaded Nodes
@@ -319,7 +319,7 @@ declare class GraphManagerService {
      * @memberof GraphManagerService
      */
     addChildAndCreateNode(parentId: string, node: SpinalNodeObject, relationName: string, relationType: string): Promise<boolean>;
-    isChild(parentId: string, childId: string, linkRelationName: string[]): any;
+    isChild(parentId: string, childId: string, linkRelationName: string[]): Promise<boolean>;
     /**
      * add a node to the set of node
      * @private

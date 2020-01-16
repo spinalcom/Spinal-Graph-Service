@@ -111,7 +111,7 @@ class GraphManagerService {
    */
   setGraphFromForgeFile(forgeFile: spinal.Model): Promise<String> {
     console.warn('deprecated use set graph instead');
-    if (forgeFile instanceof SpinalNode) return this.setGraph(forgeFile);
+    if (forgeFile instanceof SpinalNode) return this.setGraph(<any>forgeFile);
     if (!forgeFile.hasOwnProperty('graph')) {
       forgeFile.add_attr({
         graph: new SpinalGraph(),
@@ -186,7 +186,7 @@ class GraphManagerService {
    * @return all node that validate the predicate
    */
   findNodes(startId: string, relationNames: string[], predicate: (node) => boolean)
-    : Promise<SpinalNode[]> {
+    : Promise<SpinalNode<any>[]> {
     let node: SpinalNode<any> = this.graph;
     if (this.nodes.hasOwnProperty(startId)) {
       node = this.nodes[startId];
@@ -500,7 +500,7 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   moveChild(fromId: string, toId: string, childId: string,
-            relationName: string, relationType: string): Promise<boolean> {
+    relationName: string, relationType: string): Promise<boolean> {
     if (!this.nodes.hasOwnProperty(fromId)) {
       return Promise.reject(`fromId: ${fromId} not found`);
     }
@@ -527,11 +527,11 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   moveChildInContext(fromId: string,
-                     toId: string,
-                     childId: string,
-                     contextId: string,
-                     relationName: string,
-                     relationType: string): Promise<boolean> {
+    toId: string,
+    childId: string,
+    contextId: string,
+    relationName: string,
+    relationType: string): Promise<boolean> {
     if (!this.nodes.hasOwnProperty(fromId)) {
       return Promise.reject(`fromId: ${fromId} not found`);
     }
@@ -545,7 +545,7 @@ class GraphManagerService {
     return this.nodes[fromId].removeChild(this.nodes[childId], relationName, relationType)
       .then(() => {
         return this.nodes[toId].addChildInContext(this.nodes[childId], relationName,
-                                                  relationType, this.nodes[contextId]);
+          relationType, this.nodes[contextId]);
       }).then(() => true);
   }
 
@@ -559,7 +559,7 @@ class GraphManagerService {
    * @returns {Promise<boolean>}
    */
   removeChild(nodeId: string, childId: string, relationName: string,
-              relationType: string, stop: boolean = false): Promise<boolean> {
+    relationType: string, stop: boolean = false): Promise<boolean> {
     if (!this.nodes.hasOwnProperty(nodeId)) {
       return Promise.reject(Error('nodeId unknown.'));
     }
@@ -700,7 +700,7 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   addChildInContext(parentId: string, childId: string, contextId: string,
-                    relationName: string, relationType: string): Promise<SpinalNode<any>> {
+    relationName: string, relationType: string): Promise<SpinalNode<any>> {
 
     if (!this.nodes.hasOwnProperty(parentId)) {
       return Promise.reject(Error(`Node parent id ${parentId} not found`));
@@ -752,7 +752,7 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   addChildAndCreateNode(parentId: string, node: SpinalNodeObject,
-                        relationName: string, relationType: string): Promise<boolean> {
+    relationName: string, relationType: string): Promise<boolean> {
     if (!node.hasOwnProperty('info')) {
       return Promise.reject(false);
     }
