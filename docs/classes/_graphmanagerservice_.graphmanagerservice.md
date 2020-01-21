@@ -1,4 +1,4 @@
-[spinal-env-viewer-graph-service](../README.md) › [Globals](../globals.md) › ["GraphManagerService"](../modules/_graphmanagerservice_.md) › [GraphManagerService](_graphmanagerservice_.graphmanagerservice.md)
+[spinal-env-viewer-graph-service - v1.0.13](../README.md) › [Globals](../globals.md) › ["GraphManagerService"](../modules/_graphmanagerservice_.md) › [GraphManagerService](_graphmanagerservice_.graphmanagerservice.md)
 
 # Class: GraphManagerService
 
@@ -44,9 +44,14 @@
 * [addChildInContext](_graphmanagerservice_.graphmanagerservice.md#addchildincontext)
 * [addContext](_graphmanagerservice_.graphmanagerservice.md#addcontext)
 * [bindNode](_graphmanagerservice_.graphmanagerservice.md#bindnode)
+* [browseAnClassifyByType](_graphmanagerservice_.graphmanagerservice.md#browseanclassifybytype)
+* [browseAndClassifyByTypeInContext](_graphmanagerservice_.graphmanagerservice.md#browseandclassifybytypeincontext)
 * [createNode](_graphmanagerservice_.graphmanagerservice.md#createnode)
+* [findInContext](_graphmanagerservice_.graphmanagerservice.md#findincontext)
+* [findInContextByType](_graphmanagerservice_.graphmanagerservice.md#findincontextbytype)
 * [findNode](_graphmanagerservice_.graphmanagerservice.md#findnode)
 * [findNodes](_graphmanagerservice_.graphmanagerservice.md#findnodes)
+* [findNodesByType](_graphmanagerservice_.graphmanagerservice.md#findnodesbytype)
 * [generateQRcode](_graphmanagerservice_.graphmanagerservice.md#generateqrcode)
 * [getChildren](_graphmanagerservice_.graphmanagerservice.md#getchildren)
 * [getChildrenIds](_graphmanagerservice_.graphmanagerservice.md#getchildrenids)
@@ -60,6 +65,7 @@
 * [getNodeByType](_graphmanagerservice_.graphmanagerservice.md#getnodebytype)
 * [getNodes](_graphmanagerservice_.graphmanagerservice.md#getnodes)
 * [getNodesInfo](_graphmanagerservice_.graphmanagerservice.md#getnodesinfo)
+* [getParents](_graphmanagerservice_.graphmanagerservice.md#getparents)
 * [getRealNode](_graphmanagerservice_.graphmanagerservice.md#getrealnode)
 * [getRelationNames](_graphmanagerservice_.graphmanagerservice.md#getrelationnames)
 * [hasChildInContext](_graphmanagerservice_.graphmanagerservice.md#haschildincontext)
@@ -84,7 +90,7 @@
 
 \+ **new GraphManagerService**(`viewerEnv?`: number): *[GraphManagerService](_graphmanagerservice_.graphmanagerservice.md)*
 
-*Defined in [GraphManagerService.ts:77](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L77)*
+*Defined in [src/GraphManagerService.ts:84](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L84)*
 
 **Parameters:**
 
@@ -100,7 +106,7 @@ Name | Type | Description |
 
 • **bindedNode**: *Map‹string, Map‹any, [callback](../modules/_graphmanagerservice_.md#callback)››*
 
-*Defined in [GraphManagerService.ts:69](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L69)*
+*Defined in [src/GraphManagerService.ts:76](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L76)*
 
 ___
 
@@ -108,7 +114,7 @@ ___
 
 • **binders**: *Map‹String, BindProcess›*
 
-*Defined in [GraphManagerService.ts:70](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L70)*
+*Defined in [src/GraphManagerService.ts:77](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L77)*
 
 ___
 
@@ -116,7 +122,7 @@ ___
 
 • **graph**: *SpinalGraph‹any›*
 
-*Defined in [GraphManagerService.ts:76](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L76)*
+*Defined in [src/GraphManagerService.ts:83](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L83)*
 
 ___
 
@@ -124,7 +130,7 @@ ___
 
 • **initProm**: *q.Deferred‹SpinalGraph‹any››*
 
-*Defined in [GraphManagerService.ts:77](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L77)*
+*Defined in [src/GraphManagerService.ts:84](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L84)*
 
 ___
 
@@ -132,7 +138,7 @@ ___
 
 • **initialized**: *Promise‹boolean›*
 
-*Defined in [GraphManagerService.ts:73](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L73)*
+*Defined in [src/GraphManagerService.ts:80](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L80)*
 
 ___
 
@@ -140,7 +146,7 @@ ___
 
 • **listenerOnNodeRemove**: *Map‹any, [callback](../modules/_graphmanagerservice_.md#callback)›*
 
-*Defined in [GraphManagerService.ts:72](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L72)*
+*Defined in [src/GraphManagerService.ts:79](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L79)*
 
 ___
 
@@ -148,7 +154,7 @@ ___
 
 • **listenersOnNodeAdded**: *Map‹any, [callback](../modules/_graphmanagerservice_.md#callback)›*
 
-*Defined in [GraphManagerService.ts:71](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L71)*
+*Defined in [src/GraphManagerService.ts:78](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L78)*
 
 ___
 
@@ -156,7 +162,7 @@ ___
 
 • **nodes**: *object*
 
-*Defined in [GraphManagerService.ts:74](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L74)*
+*Defined in [src/GraphManagerService.ts:81](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L81)*
 
 #### Type declaration:
 
@@ -168,7 +174,7 @@ ___
 
 • **nodesInfo**: *object*
 
-*Defined in [GraphManagerService.ts:75](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L75)*
+*Defined in [src/GraphManagerService.ts:82](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L82)*
 
 #### Type declaration:
 
@@ -180,7 +186,7 @@ ___
 
 ▸ **_addNode**(`node`: SpinalNode‹any›): *void*
 
-*Defined in [GraphManagerService.ts:786](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L786)*
+*Defined in [src/GraphManagerService.ts:931](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L931)*
 
 add a node to the set of node
 
@@ -200,7 +206,7 @@ ___
 
 ▸ **_areAllChildrenLoaded**(`nodeId`: string): *boolean*
 
-*Defined in [GraphManagerService.ts:805](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L805)*
+*Defined in [src/GraphManagerService.ts:950](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L950)*
 
 Check if all children from a node are loaded
 
@@ -222,7 +228,7 @@ ___
 
 ▸ **_bindFunc**(`nodeId`: string): *void*
 
-*Defined in [GraphManagerService.ts:842](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L842)*
+*Defined in [src/GraphManagerService.ts:987](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L987)*
 
 call the callback method of all the binder of the node
 
@@ -242,7 +248,7 @@ ___
 
 ▸ **_bindNode**(`nodeId`: string): *void*
 
-*Defined in [GraphManagerService.ts:828](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L828)*
+*Defined in [src/GraphManagerService.ts:973](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L973)*
 
 Bind the node if needed and save the callback function
 
@@ -262,7 +268,7 @@ ___
 
 ▸ **_unBind**(`nodeId`: string, `binder`: any): *boolean*
 
-*Defined in [GraphManagerService.ts:859](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L859)*
+*Defined in [src/GraphManagerService.ts:1004](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L1004)*
 
 **`memberof`** GraphManagerService
 
@@ -281,7 +287,7 @@ ___
 
 ▸ **addChild**(`parentId`: string, `childId`: string, `relationName`: string, `relationType`: string): *Promise‹boolean›*
 
-*Defined in [GraphManagerService.ts:730](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L730)*
+*Defined in [src/GraphManagerService.ts:875](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L875)*
 
 Add the node corresponding to childId as child to the node corresponding to the parentId
 
@@ -306,7 +312,7 @@ ___
 
 ▸ **addChildAndCreateNode**(`parentId`: string, `node`: [SpinalNodeObject](../interfaces/_graphmanagerservice_.spinalnodeobject.md), `relationName`: string, `relationType`: string): *Promise‹boolean›*
 
-*Defined in [GraphManagerService.ts:753](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L753)*
+*Defined in [src/GraphManagerService.ts:898](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L898)*
 
 Create a node and add it as child to the parentId.
 
@@ -332,7 +338,7 @@ ___
 
 ▸ **addChildInContext**(`parentId`: string, `childId`: string, `contextId`: string, `relationName`: string, `relationType`: string): *Promise‹SpinalNode‹any››*
 
-*Defined in [GraphManagerService.ts:701](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L701)*
+*Defined in [src/GraphManagerService.ts:846](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L846)*
 
 **`memberof`** GraphManagerService
 
@@ -354,7 +360,7 @@ ___
 
 ▸ **addContext**(`name`: string, `type?`: string, `elt?`: Model): *Promise‹SpinalContext‹any››*
 
-*Defined in [GraphManagerService.ts:599](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L599)*
+*Defined in [src/GraphManagerService.ts:744](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L744)*
 
 Add a context to the graph
 
@@ -374,9 +380,9 @@ ___
 
 ###  bindNode
 
-▸ **bindNode**(`nodeId`: string, `caller`: any, `callback`: [callback](undefined)): *Function*
+▸ **bindNode**(`nodeId`: string, `caller`: any, `callback`: callback): *Function*
 
-*Defined in [GraphManagerService.ts:473](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L473)*
+*Defined in [src/GraphManagerService.ts:618](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L618)*
 
 Bind a node and return a function to unbind the same node
 
@@ -388,7 +394,7 @@ Name | Type | Description |
 ------ | ------ | ------ |
 `nodeId` | string | - |
 `caller` | any | usually 'this' |
-`callback` | [callback](undefined) | to be call every change of the node |
+`callback` | callback | to be call every change of the node |
 
 **Returns:** *Function*
 
@@ -398,11 +404,65 @@ undefined and caller is an object and callback is a function otherwise
 
 ___
 
+###  browseAnClassifyByType
+
+▸ **browseAnClassifyByType**(`startId`: string, `relationNames`: string[]): *Promise‹any›*
+
+*Defined in [src/GraphManagerService.ts:235](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L235)*
+
+Recursively finds all the children nodes and classify them by type.
+
+**`throws`** {TypeError} If the relationNames are neither an array, a string or omitted
+
+**`throws`** {TypeError} If an element of relationNames is not a string
+
+**`throws`** {TypeError} If the predicate is not a function
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`startId` | string | starting point of the search if note found the search will start at the beginning of the graph |
+`relationNames` | string[] | Array containing the relation names to follow |
+
+**Returns:** *Promise‹any›*
+
+>}
+
+___
+
+###  browseAndClassifyByTypeInContext
+
+▸ **browseAndClassifyByTypeInContext**(`startId`: string, `contextId`: string): *Promise‹any›*
+
+*Defined in [src/GraphManagerService.ts:318](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L318)*
+
+Recursively finds all the children nodes in the context and classify them by type.
+
+**`throws`** {TypeError} If the relationNames are neither an array, a string or omitted
+
+**`throws`** {TypeError} If an element of relationNames is not a string
+
+**`throws`** {TypeError} If the predicate is not a function
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`startId` | string | starting point of the search if note found the search will start at the beginning of the graph |
+`contextId` | string | Context to use for the search |
+
+**Returns:** *Promise‹any›*
+
+>}
+
+___
+
 ###  createNode
 
 ▸ **createNode**(`info`: object, `element`: Model): *string*
 
-*Defined in [GraphManagerService.ts:680](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L680)*
+*Defined in [src/GraphManagerService.ts:825](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L825)*
 
 Create a new node.
 The node newly created is volatile
@@ -423,11 +483,63 @@ return the child identifier
 
 ___
 
+###  findInContext
+
+▸ **findInContext**(`startId`: string, `contextId`: string, `predicate`: [SpinalNodeFindPredicateFunc](../modules/_graphmanagerservice_.md#spinalnodefindpredicatefunc)): *Promise‹any›*
+
+*Defined in [src/GraphManagerService.ts:271](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L271)*
+
+Recursively finds all the children nodes in the context for which the predicate is true..
+
+**`throws`** {TypeError} If context is not a SpinalContext
+
+**`throws`** {TypeError} If the predicate is not a function
+
+**Parameters:**
+
+Name | Type | Default | Description |
+------ | ------ | ------ | ------ |
+`startId` | string | - | starting point of the search if note found the search will start at the beginning of the graph |
+`contextId` | string | - | Context to use for the search |
+`predicate` | [SpinalNodeFindPredicateFunc](../modules/_graphmanagerservice_.md#spinalnodefindpredicatefunc) |  DEFAULT_PREDICATE | Function returning true if the node needs to be returned |
+
+**Returns:** *Promise‹any›*
+
+The nodes that were found
+
+___
+
+###  findInContextByType
+
+▸ **findInContextByType**(`startId`: string, `contextId`: string, `nodeType`: string): *Promise‹any›*
+
+*Defined in [src/GraphManagerService.ts:301](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L301)*
+
+Recursively finds all the children nodes in the context for which the predicate is true..
+
+**`throws`** {TypeError} If context is not a SpinalContext
+
+**`throws`** {TypeError} If the predicate is not a function
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`startId` | string | starting point of the search if note found the search will start at the beginning of the graph |
+`contextId` | string | Context to use for the search |
+`nodeType` | string | type of node to search |
+
+**Returns:** *Promise‹any›*
+
+The nodes that were found
+
+___
+
 ###  findNode
 
 ▸ **findNode**(`id`: string, `stop`: boolean): *Promise‹[SpinalNodeRef](../interfaces/_graphmanagerservice_.spinalnoderef.md)›*
 
-*Defined in [GraphManagerService.ts:155](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L155)*
+*Defined in [src/GraphManagerService.ts:163](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L163)*
 
 Find a node with it id
 
@@ -444,9 +556,9 @@ ___
 
 ###  findNodes
 
-▸ **findNodes**(`startId`: string, `relationNames`: string[], `predicate`: function): *Promise‹SpinalNode[]›*
+▸ **findNodes**(`startId`: string, `relationNames`: string[], `predicate`: function): *Promise‹SpinalNode‹any›[]›*
 
-*Defined in [GraphManagerService.ts:187](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L187)*
+*Defined in [src/GraphManagerService.ts:195](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L195)*
 
 Find all the nodes that validate the predicate
 
@@ -475,9 +587,33 @@ Name | Type |
 ------ | ------ |
 `node` | any |
 
-**Returns:** *Promise‹SpinalNode[]›*
+**Returns:** *Promise‹SpinalNode‹any›[]›*
 
 all node that validate the predicate
+
+___
+
+###  findNodesByType
+
+▸ **findNodesByType**(`startId`: string, `relationNames`: string[], `nodeType`: string): *Promise‹any›*
+
+*Defined in [src/GraphManagerService.ts:218](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L218)*
+
+Find all nodes with the type "nodeType"
+ @param startId {String} starting point of the search if note found the
+search will start at the beginning of the graph
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`startId` | string | - |
+`relationNames` | string[] | the relations that will be follow during the search if empty follow all relations |
+`nodeType` | string | type of node to search |
+
+**Returns:** *Promise‹any›*
+
+all nodes with the type "nodeType"
 
 ___
 
@@ -485,7 +621,7 @@ ___
 
 ▸ **generateQRcode**(`nodeId`: string): *string*
 
-*Defined in [GraphManagerService.ts:201](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L201)*
+*Defined in [src/GraphManagerService.ts:346](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L346)*
 
 **Parameters:**
 
@@ -501,7 +637,7 @@ ___
 
 ▸ **getChildren**(`id`: string, `relationNames`: string[]): *Promise‹[SpinalNodeRef](../interfaces/_graphmanagerservice_.spinalnoderef.md)[]›*
 
-*Defined in [GraphManagerService.ts:302](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L302)*
+*Defined in [src/GraphManagerService.ts:447](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L447)*
 
 Return all children of a node
 
@@ -522,7 +658,7 @@ ___
 
 ▸ **getChildrenIds**(`nodeId`: string): *string[]*
 
-*Defined in [GraphManagerService.ts:394](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L394)*
+*Defined in [src/GraphManagerService.ts:539](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L539)*
 
 **`memberof`** GraphManagerService
 
@@ -540,7 +676,7 @@ ___
 
 ▸ **getChildrenInContext**(`parentId`: string, `contextId`: string): *Promise‹[SpinalNodeRef](../interfaces/_graphmanagerservice_.spinalnoderef.md)[]›*
 
-*Defined in [GraphManagerService.ts:330](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L330)*
+*Defined in [src/GraphManagerService.ts:475](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L475)*
 
 Return the children of the node that are registered in the context
 
@@ -563,7 +699,7 @@ ___
 
 ▸ **getContext**(`name`: string): *SpinalContext‹any›*
 
-*Defined in [GraphManagerService.ts:611](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L611)*
+*Defined in [src/GraphManagerService.ts:756](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L756)*
 
 **`memberof`** GraphManagerService
 
@@ -581,7 +717,7 @@ ___
 
 ▸ **getContextWithType**(`type`: string): *any[]*
 
-*Defined in [GraphManagerService.ts:626](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L626)*
+*Defined in [src/GraphManagerService.ts:771](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L771)*
 
 Return all context with type
 
@@ -599,7 +735,7 @@ ___
 
 ▸ **getGraph**(): *SpinalGraph‹any›*
 
-*Defined in [GraphManagerService.ts:262](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L262)*
+*Defined in [src/GraphManagerService.ts:407](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L407)*
 
 return the current graph
 
@@ -611,7 +747,7 @@ ___
 
 ▸ **getInfo**(`nodeId`: string): *[SpinalNodeRef](../interfaces/_graphmanagerservice_.spinalnoderef.md)*
 
-*Defined in [GraphManagerService.ts:353](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L353)*
+*Defined in [src/GraphManagerService.ts:498](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L498)*
 
 Return the node info aggregated with its childrenIds, contextIds and element
 
@@ -631,7 +767,7 @@ ___
 
 ▸ **getNode**(`id`: string): *[SpinalNodeRef](../interfaces/_graphmanagerservice_.spinalnoderef.md)*
 
-*Defined in [GraphManagerService.ts:234](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L234)*
+*Defined in [src/GraphManagerService.ts:379](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L379)*
 
 Return the information about the node with the given id
 
@@ -649,7 +785,7 @@ ___
 
 ▸ **getNodeAsync**(`id`: string): *Promise‹[SpinalNodeRef](../interfaces/_graphmanagerservice_.spinalnoderef.md)›*
 
-*Defined in [GraphManagerService.ts:247](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L247)*
+*Defined in [src/GraphManagerService.ts:392](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L392)*
 
 Return the information about the node with the given id
 
@@ -667,7 +803,7 @@ ___
 
 ▸ **getNodeByType**(`type`: string): *any[]*
 
-*Defined in [GraphManagerService.ts:643](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L643)*
+*Defined in [src/GraphManagerService.ts:788](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L788)*
 
 Retr
 
@@ -685,7 +821,7 @@ ___
 
 ▸ **getNodes**(): *object*
 
-*Defined in [GraphManagerService.ts:215](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L215)*
+*Defined in [src/GraphManagerService.ts:360](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L360)*
 
 Return all loaded Nodes
 
@@ -701,7 +837,7 @@ ___
 
 ▸ **getNodesInfo**(): *object*
 
-*Defined in [GraphManagerService.ts:225](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L225)*
+*Defined in [src/GraphManagerService.ts:370](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L370)*
 
 Return all loaded Nodes
 
@@ -713,11 +849,30 @@ Return all loaded Nodes
 
 ___
 
+###  getParents
+
+▸ **getParents**(`nodeId`: string, `relationNames`: string | string[]): *Promise‹any›*
+
+*Defined in [src/GraphManagerService.ts:1044](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L1044)*
+
+getParents
+
+**Parameters:**
+
+Name | Type |
+------ | ------ |
+`nodeId` | string |
+`relationNames` | string &#124; string[] |
+
+**Returns:** *Promise‹any›*
+
+___
+
 ###  getRealNode
 
 ▸ **getRealNode**(`id`: string): *SpinalNode‹any›*
 
-*Defined in [GraphManagerService.ts:272](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L272)*
+*Defined in [src/GraphManagerService.ts:417](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L417)*
 
 Return the node with the given id
 
@@ -737,7 +892,7 @@ ___
 
 ▸ **getRelationNames**(`id`: string): *string[]*
 
-*Defined in [GraphManagerService.ts:285](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L285)*
+*Defined in [src/GraphManagerService.ts:430](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L430)*
 
 Return all the relation names of the node coresponding to id
 
@@ -757,7 +912,7 @@ ___
 
 ▸ **hasChildInContext**(`nodeId`: string, `contextId`: string): *boolean*
 
-*Defined in [GraphManagerService.ts:876](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L876)*
+*Defined in [src/GraphManagerService.ts:1021](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L1021)*
 
 **Parameters:**
 
@@ -772,9 +927,9 @@ ___
 
 ###  isChild
 
-▸ **isChild**(`parentId`: string, `childId`: string, `linkRelationName`: string[]): *any*
+▸ **isChild**(`parentId`: string, `childId`: string, `linkRelationName`: string[]): *Promise‹boolean›*
 
-*Defined in [GraphManagerService.ts:763](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L763)*
+*Defined in [src/GraphManagerService.ts:908](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L908)*
 
 **Parameters:**
 
@@ -784,15 +939,15 @@ Name | Type |
 `childId` | string |
 `linkRelationName` | string[] |
 
-**Returns:** *any*
+**Returns:** *Promise‹boolean›*
 
 ___
 
 ###  listenOnNodeAdded
 
-▸ **listenOnNodeAdded**(`caller`: any, `callback`: [callback](undefined)): *boolean*
+▸ **listenOnNodeAdded**(`caller`: any, `callback`: callback): *boolean*
 
-*Defined in [GraphManagerService.ts:406](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L406)*
+*Defined in [src/GraphManagerService.ts:551](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L551)*
 
 **`memberof`** GraphManagerService
 
@@ -801,7 +956,7 @@ ___
 Name | Type |
 ------ | ------ |
 `caller` | any |
-`callback` | [callback](undefined) |
+`callback` | callback |
 
 **Returns:** *boolean*
 
@@ -809,9 +964,9 @@ ___
 
 ###  listenOnNodeRemove
 
-▸ **listenOnNodeRemove**(`caller`: any, `callback`: [callback](undefined)): *boolean*
+▸ **listenOnNodeRemove**(`caller`: any, `callback`: callback): *boolean*
 
-*Defined in [GraphManagerService.ts:417](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L417)*
+*Defined in [src/GraphManagerService.ts:562](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L562)*
 
 **`memberof`** GraphManagerService
 
@@ -820,7 +975,7 @@ ___
 Name | Type |
 ------ | ------ |
 `caller` | any |
-`callback` | [callback](undefined) |
+`callback` | callback |
 
 **Returns:** *boolean*
 
@@ -830,7 +985,7 @@ ___
 
 ▸ **modifyNode**(`nodeId`: string, `info`: [SpinalNodeRef](../interfaces/_graphmanagerservice_.spinalnoderef.md)): *boolean*
 
-*Defined in [GraphManagerService.ts:446](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L446)*
+*Defined in [src/GraphManagerService.ts:591](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L591)*
 
 **`memberof`** GraphManagerService
 
@@ -851,7 +1006,7 @@ ___
 
 ▸ **moveChild**(`fromId`: string, `toId`: string, `childId`: string, `relationName`: string, `relationType`: string): *Promise‹boolean›*
 
-*Defined in [GraphManagerService.ts:501](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L501)*
+*Defined in [src/GraphManagerService.ts:646](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L646)*
 
 **`memberof`** GraphManagerService
 
@@ -873,7 +1028,7 @@ ___
 
 ▸ **moveChildInContext**(`fromId`: string, `toId`: string, `childId`: string, `contextId`: string, `relationName`: string, `relationType`: string): *Promise‹boolean›*
 
-*Defined in [GraphManagerService.ts:528](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L528)*
+*Defined in [src/GraphManagerService.ts:673](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L673)*
 
 **`memberof`** GraphManagerService
 
@@ -896,7 +1051,7 @@ ___
 
 ▸ **removeChild**(`nodeId`: string, `childId`: string, `relationName`: string, `relationType`: string, `stop`: boolean): *Promise‹boolean›*
 
-*Defined in [GraphManagerService.ts:560](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L560)*
+*Defined in [src/GraphManagerService.ts:705](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L705)*
 
 Remove the child corresponding to childId from the node corresponding to parentId.
 
@@ -918,7 +1073,7 @@ ___
 
 ▸ **removeFromGraph**(`id`: string): *Promise‹void›*
 
-*Defined in [GraphManagerService.ts:662](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L662)*
+*Defined in [src/GraphManagerService.ts:807](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L807)*
 
 Remove the node referenced by id from th graph.
 
@@ -938,7 +1093,7 @@ ___
 
 ▸ **setGraph**(`graph`: SpinalGraph‹any›): *Promise‹String›*
 
-*Defined in [GraphManagerService.ts:127](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L127)*
+*Defined in [src/GraphManagerService.ts:135](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L135)*
 
 **`memberof`** GraphManagerService
 
@@ -958,7 +1113,7 @@ ___
 
 ▸ **setGraphFromForgeFile**(`forgeFile`: Model): *Promise‹String›*
 
-*Defined in [GraphManagerService.ts:112](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L112)*
+*Defined in [src/GraphManagerService.ts:119](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L119)*
 
 Change the current graph with the one of the forgeFile if there is one create one if note
 
@@ -978,7 +1133,7 @@ ___
 
 ▸ **setInfo**(`nodeId`: string): *void*
 
-*Defined in [GraphManagerService.ts:378](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L378)*
+*Defined in [src/GraphManagerService.ts:523](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L523)*
 
 Return the node info aggregated with its childrenIds, contextIds and element
 
@@ -998,7 +1153,7 @@ ___
 
 ▸ **stopListeningOnNodeAdded**(`caller`: any): *boolean*
 
-*Defined in [GraphManagerService.ts:427](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L427)*
+*Defined in [src/GraphManagerService.ts:572](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L572)*
 
 **`memberof`** GraphManagerService
 
@@ -1016,7 +1171,7 @@ ___
 
 ▸ **stopListeningOnNodeRemove**(`caller`: any): *boolean*
 
-*Defined in [GraphManagerService.ts:436](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L436)*
+*Defined in [src/GraphManagerService.ts:581](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L581)*
 
 **`memberof`** GraphManagerService
 
@@ -1034,7 +1189,7 @@ ___
 
 ▸ **waitForInitialization**(): *q.Promise‹SpinalGraph‹any››*
 
-*Defined in [GraphManagerService.ts:146](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L146)*
+*Defined in [src/GraphManagerService.ts:154](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L154)*
 
 **`memberof`** GraphManagerService
 

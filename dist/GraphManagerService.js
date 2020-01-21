@@ -23,10 +23,20 @@
  *  <http://resources.spinalcom.com/licenses.pdf>.
  */
 // tslint:disable:function-name
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const spinal_model_graph_1 = require("spinal-model-graph");
 const qrcode = require("qrcode-generator");
 const q = require("q");
+const DEFAULT_PREDICATE = () => true;
 const G_ROOT = typeof window === 'undefined' ? global : window;
 /**
  *  @property {Map<string, Map<any, Callback>>} bindedNode
@@ -148,6 +158,118 @@ class GraphManagerService {
                 this._addNode(n);
             }
             return found;
+        });
+    }
+    /**
+     * Find all nodes with the type "nodeType"
+     *  @param startId {String} starting point of the search if note found the
+     * search will start at the beginning of the graph
+     * @param relationNames {String[]} the relations that will be follow
+     * during the search if empty follow all relations
+     * @param nodeType type of node to search
+     * @return all nodes with the type "nodeType"
+     */
+    findNodesByType(startId, relationNames, nodeType) {
+        return this.findNodes(startId, relationNames, (node) => {
+            return node.getType().get() === nodeType;
+        });
+    }
+    /**
+   * Recursively finds all the children nodes and classify them by type.
+   * @param {String} startId  starting point of the search if note found the
+   * search will start at the beginning of the graph
+   * @param {string|string[]} relationNames Array containing the relation names to follow
+   * @returns {Object<{types : string[], data : Object<string : SpinalNode[]>}>}
+   * @throws {TypeError} If the relationNames are neither an array, a string or omitted
+   * @throws {TypeError} If an element of relationNames is not a string
+   * @throws {TypeError} If the predicate is not a function
+   */
+    browseAnClassifyByType(startId, relationNames) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let dataStructure = {
+                types: [],
+                data: {}
+            };
+            yield this.findNodes(startId, relationNames, (node) => {
+                let type = node.getType().get();
+                if (dataStructure.types.indexOf(type) === -1) {
+                    dataStructure.types.push(type);
+                }
+                if (typeof dataStructure.data[type] === "undefined") {
+                    dataStructure.data[type] = [];
+                }
+                dataStructure.data[type].push(node.info);
+                return false;
+            });
+            return dataStructure;
+        });
+    }
+    /**
+     * Recursively finds all the children nodes in the context for which the predicate is true..
+     * @param {string} startId starting point of the search if note found the
+   * search will start at the beginning of the graph
+     * @param {string} contextId Context to use for the search
+     * @param {findPredicate} predicate Function returning true if the node needs to be returned
+     * @returns {Promise<Array<SpinalNode>>} The nodes that were found
+     * @throws {TypeError} If context is not a SpinalContext
+     * @throws {TypeError} If the predicate is not a function
+     */
+    findInContext(startId, contextId, predicate = DEFAULT_PREDICATE) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let contextNode = this.getRealNode(contextId);
+            let startNode = this.getRealNode(startId);
+            if (contextNode && startNode) {
+                return startNode.findInContext(contextNode, predicate).then(found => {
+                    if (found) {
+                        return found.map(el => el.info);
+                    }
+                });
+            }
+        });
+    }
+    /**
+   * Recursively finds all the children nodes in the context for which the predicate is true..
+   * @param {string} startId starting point of the search if note found the
+  * search will start at the beginning of the graph
+   * @param {string} contextId Context to use for the search
+   * @param nodeType type of node to search
+   * @returns {Promise<Array<SpinalNode>>} The nodes that were found
+   * @throws {TypeError} If context is not a SpinalContext
+   * @throws {TypeError} If the predicate is not a function
+   */
+    findInContextByType(startId, contextId, nodeType) {
+        return this.findInContext(startId, contextId, (node) => {
+            return node.getType().get() === nodeType;
+        });
+    }
+    /**
+   * Recursively finds all the children nodes in the context and classify them by type.
+   * @param {string} startId starting point of the search if note found the
+  * search will start at the beginning of the graph
+   * @param {string} contextId Context to use for the search
+   * @returns {Object<{types : string[], data : Object<string : any[]>}>}
+   * @throws {TypeError} If the relationNames are neither an array, a string or omitted
+   * @throws {TypeError} If an element of relationNames is not a string
+   * @throws {TypeError} If the predicate is not a function
+   */
+    browseAndClassifyByTypeInContext(startId, contextId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let dataStructure = {
+                types: [],
+                data: {}
+            };
+            yield this.findInContext(startId, contextId, (node) => {
+                let type = node.getType().get();
+                if (dataStructure.types.indexOf(type) === -1) {
+                    dataStructure.types.push(type);
+                }
+                if (typeof dataStructure.data[type] === "undefined") {
+                    dataStructure.data[type] = [];
+                }
+                dataStructure.data[type].push(node.info);
+                return false;
+            });
+            return dataStructure;
         });
     }
     generateQRcode(nodeId) {
@@ -758,6 +880,12 @@ class GraphManagerService {
             }
         }
         return false;
+    }
+    /**
+     * getParents
+     */
+    getParents(nodeId, relationNames) {
+        return Promise.resolve([]);
     }
 }
 exports.GraphManagerService = GraphManagerService;

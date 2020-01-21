@@ -16,6 +16,7 @@ interface SpinalNodeObject {
     element?: spinal.Model;
     [key: string]: any;
 }
+declare type SpinalNodeFindPredicateFunc = (node: SpinalNode<any>) => boolean;
 /**
  * @type (node: string | SpinalNodeRef) => any
  */
@@ -83,6 +84,60 @@ declare class GraphManagerService {
      * @return all node that validate the predicate
      */
     findNodes(startId: string, relationNames: string[], predicate: (node: any) => boolean): Promise<SpinalNode<any>[]>;
+    /**
+     * Find all nodes with the type "nodeType"
+     *  @param startId {String} starting point of the search if note found the
+     * search will start at the beginning of the graph
+     * @param relationNames {String[]} the relations that will be follow
+     * during the search if empty follow all relations
+     * @param nodeType type of node to search
+     * @return all nodes with the type "nodeType"
+     */
+    findNodesByType(startId: string, relationNames: string[], nodeType: string): Promise<any>;
+    /**
+   * Recursively finds all the children nodes and classify them by type.
+   * @param {String} startId  starting point of the search if note found the
+   * search will start at the beginning of the graph
+   * @param {string|string[]} relationNames Array containing the relation names to follow
+   * @returns {Object<{types : string[], data : Object<string : SpinalNode[]>}>}
+   * @throws {TypeError} If the relationNames are neither an array, a string or omitted
+   * @throws {TypeError} If an element of relationNames is not a string
+   * @throws {TypeError} If the predicate is not a function
+   */
+    browseAnClassifyByType(startId: string, relationNames: string[]): Promise<any>;
+    /**
+     * Recursively finds all the children nodes in the context for which the predicate is true..
+     * @param {string} startId starting point of the search if note found the
+   * search will start at the beginning of the graph
+     * @param {string} contextId Context to use for the search
+     * @param {findPredicate} predicate Function returning true if the node needs to be returned
+     * @returns {Promise<Array<SpinalNode>>} The nodes that were found
+     * @throws {TypeError} If context is not a SpinalContext
+     * @throws {TypeError} If the predicate is not a function
+     */
+    findInContext(startId: string, contextId: string, predicate?: SpinalNodeFindPredicateFunc): Promise<any>;
+    /**
+   * Recursively finds all the children nodes in the context for which the predicate is true..
+   * @param {string} startId starting point of the search if note found the
+  * search will start at the beginning of the graph
+   * @param {string} contextId Context to use for the search
+   * @param nodeType type of node to search
+   * @returns {Promise<Array<SpinalNode>>} The nodes that were found
+   * @throws {TypeError} If context is not a SpinalContext
+   * @throws {TypeError} If the predicate is not a function
+   */
+    findInContextByType(startId: string, contextId: string, nodeType: string): Promise<any>;
+    /**
+   * Recursively finds all the children nodes in the context and classify them by type.
+   * @param {string} startId starting point of the search if note found the
+  * search will start at the beginning of the graph
+   * @param {string} contextId Context to use for the search
+   * @returns {Object<{types : string[], data : Object<string : any[]>}>}
+   * @throws {TypeError} If the relationNames are neither an array, a string or omitted
+   * @throws {TypeError} If an element of relationNames is not a string
+   * @throws {TypeError} If the predicate is not a function
+   */
+    browseAndClassifyByTypeInContext(startId: string, contextId: string): Promise<any>;
     generateQRcode(nodeId: string): string;
     /**
      * Return all loaded Nodes
@@ -359,6 +414,10 @@ declare class GraphManagerService {
      */
     private _unBind;
     hasChildInContext(nodeId: string, contextId: string): boolean;
+    /**
+     * getParents
+     */
+    getParents(nodeId: string, relationNames: string | string[]): Promise<any>;
 }
 export default GraphManagerService;
 export { GraphManagerService, SpinalNodeRef, InfoModel, SpinalNodeObject };

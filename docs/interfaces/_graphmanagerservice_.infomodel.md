@@ -1,4 +1,4 @@
-[spinal-env-viewer-graph-service](../README.md) › [Globals](../globals.md) › ["GraphManagerService"](../modules/_graphmanagerservice_.md) › [InfoModel](_graphmanagerservice_.infomodel.md)
+[spinal-env-viewer-graph-service - v1.0.13](../README.md) › [Globals](../globals.md) › ["GraphManagerService"](../modules/_graphmanagerservice_.md) › [InfoModel](_graphmanagerservice_.infomodel.md)
 
 # Interface: InfoModel
 
@@ -44,7 +44,7 @@
 
 *Inherited from void*
 
-Defined in /home/laurent/Desktop/spinalcom/modules/Spinal-Graph-Service/node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:118
+Defined in node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:118
 
 Creates an instance of Model.
 
@@ -64,7 +64,7 @@ Name | Type |
 
 • **id**: *string | Str*
 
-*Defined in [GraphManagerService.ts:40](https://github.com/spinalcom/Spinal-Graph-Service/blob/e4d46ae/src/GraphManagerService.ts#L40)*
+*Defined in [src/GraphManagerService.ts:40](https://github.com/spinalcom/Spinal-Graph-Service/blob/2aed2ff/src/GraphManagerService.ts#L40)*
 
 ## Methods
 
@@ -74,7 +74,7 @@ Name | Type |
 
 *Inherited from void*
 
-Defined in /home/laurent/Desktop/spinalcom/modules/Spinal-Graph-Service/node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:157
+Defined in node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:157
 
 add attribute
 
@@ -92,7 +92,7 @@ Name | Type | Description |
 
 *Inherited from void*
 
-Defined in /home/laurent/Desktop/spinalcom/modules/Spinal-Graph-Service/node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:167
+Defined in node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:167
 
 add attribute
 
@@ -116,7 +116,7 @@ ___
 
 *Inherited from void*
 
-Defined in /home/laurent/Desktop/spinalcom/modules/Spinal-Graph-Service/node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:202
+Defined in node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:202
 
  if this has been modified during the preceding round, f will be called
 
@@ -139,7 +139,7 @@ ___
 
 *Inherited from void*
 
-Defined in /home/laurent/Desktop/spinalcom/modules/Spinal-Graph-Service/node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:223
+Defined in node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:223
 
 create and returns a deep copy
 
@@ -155,7 +155,7 @@ ___
 
 *Inherited from void*
 
-Defined in /home/laurent/Desktop/spinalcom/modules/Spinal-Graph-Service/node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:141
+Defined in node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:141
 
 ### return a copy of data in a "standard JS" representation
 (e.g. string, number, objects, ...).
@@ -179,7 +179,7 @@ ___
 
 *Inherited from void*
 
-Defined in /home/laurent/Desktop/spinalcom/modules/Spinal-Graph-Service/node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:217
+Defined in node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:217
 
 return true if this has changed since previous synchronisation due to
 a direct modification (not from a child one)
@@ -196,7 +196,7 @@ ___
 
 *Inherited from void*
 
-Defined in /home/laurent/Desktop/spinalcom/modules/Spinal-Graph-Service/node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:210
+Defined in node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:210
 
 return true if this (or a child of this) has changed since the previous
 synchronisation
@@ -213,7 +213,7 @@ ___
 
 *Inherited from void*
 
-Defined in /home/laurent/Desktop/spinalcom/modules/Spinal-Graph-Service/node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:174
+Defined in node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:174
 
 change attribute named `name` to `opt` (use references for comparison)
 
@@ -236,7 +236,7 @@ ___
 
 *Inherited from void*
 
-Defined in /home/laurent/Desktop/spinalcom/modules/Spinal-Graph-Service/node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:181
+Defined in node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:181
 
 remove attribute named name
 
@@ -259,7 +259,7 @@ ___
 
 *Inherited from void*
 
-Defined in /home/laurent/Desktop/spinalcom/modules/Spinal-Graph-Service/node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:150
+Defined in node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:150
 
 modify data, using another values, or Model instances.
 Should not be redefined (but _set should be)
@@ -284,7 +284,7 @@ ___
 
 *Inherited from void*
 
-Defined in /home/laurent/Desktop/spinalcom/modules/Spinal-Graph-Service/node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:188
+Defined in node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:188
 
 `add / mod / rem attr` to get the same data than `opt`
  (assumed to be something like `{ key: val, ... }`)
@@ -307,7 +307,7 @@ ___
 
 *Inherited from void*
 
-Defined in /home/laurent/Desktop/spinalcom/modules/Spinal-Graph-Service/node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:203
+Defined in node_modules/spinal-core-connectorjs_type/declarations/connectorTS.d.ts:203
 
 **Parameters:**
 

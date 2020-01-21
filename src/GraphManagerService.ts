@@ -49,7 +49,14 @@ interface SpinalNodeObject {
   [key: string]: any;
 }
 
+
+
+
+type SpinalNodeFindPredicateFunc = (node: SpinalNode<any>) => boolean;
+const DEFAULT_PREDICATE: SpinalNodeFindPredicateFunc = () => true;
+
 const G_ROOT = typeof window === 'undefined' ? global : window;
+
 
 /**
  * @type (node: string | SpinalNodeRef) => any
@@ -198,6 +205,143 @@ class GraphManagerService {
       return found;
     });
   }
+
+  /**
+   * Find all nodes with the type "nodeType"
+   *  @param startId {String} starting point of the search if note found the
+   * search will start at the beginning of the graph
+   * @param relationNames {String[]} the relations that will be follow
+   * during the search if empty follow all relations
+   * @param nodeType type of node to search
+   * @return all nodes with the type "nodeType"
+   */
+  public findNodesByType(startId: string, relationNames: string[], nodeType: string): Promise<any> {
+    return this.findNodes(startId, relationNames, (node) => {
+      return node.getType().get() === nodeType;
+    })
+  }
+
+
+  /**
+ * Recursively finds all the children nodes and classify them by type.
+ * @param {String} startId  starting point of the search if note found the
+ * search will start at the beginning of the graph
+ * @param {string|string[]} relationNames Array containing the relation names to follow
+ * @returns {Object<{types : string[], data : Object<string : SpinalNode[]>}>}
+ * @throws {TypeError} If the relationNames are neither an array, a string or omitted
+ * @throws {TypeError} If an element of relationNames is not a string
+ * @throws {TypeError} If the predicate is not a function
+ */
+  public async browseAnClassifyByType(startId: string, relationNames: string[]): Promise<any> {
+    let dataStructure = {
+      types: [],
+      data: {}
+    };
+
+    await this.findNodes(startId, relationNames, (node) => {
+      let type = node.getType().get();
+
+      if (dataStructure.types.indexOf(type) === -1) {
+        dataStructure.types.push(type);
+      }
+
+      if (typeof dataStructure.data[type] === "undefined") {
+        dataStructure.data[type] = [];
+      }
+
+      dataStructure.data[type].push(node.info);
+
+      return false;
+    })
+
+    return dataStructure;
+  }
+
+
+  /**
+   * Recursively finds all the children nodes in the context for which the predicate is true..
+   * @param {string} startId starting point of the search if note found the
+ * search will start at the beginning of the graph
+   * @param {string} contextId Context to use for the search
+   * @param {findPredicate} predicate Function returning true if the node needs to be returned
+   * @returns {Promise<Array<SpinalNode>>} The nodes that were found
+   * @throws {TypeError} If context is not a SpinalContext
+   * @throws {TypeError} If the predicate is not a function
+   */
+  public async findInContext(startId: string, contextId: string,
+    predicate: SpinalNodeFindPredicateFunc = DEFAULT_PREDICATE): Promise<any> {
+
+
+    let contextNode = this.getRealNode(contextId);
+    let startNode = this.getRealNode(startId);
+
+
+    if (contextNode && startNode) {
+      return startNode.findInContext(contextNode, predicate).then(found => {
+        if (found) {
+          return found.map(el => el.info);
+        }
+      })
+    }
+
+
+  }
+
+
+  /**
+ * Recursively finds all the children nodes in the context for which the predicate is true..
+ * @param {string} startId starting point of the search if note found the
+* search will start at the beginning of the graph
+ * @param {string} contextId Context to use for the search
+ * @param nodeType type of node to search
+ * @returns {Promise<Array<SpinalNode>>} The nodes that were found
+ * @throws {TypeError} If context is not a SpinalContext
+ * @throws {TypeError} If the predicate is not a function
+ */
+  public findInContextByType(startId: string, contextId: string, nodeType: string): Promise<any> {
+    return this.findInContext(startId, contextId, (node) => {
+      return node.getType().get() === nodeType;
+    })
+  }
+
+  /**
+ * Recursively finds all the children nodes in the context and classify them by type.
+ * @param {string} startId starting point of the search if note found the
+* search will start at the beginning of the graph
+ * @param {string} contextId Context to use for the search
+ * @returns {Object<{types : string[], data : Object<string : any[]>}>}
+ * @throws {TypeError} If the relationNames are neither an array, a string or omitted
+ * @throws {TypeError} If an element of relationNames is not a string
+ * @throws {TypeError} If the predicate is not a function
+ */
+
+  public async browseAndClassifyByTypeInContext(startId: string, contextId: string): Promise<any> {
+    let dataStructure = {
+      types: [],
+      data: {}
+    };
+
+    await this.findInContext(startId, contextId, (node) => {
+      let type = node.getType().get();
+
+      if (dataStructure.types.indexOf(type) === -1) {
+        dataStructure.types.push(type);
+      }
+
+      if (typeof dataStructure.data[type] === "undefined") {
+        dataStructure.data[type] = [];
+      }
+
+      dataStructure.data[type].push(node.info);
+
+      return false;
+
+    })
+
+    return dataStructure;
+
+  }
+
 
   generateQRcode(nodeId: string): string {
     const typeNumber = 0;
@@ -892,6 +1036,15 @@ class GraphManagerService {
     }
     return false;
   }
+
+
+  /**
+   * getParents
+   */
+  public getParents(nodeId: string, relationNames: string | string[]): Promise<any> {
+    return Promise.resolve([])
+  }
+
 }
 
 export default GraphManagerService;

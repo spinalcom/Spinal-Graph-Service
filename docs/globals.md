@@ -1,6 +1,6 @@
-[spinal-env-viewer-graph-service](README.md) › [Globals](globals.md)
+[spinal-env-viewer-graph-service - v1.0.13](README.md) › [Globals](globals.md)
 
-# spinal-env-viewer-graph-service
+# spinal-env-viewer-graph-service - v1.0.13
 
 ## Index
 
