@@ -835,6 +835,7 @@ class GraphManagerService {
   }
 
   /**
+   * d
    * @param {string} parentId
    * @param {string} childId
    * @param {string} contextId
@@ -1018,6 +1019,7 @@ class GraphManagerService {
     return res;
   }
 
+
   public hasChildInContext(nodeId: string, contextId: string) {
 
     if (contextId === nodeId) {
@@ -1039,10 +1041,24 @@ class GraphManagerService {
 
 
   /**
-   * getParents
+   * Return all parents for the relation names no matter the type of relation
+   * @param {string} nodeId The node id whose parents are recovered
+   * @param {String[]} [relationNames=[]] Array containing the relation names of the desired parents
+   * @returns {Promise<Array<SpinalNode<any>>>} Promise containing the parents that were found
+   * @throws {TypeError} If the relationNames are neither an array, a string or omitted
+   * @throws {TypeError} If an element of relationNames is not a string
    */
   public getParents(nodeId: string, relationNames: string | string[]): Promise<any> {
-    return Promise.resolve([])
+    let node = this.nodes[nodeId];
+
+    if (node) {
+      return node.getParents(relationNames).then(parents => {
+        return parents.map(parent => {
+          return parent.info;
+        })
+      });
+    }
+
   }
 
 }
