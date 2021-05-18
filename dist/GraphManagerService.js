@@ -893,9 +893,11 @@ class GraphManagerService {
     getParents(nodeId, relationNames) {
         let node = this.nodes[nodeId];
         if (node) {
-            return node.getParents(relationNames).then(parents => {
+            return node.getParents(relationNames).then(result => {
+                const parents = result.filter(parent => parent instanceof spinal_model_graph_1.SpinalNode);
                 return parents.map(parent => {
-                    return parent.info;
+                    this._addNode(parent);
+                    return this.getInfo(parent.getId().get());
                 });
             });
         }
