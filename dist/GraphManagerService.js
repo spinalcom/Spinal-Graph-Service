@@ -239,7 +239,11 @@ class GraphManagerService {
    */
     findInContextByType(startId, contextId, nodeType) {
         return this.findInContext(startId, contextId, (node) => {
-            return node.getType().get() === nodeType;
+            if (node.getType().get() === nodeType) {
+                this._addNode(node);
+                return true;
+            }
+            return false;
         });
     }
     /**
