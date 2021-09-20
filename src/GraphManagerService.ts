@@ -300,7 +300,7 @@ class GraphManagerService {
  */
   public findInContextByType(startId: string, contextId: string, nodeType: string): Promise<any> {
     return this.findInContext(startId, contextId, (node) => {
-      if(node.getType().get() === nodeType) {
+      if (node.getType().get() === nodeType) {
         this._addNode(node);
         return true;
       }
@@ -435,7 +435,9 @@ class GraphManagerService {
     const relationNames = [];
     if (this.nodes.hasOwnProperty(id)) {
       for (const [, relationMap] of this.nodes[id].children) {
-        relationNames.push(...relationMap.keys());
+        if (relationMap && relationMap.keys) {
+          relationNames.push(...relationMap.keys());
+        }
       }
     }
     return relationNames;
@@ -456,7 +458,9 @@ class GraphManagerService {
     if (relationNames.length === 0) {
 
       for (const [, relationMap] of this.nodes[id].children) {
-        relationNames.push(...relationMap.keys());
+        if (relationMap && relationMap.keys) {
+          relationNames.push(...relationMap.keys());
+        }
       }
     }
 
