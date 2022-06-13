@@ -7,7 +7,8 @@
     "build": "rm -fr build && tsc",
     "dev": "rm -fr build && tsc --watch & nodemon build",
     "docs": "./node_modules/.bin/typedoc --theme markdown --out docs",
-    "test": "jest"
+    "test": "jest",
+    "test-config": "ts-jest config:init"
   },
   "types": "./declarations/index.d.ts",
   "keywords": [],
@@ -33,7 +34,7 @@
     "tslint-config-airbnb": "^5.11.1",
     "typedoc": "^0.22.17",
     "typedoc-plugin-markdown": "^2.2.11",
-    "typescript": "^3.2.2",
+    "typescript": "^3.9.10",
     "typescript-eslint-parser": "^21.0.2"
   }
 }
