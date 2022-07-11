@@ -74,7 +74,7 @@ type callback = (node: string | SpinalNodeRef) => any;
  */
 class GraphManagerService {
   bindedNode: Map<string, Map<any, callback>>;
-  binders: Map<String, spinal.BindProcess>;
+  binders: Map<String, spinal.Process>;
   listenersOnNodeAdded: Map<any, callback>;
   listenerOnNodeRemove: Map<any, callback>;
   initialized: Promise<boolean>;
