@@ -47,28 +47,21 @@ describe.skip("Create the given node in the graph and add it to the parent as ch
 
 describe("Adds the given node to the parent as child in the given context.", () => {
     graph.addContext("Context", 'context', new Str("Context1"));
-    test("Throws an error if the parent isn't found.", async () => {
+    test("Throws an error if the parent isn't found.", () => {
         const childId = graph.createNode({['type']: 'Node'}, new Str('Node8'));
-        expect(() => graph.addChildInContext("parentId", childId, graph.getContext("Context").getId().get(), "Link", "Ref")).toThrowError("Error: Node parent id parentId not found");
-        // ((reason) => {
-        //     expect(reason).toBeDefined();
-        //     expect(reason.toString()).toMatch("");
-        // });
+        expect(() => graph.addChildInContext("parentId", childId, graph.getContext("Context").getId().get(), "Link", "Ref"))
+            .rejects.toThrowError("Node parent id parentId not found");
     });
     test("Throws an error if the child is invalid.", async () => {
         const parentId = graph.createNode({['type']: 'Node'}, new Str('Node9'));
-        graph.addChildInContext(parentId, "childId", graph.getContext("Context").getId().get(), "Link", "Ref").catch((reason) => {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("Error: Node child id childId not found");
-        });
+        expect(() => graph.addChildInContext(parentId, "childId", graph.getContext("Context").getId().get(), "Link", "Ref"))
+            .rejects.toThrowError("Node child id childId not found");
     });
     test("Throws an error if the context is invalid.", async () => {
         const parentId = graph.createNode({['type']: 'Node'}, new Str('Node10'));
         const childId = graph.createNode({['type']: 'Node'}, new Str('Node11'));
-        graph.addChildInContext(parentId, childId, "ContextId", "Link", "Ref").catch((reason) => {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("Error: Node context id ContextId not found");
-        });
+        expect(() => graph.addChildInContext(parentId, childId, "context", "Link", "Ref"))
+            .rejects.toThrowError("Node context id context not found");
     });
     test("returns true and adds the child node to the parent node in the given context.", async () => {
         const parentId = graph.createNode({['type']: 'Node'}, new Str('Node12'));
@@ -86,10 +79,7 @@ describe("Gets the children of the given node.", () => {
     graph.addChild(parentId, childId, "Link", "Ref");
     graph.addChild(parentId, childIdbis, "Link", "Ref");
     test("Throws an error if the given node is invalid", () => {
-        graph.getChildren("parentId").catch((reason) => {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("Error: Node id: parentId not found");
-        });
+        expect(() => graph.getChildren("parentId")).rejects.toThrowError("Node id: parentId not found");
     });
     test("Gets the children of the given parent.", () => {
         graph.getChildren(parentId).then((children) => {
@@ -128,20 +118,10 @@ describe("Gets the children of the given node in the given context.", () => {
     graph.addChildInContext(parentId, childId, ctx, "Link", "Ref");
     graph.addChild(parentId, childIdbis, "Link", "Ref");
     test("Throws an error if the given node is invalid", () => {
-        try {
-            graph.getChildrenInContext("parentId", ctx);
-        } catch (reason) {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("parentId or contextId not found");
-        }
+        expect(() => graph.getChildrenInContext("parentId", ctx)).toThrowError("parentId or contextId not found");
     });
     test("Throws an error if the given context is invalid", () => {
-        try {
-            graph.getChildrenInContext(parentId, "contextId");
-        } catch (reason) {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("parentId or contextId not found");
-        }
+        expect(() => graph.getChildrenInContext(parentId, "ctx")).toThrowError("parentId or contextId not found");
     });
     test("Gets the children of the given parent.", () => {
         graph.getChildrenInContext(parentId, ctx).then((children) => {
@@ -161,22 +141,13 @@ describe("Move a child from a parent to another.", () => {
     const ctx = graph.getContext("Context").getId().get();
     graph.addChild(fromId, childId, "Link", "Ref");
     test("Throws an error if the from parent is invalid", () => {
-        graph.moveChild("fromId", toId, childId, "Link", "Ref").catch( (reason) => {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("fromId: fromId not found");
-        });
+        expect(() => graph.moveChild("fromId", toId, childId, "Link", "Ref")).rejects.toMatch("fromId: fromId not found");
     });
     test("Throws an error if the to parent is invalid", () => {
-        graph.moveChild(fromId, "toId", childId, "Link", "Ref").catch( (reason) => {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("toId: toId not found");
-        });
+        expect(() => graph.moveChild(fromId, "toId", childId, "Link", "Ref")).rejects.toMatch("toId: toId not found");
     });
     test("Throws an error if the child is invalid", () => {
-        graph.moveChild(fromId, toId, "childId", "Link", "Ref").catch( (reason) => {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("childId: childId not found");
-        });
+        expect(() => graph.moveChild(fromId, toId, "childId", "Link", "Ref")).rejects.toMatch("childId: childId not found");
     });
     test("Moves the child from the from parent to the to parent and returns true.", async () => {
         let result = await graph.isChild(toId, childId, ["Link"]);
@@ -196,45 +167,33 @@ describe("Move a child from a parent to another in the given context.", () => {
     const childId = graph.createNode({['type']: 'Node'}, new Str('Node28'));
     const ctx = graph.getContext("Context").getId().get();
     graph.addChild(fromId, childId, "Link", "Ref");
-    test("Throws an error if the from parent is invalid", () => {
-        graph.moveChildInContext("fromId", toId, childId, ctx, "Link", "Ref").catch( async (reason) => {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("fromId: fromId not found");
-            let result = await graph.isChild(toId, childId, ["Link"]);
-            expect(result).toBeFalsy();
-            result = await graph.isChild(fromId, childId, ["Link"]);
-            expect(result).toBeTruthy();
-        });
+    test("Throws an error if the from parent is invalid", async () => {
+        expect(() => graph.moveChildInContext("fromId", toId, childId, ctx, "Link", "Ref")).rejects.toMatch("fromId: fromId not found");
+        let result = await graph.isChild(toId, childId, ["Link"]);
+        expect(result).toBeFalsy();
+        result = await graph.isChild(fromId, childId, ["Link"]);
+        expect(result).toBeTruthy();
     });
-    test("Throws an error if the to parent is invalid", () => {
-        graph.moveChildInContext(fromId, "toId", childId, ctx, "Link", "Ref").catch( async (reason) => {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("toId: toId not found");
-            let result = await graph.isChild(toId, childId, ["Link"]);
-            expect(result).toBeFalsy();
-            result = await graph.isChild(fromId, childId, ["Link"]);
-            expect(result).toBeTruthy();
-        });
+    test("Throws an error if the to parent is invalid", async () => {
+        expect(() => graph.moveChildInContext(fromId, "toId", childId, ctx, "Link", "Ref")).rejects.toMatch("toId: toId not found");
+        let result = await graph.isChild(toId, childId, ["Link"]);
+        expect(result).toBeFalsy();
+        result = await graph.isChild(fromId, childId, ["Link"]);
+        expect(result).toBeTruthy();
     });
-    test("Throws an error if the child is invalid", () => {
-        graph.moveChildInContext(fromId, toId, "childId", ctx, "Link", "Ref").catch( async (reason) => {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("childId: childId not found");
-            let result = await graph.isChild(toId, childId, ["Link"]);
-            expect(result).toBeFalsy();
-            result = await graph.isChild(fromId, childId, ["Link"]);
-            expect(result).toBeTruthy();
-        });
+    test("Throws an error if the child is invalid", async () => {
+        expect(() => graph.moveChildInContext(fromId, toId, "childId", ctx, "Link", "Ref")).rejects.toMatch("childId: childId not found");
+        let result = await graph.isChild(toId, childId, ["Link"]);
+        expect(result).toBeFalsy();
+        result = await graph.isChild(fromId, childId, ["Link"]);
+        expect(result).toBeTruthy();
     });
-    test("Throws an error if the context is invalid", () => {
-        graph.moveChildInContext(fromId, toId, childId, "ctx", "Link", "Ref").catch( async (reason) => {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("TypeError: context must be a SpinaContext");
-            let result = await graph.isChild(toId, childId, ["Link"]);
-            expect(result).toBeFalsy();
-            result = await graph.isChild(fromId, childId, ["Link"]);
-            expect(result).toBeTruthy();
-        });
+    test("Throws an error if the context is invalid", async () => {
+        expect(() => graph.moveChildInContext(fromId, toId, childId, "ctx", "Link", "Ref")).rejects.toThrowError("context must be a SpinaContext");
+        let result = await graph.isChild(toId, childId, ["Link"]);
+        expect(result).toBeFalsy();
+        result = await graph.isChild(fromId, childId, ["Link"]);
+        expect(result).toBeTruthy();
     });
     test("Moves the child from the from parent to the to parent and returns true.", async () => {
         let result = await graph.isChild(toId, childId, ["Link"]);
@@ -253,22 +212,21 @@ describe("Removes the child from the node", () => {
     const childId = graph.createNode({['type']: 'Node'}, new Str('Node30'));
     graph.addChild(parentId, childId, "Link", "Ref");
     test("Throws an error if the parent node is invalid", () => {
-        graph.removeChild("parentId", childId, "Link", "Ref").catch( (reason) => {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("nodeId unknown.");
-        });
+        expect(() => graph.removeChild("parentId", childId, "Link", "Ref")).rejects.toThrowError("nodeId unknown.");
     });
     test("Throws an error if the child node is invalid", () => {
-        graph.removeChild(parentId, "childId", "Link", "Ref").catch( (reason) => {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("nodeId unknown.");
-        });
+        expect(() => graph.removeChild(parentId, "childId", "Link", "Ref")).rejects.toThrowError("childId unknown. It might already been removed from the parent node");
     });
     test("Removes the child from the parent and returns true", async () => {
-        let result = await graph.removeChild(parentId, childId, "Link", "Ref");
-        expect(result).toBeTruthy();
-        result = await graph.isChild(parentId, childId, ["Link"]);
-        expect(result).toBeFalsy();
+        try
+        {
+            let result = await graph.removeChild(parentId, childId, "Link", "Ref");
+            expect(result).toBeTruthy();
+            result = await graph.isChild(parentId, childId, ["Link"]);
+            expect(result).toBeFalsy();
+        } catch (e) {
+            console.log(e.toString());
+        }
     });
 });
 
@@ -278,11 +236,8 @@ describe("Gets the parent of the given child node.", () => {
     const childId = graph.createNode({['type']: 'Node'}, new Str('Node33'));
     graph.addChild(parent1Id, childId, "Link", "Ref");
     graph.addChild(parent2Id, childId, "Link", "Ref");
-    test("Throws an error if the child is invalid.", () => {
-        graph.getParents("childId", ["Link"]).catch((reason) => {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("Error");
-        });
+    test("Returns undefined if the child is invalid.", () => {
+        expect(graph.getParents("childId", ["Link"])).toBeUndefined();
     });
     test("Getting the parents of the node", async () => {
         let result = await graph.getParents(childId, ["Link"]);
@@ -321,16 +276,10 @@ describe("Test if the given child node is a child to the given parent node.", ()
     const childId = graph.createNode({['type']: 'Node'}, new Str('Node39'));
     graph.addChild(parentId, childId, "Link", "Ref");
     test("Throws an error if the parent node is invalid.", () => {
-        graph.isChild("parentId", childId, ["Link"]).catch( (reason) => {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("nodeId unknown.");
-        });
+        expect(() => graph.isChild("parentId", childId, ["Link"])).rejects.toThrowError("nodeId unknown.");
     });
     test("Throws an error if the child node is invalid.", () => {
-        graph.isChild(parentId, "childId", ["Link"]).catch( (reason) => {
-            expect(reason).toBeDefined();
-            expect(reason.toString()).toMatch("nodeId unknown.");
-        });
+        expect(() => graph.isChild(parentId, "childId", ["Link"])).rejects.toThrowError("nodeId unknown.");
     });
     test("Returns true if the parent has the right child.", async () => {
         let result = await graph.isChild(parentId, childId, ["Link"]);

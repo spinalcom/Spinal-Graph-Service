@@ -1,4 +1,4 @@
-import { Bool, Str } from "spinal-core-connectorjs_type";
+import { Str } from "spinal-core-connectorjs_type";
 import { SpinalGraph, SpinalNode } from "spinal-model-graph";
 import { GraphManagerService } from "../../src/GraphManagerService";
 
