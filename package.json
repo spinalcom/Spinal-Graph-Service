@@ -7,7 +7,7 @@
     "build": "rm -fr build && tsc",
     "dev": "rm -fr build && tsc --watch & nodemon build",
     "docs": "./node_modules/.bin/typedoc --theme markdown --out docs",
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "test-config": "ts-jest config:init"
   },
   "types": "./declarations/index.d.ts",
