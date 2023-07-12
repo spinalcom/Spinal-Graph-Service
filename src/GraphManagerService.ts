@@ -1,62 +1,41 @@
 /*
- * Copyright 2019 SpinalCom - www.spinalcom.com
+ * Copyright 2023 SpinalCom - www.spinalcom.com
  *
- *  This file is part of SpinalCore.
+ * This file is part of SpinalCore.
  *
- *  Please read all of the following terms and conditions
- *  of the Free Software license Agreement ("Agreement")
- *  carefully.
+ * Please read all of the following terms and conditions
+ * of the Free Software license Agreement ("Agreement")
+ * carefully.
  *
- *  This Agreement is a legally binding contract between
- *  the Licensee (as defined below) and SpinalCom that
- *  sets forth the terms and conditions that govern your
- *  use of the Program. By installing and/or using the
- *  Program, you agree to abide by all the terms and
- *  conditions stated or referenced herein.
+ * This Agreement is a legally binding contract between
+ * the Licensee (as defined below) and SpinalCom that
+ * sets forth the terms and conditions that govern your
+ * use of the Program. By installing and/or using the
+ * Program, you agree to abide by all the terms and
+ * conditions stated or referenced herein.
  *
- *  If you do not agree to abide by these terms and
- *  conditions, do not demonstrate your acceptance and do
- *  not install or use the Program.
- *  You should have received a copy of the license along
- *  with this file. If not, see
- *  <http://resources.spinalcom.com/licenses.pdf>.
+ * If you do not agree to abide by these terms and
+ * conditions, do not demonstrate your acceptance and do
+ * not install or use the Program.
+ * You should have received a copy of the license along
+ * with this file. If not, see
+ * <http://resources.spinalcom.com/licenses.pdf>.
  */
+
 // tslint:disable:function-name
 
-import { SpinalContext, SpinalGraph, SpinalNode, SpinalNodePointer } from 'spinal-model-graph';
+import { SpinalContext, SpinalGraph, SpinalNode } from 'spinal-model-graph';
 import * as qrcode from 'qrcode-generator';
 import * as q from 'q';
-
-interface SpinalNodeRef extends spinal.Model {
-  childrenIds: string[];
-  contextIds: string[];
-  element: SpinalNodePointer<spinal.Model>;
-  hasChildren: boolean;
-
-  [key: string]: any;
-}
-
-interface InfoModel extends spinal.Model {
-  id: string | spinal.Str;
-
-  [key: string]: any;
-}
-
-interface SpinalNodeObject {
-  info: InfoModel;
-  element?: spinal.Model;
-
-  [key: string]: any;
-}
-
-
-
-
-type SpinalNodeFindPredicateFunc = (node: SpinalNode<any>) => boolean;
-const DEFAULT_PREDICATE: SpinalNodeFindPredicateFunc = () => true;
+import type { SpinalNodeRef } from './interfaces/SpinalNodeRef';
+import type { SpinalNodeObject } from './interfaces/SpinalNodeObject';
+import {
+  type SpinalNodeFindPredicateFunc,
+  DEFAULT_PREDICATE,
+} from './interfaces/SpinalNodeFindPredicateFunc';
+import { Model } from 'spinal-core-connectorjs_type';
 
 const G_ROOT = typeof window === 'undefined' ? global : window;
-
 
 /**
  * @type (node: string | SpinalNodeRef) => any
@@ -95,17 +74,15 @@ class GraphManagerService {
     this.graph = undefined;
     this.nodesInfo = {};
     if (typeof viewerEnv !== 'undefined') {
-
-      (<any>G_ROOT).spinal.spinalSystem.getModel()
-        .then(
-          (obj: any) => {
-            if (obj instanceof SpinalGraph) {
-              this.setGraph(obj);
-            } else {
-              this.setGraphFromForgeFile(obj);
-            }
-          },
-        )
+      (<any>G_ROOT).spinal.spinalSystem
+        .getModel()
+        .then((obj: any) => {
+          if (obj instanceof SpinalGraph) {
+            this.setGraph(obj);
+          } else {
+            this.setGraphFromForgeFile(obj);
+          }
+        })
         .catch((e: Error) => console.error(e));
     }
   }
@@ -132,19 +109,19 @@ class GraphManagerService {
    * @returns {Promise<String>} the id of the graph
    * @memberof GraphManagerService
    */
-  setGraph(graph: SpinalGraph<any>): Promise<String> {
-
-    if (this.graph && typeof this.graph.getId === 'function' &&
-      this.nodes.hasOwnProperty(this.graph.getId().get())) {
+  async setGraph(graph: SpinalGraph<any>): Promise<String> {
+    if (
+      this.graph &&
+      typeof this.graph.getId === 'function' &&
+      this.nodes.hasOwnProperty(this.graph.getId().get())
+    ) {
       delete this.nodes[this.graph.getId().get()];
     }
     this.graph = graph;
     this.nodes[this.graph.getId().get()] = this.graph;
-    return this.getChildren(this.graph.getId().get(), [])
-      .then(() => {
-        this.initProm.resolve(this.graph);
-        return this.graph.getId().get();
-      });
+    await this.getChildren(this.graph.getId().get(), []);
+    this.initProm.resolve(this.graph);
+    return this.graph.getId().get();
   }
 
   /**
@@ -160,25 +137,26 @@ class GraphManagerService {
    * @param id
    * @param stop
    */
-  findNode(id: string, stop = false): Promise<SpinalNodeRef> {
-    const promises = [];
+  async findNode(id: string, stop = false): Promise<SpinalNodeRef> {
     if (this.nodes.hasOwnProperty(id)) {
-      return Promise.resolve(this.getInfo(id));
+      return this.getInfo(id);
     }
 
-    if (stop) {
-      Promise.resolve(undefined);
-    }
-
-    for (const key in this.nodes) {
-      if (this.nodes.hasOwnProperty(key)) {
-        promises.push(this.getChildren(this.nodes[key].getId().get(), []));
+    for (const key in this.nodesInfo) {
+      if (this.nodesInfo.hasOwnProperty(key) && this.haveChildId(key, id)) {
+        const children = await this.getChildren(key);
+        for (const child of children) {
+          if (child.id.get() === id) return child;
+        }
       }
     }
+    return undefined;
+  }
 
-    return Promise.all(promises).then(() => {
-      return this.findNode(id, true);
-    });
+  haveChildId(nodeId: string, searchId: string): boolean {
+    const nodeRef = this.nodesInfo[nodeId];
+    if (!nodeRef) return false;
+    return nodeRef.childrenIds.includes(searchId);
   }
 
   /**
@@ -192,18 +170,20 @@ class GraphManagerService {
    * node if valid
    * @return all node that validate the predicate
    */
-  findNodes(startId: string, relationNames: string[], predicate: (node) => boolean)
-    : Promise<SpinalNode<any>[]> {
+  async findNodes(
+    startId: string,
+    relationNames: string[],
+    predicate: (node) => boolean
+  ): Promise<SpinalNode<any>[]> {
     let node: SpinalNode<any> = this.graph;
     if (this.nodes.hasOwnProperty(startId)) {
       node = this.nodes[startId];
     }
-    return node.find(relationNames, predicate).then((found) => {
-      for (const n of found) {
-        this._addNode(n);
-      }
-      return found;
-    });
+    const found = await node.find(relationNames, predicate);
+    for (const n of found) {
+      this._addNode(n);
+    }
+    return found;
   }
 
   /**
@@ -215,27 +195,33 @@ class GraphManagerService {
    * @param nodeType type of node to search
    * @return all nodes with the type "nodeType"
    */
-  public findNodesByType(startId: string, relationNames: string[], nodeType: string): Promise<any> {
+  public findNodesByType(
+    startId: string,
+    relationNames: string[],
+    nodeType: string
+  ): Promise<any> {
     return this.findNodes(startId, relationNames, (node) => {
       return node.getType().get() === nodeType;
-    })
+    });
   }
 
-
   /**
- * Recursively finds all the children nodes and classify them by type.
- * @param {String} startId  starting point of the search if note found the
- * search will start at the beginning of the graph
- * @param {string|string[]} relationNames Array containing the relation names to follow
- * @returns {Object<{types : string[], data : Object<string : SpinalNode[]>}>}
- * @throws {TypeError} If the relationNames are neither an array, a string or omitted
- * @throws {TypeError} If an element of relationNames is not a string
- * @throws {TypeError} If the predicate is not a function
- */
-  public async browseAnClassifyByType(startId: string, relationNames: string[]): Promise<any> {
+   * Recursively finds all the children nodes and classify them by type.
+   * @param {String} startId  starting point of the search if note found the
+   * search will start at the beginning of the graph
+   * @param {string|string[]} relationNames Array containing the relation names to follow
+   * @returns {Object<{types : string[], data : Object<string : SpinalNode[]>}>}
+   * @throws {TypeError} If the relationNames are neither an array, a string or omitted
+   * @throws {TypeError} If an element of relationNames is not a string
+   * @throws {TypeError} If the predicate is not a function
+   */
+  public async browseAnClassifyByType(
+    startId: string,
+    relationNames: string[]
+  ): Promise<any> {
     let dataStructure = {
       types: [],
-      data: {}
+      data: {},
     };
 
     await this.findNodes(startId, relationNames, (node) => {
@@ -245,84 +231,87 @@ class GraphManagerService {
         dataStructure.types.push(type);
       }
 
-      if (typeof dataStructure.data[type] === "undefined") {
+      if (typeof dataStructure.data[type] === 'undefined') {
         dataStructure.data[type] = [];
       }
 
       dataStructure.data[type].push(node.info);
 
       return false;
-    })
+    });
 
     return dataStructure;
   }
 
-
   /**
    * Recursively finds all the children nodes in the context for which the predicate is true..
    * @param {string} startId starting point of the search if note found the
- * search will start at the beginning of the graph
+   * search will start at the beginning of the graph
    * @param {string} contextId Context to use for the search
    * @param {findPredicate} predicate Function returning true if the node needs to be returned
    * @returns {Promise<Array<SpinalNode>>} The nodes that were found
    * @throws {TypeError} If context is not a SpinalContext
    * @throws {TypeError} If the predicate is not a function
    */
-  public async findInContext(startId: string, contextId: string,
-    predicate: SpinalNodeFindPredicateFunc = DEFAULT_PREDICATE): Promise<any> {
-
-
+  public async findInContext(
+    startId: string,
+    contextId: string,
+    predicate: SpinalNodeFindPredicateFunc = DEFAULT_PREDICATE
+  ): Promise<any> {
     let contextNode = this.getRealNode(contextId);
     let startNode = this.getRealNode(startId);
 
-
     if (contextNode && startNode) {
-      return startNode.findInContext(contextNode, predicate).then(found => {
+      return startNode.findInContext(contextNode, predicate).then((found) => {
         if (found) {
-          return found.map(el => el.info);
+          return found.map((el) => el.info);
         }
-      })
+      });
     }
-
-
   }
 
-
   /**
- * Recursively finds all the children nodes in the context for which the predicate is true..
- * @param {string} startId starting point of the search if note found the
-* search will start at the beginning of the graph
- * @param {string} contextId Context to use for the search
- * @param nodeType type of node to search
- * @returns {Promise<Array<SpinalNode>>} The nodes that were found
- * @throws {TypeError} If context is not a SpinalContext
- * @throws {TypeError} If the predicate is not a function
- */
-  public findInContextByType(startId: string, contextId: string, nodeType: string): Promise<any> {
+   * Recursively finds all the children nodes in the context for which the predicate is true..
+   * @param {string} startId starting point of the search if note found the
+   * search will start at the beginning of the graph
+   * @param {string} contextId Context to use for the search
+   * @param nodeType type of node to search
+   * @returns {Promise<Array<SpinalNode>>} The nodes that were found
+   * @throws {TypeError} If context is not a SpinalContext
+   * @throws {TypeError} If the predicate is not a function
+   */
+  public findInContextByType(
+    startId: string,
+    contextId: string,
+    nodeType: string
+  ): Promise<any> {
     return this.findInContext(startId, contextId, (node) => {
       if (node.getType().get() === nodeType) {
         this._addNode(node);
         return true;
       }
       return false;
-    })
+    });
   }
 
   /**
- * Recursively finds all the children nodes in the context and classify them by type.
- * @param {string} startId starting point of the search if note found the
-* search will start at the beginning of the graph
- * @param {string} contextId Context to use for the search
- * @returns {Object<{types : string[], data : Object<string : any[]>}>}
- * @throws {TypeError} If the relationNames are neither an array, a string or omitted
- * @throws {TypeError} If an element of relationNames is not a string
- * @throws {TypeError} If the predicate is not a function
- */
+   * Recursively finds all the children nodes in the context and classify them by type.
+   * @param {string} startId starting point of the search if note found the
+   * search will start at the beginning of the graph
+   * @param {string} contextId Context to use for the search
+   * @returns {Object<{types : string[], data : Object<string : any[]>}>}
+   * @throws {TypeError} If the relationNames are neither an array, a string or omitted
+   * @throws {TypeError} If an element of relationNames is not a string
+   * @throws {TypeError} If the predicate is not a function
+   */
 
-  public async browseAndClassifyByTypeInContext(startId: string, contextId: string): Promise<any> {
+  public async browseAndClassifyByTypeInContext(
+    startId: string,
+    contextId: string
+  ): Promise<any> {
     let dataStructure = {
       types: [],
-      data: {}
+      data: {},
     };
 
     await this.findInContext(startId, contextId, (node) => {
@@ -332,20 +321,17 @@ class GraphManagerService {
         dataStructure.types.push(type);
       }
 
-      if (typeof dataStructure.data[type] === "undefined") {
+      if (typeof dataStructure.data[type] === 'undefined') {
         dataStructure.data[type] = [];
       }
 
       dataStructure.data[type].push(node.info);
 
       return false;
-
-    })
+    });
 
     return dataStructure;
-
   }
-
 
   generateQRcode(nodeId: string): string {
     const typeNumber = 0;
@@ -362,7 +348,6 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   getNodes(): { [nodeId: string]: SpinalNode<any> } {
-
     return this.nodes;
   }
 
@@ -381,11 +366,9 @@ class GraphManagerService {
    * @returns {SpinalNodeRef | undefined}
    */
   getNode(id: string): SpinalNodeRef {
-    console.warn('deprecated use getNodeAsync instead');
     if (this.nodes.hasOwnProperty(id)) {
       return this.getInfo(id);
     }
-
   }
 
   /**
@@ -393,15 +376,13 @@ class GraphManagerService {
    * @param id of the wanted node
    * @returns {SpinalNodeRef | undefined}
    */
-  getNodeAsync(id: string): Promise<SpinalNodeRef> {
-
-    return this.findNode(id)
-      .then((node) => {
-        return this.getInfo(node.id.get());
-      })
-      .catch(() => {
-        return undefined;
-      });
+  async getNodeAsync(id: string): Promise<SpinalNodeRef> {
+    try {
+      const node = await this.findNode(id);
+      return this.getInfo(node.id.get());
+    } catch {
+      return undefined;
+    }
   }
 
   /**
@@ -450,13 +431,15 @@ class GraphManagerService {
    * @returns {Promise<SpinalNodeRef[]>}
    * @memberof GraphManagerService
    */
-  getChildren(id: string, relationNames: string[] = []): Promise<SpinalNodeRef[]> {
+  async getChildren(
+    id: string,
+    relationNames: string[] = []
+  ): Promise<SpinalNodeRef[]> {
     if (!this.nodes.hasOwnProperty(id)) {
       return Promise.reject(Error(`Node id: ${id} not found`));
     }
 
     if (relationNames.length === 0) {
-
       for (const [, relationMap] of this.nodes[id].children) {
         if (relationMap && relationMap.keys) {
           relationNames.push(...relationMap.keys());
@@ -464,13 +447,11 @@ class GraphManagerService {
       }
     }
 
-    return this.nodes[id].getChildren(relationNames)
-      .then((children: SpinalNode<any>[]) => {
-        return children.map((n) => {
-          this._addNode(n);
-          return this.getInfo(n.info.id.get());
-        });
-      });
+    const children = await this.nodes[id].getChildren(relationNames);
+    return children.map((n) => {
+      this._addNode(n);
+      return this.getInfo(n.info.id.get());
+    });
   }
 
   /**
@@ -480,21 +461,24 @@ class GraphManagerService {
    * @returns {Promise<SpinalNodeRef[]>} The info of the children that were found
    * @memberof GraphManagerService
    */
-  getChildrenInContext(parentId: string, contextId: string): Promise<SpinalNodeRef[]> {
-
-    if (!this.nodes.hasOwnProperty(parentId) || !this.nodes.hasOwnProperty(contextId)) {
+  async getChildrenInContext(
+    parentId: string,
+    contextId: string
+  ): Promise<SpinalNodeRef[]> {
+    if (
+      !this.nodes.hasOwnProperty(parentId) ||
+      !this.nodes.hasOwnProperty(contextId)
+    ) {
       throw new Error('parentId or contextId not found');
     }
 
-    return this.nodes[parentId].getChildrenInContext(this.nodes[contextId])
-      .then((children) => {
-        return children.map((n) => {
-          this._addNode(n);
-          return this.getInfo(n.info.id.get());
-        });
-
-      });
-
+    const children = await this.nodes[parentId].getChildrenInContext(
+      this.nodes[contextId]
+    );
+    return children.map((n) => {
+      this._addNode(n);
+      return this.getInfo(n.info.id.get());
+    });
   }
 
   /**
@@ -504,15 +488,21 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   getInfo(nodeId: string): SpinalNodeRef {
-
     if (!this.nodes.hasOwnProperty(nodeId)) {
       return;
     }
     if (this.nodesInfo.hasOwnProperty(nodeId)) {
       return this.nodesInfo[nodeId];
     }
+
     const node = this.nodes[nodeId];
-    const res = node.info.deep_copy();
+    const res = <any>new Model();
+    for (const key of node.info._attribute_names) {
+      if (Object.prototype.hasOwnProperty.call(node.info, key)) {
+        const element = node.info[key];
+        res.add_attr(key, element);
+      }
+    }
     res['childrenIds'] = node.getChildrenIds();
     res['contextIds'] = node.contextIds;
     res['element'] = node.element;
@@ -523,20 +513,37 @@ class GraphManagerService {
   }
 
   /**
-   * Return the node info aggregated with its childrenIds, contextIds and element
+   * Update the node info aggregated with
+   * its childrenIds, contextIds and element
    * @param {string} nodeId
    * @returns {SpinalNodeRef}
    * @memberof GraphManagerService
    */
   setInfo(nodeId: string): void {
     const node = this.nodes[nodeId];
-    const res = node.info.deep_copy();
-    res['childrenIds'] = node.getChildrenIds();
-    res['contextIds'] = node.contextIds;
-    res['element'] = node.element;
-    res['hasChildren'] = res['childrenIds'].length > 0;
-
-    this.nodesInfo[nodeId] = <SpinalNodeRef>res;
+    if (node)
+      return console.error(
+        `trying to setInfo of ${nodeId} but not registered.`
+      );
+    let res = this.nodesInfo[nodeId];
+    if (!res) {
+      res = this.getInfo(nodeId);
+    } else {
+      for (const key of node.info._attribute_names) {
+        if (Object.prototype.hasOwnProperty.call(node.info, key)) {
+          const element = node.info[key];
+          if (!res[key]) {
+            res.add_attr(key, element);
+          } else if (element !== res[key]) {
+            res.mod_attr(key, element);
+          }
+        }
+      }
+      res['childrenIds'] = node.getChildrenIds();
+      res['contextIds'] = node.contextIds;
+      res['element'] = node.element;
+      res['hasChildren'] = res['childrenIds'].length > 0;
+    }
   }
 
   /**
@@ -601,7 +608,10 @@ class GraphManagerService {
       return false;
     }
     for (const key in info) {
-      if (!this.nodes[nodeId].info.hasOwnProperty(key) && info.hasOwnProperty(key)) {
+      if (
+        !this.nodes[nodeId].info.hasOwnProperty(key) &&
+        info.hasOwnProperty(key)
+      ) {
         const tmp = {};
         tmp[key] = info[key];
         this.nodes[nodeId].info.add_attr(tmp);
@@ -624,18 +634,18 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   bindNode(nodeId: string, caller: any, callback: callback): Function {
-    if (!this.nodes.hasOwnProperty(nodeId) ||
+    if (
+      !this.nodes.hasOwnProperty(nodeId) ||
       typeof caller !== 'object' ||
-      typeof callback !== 'function') {
+      typeof callback !== 'function'
+    ) {
       return undefined;
     }
 
     if (this.bindedNode.has(nodeId)) {
       this.bindedNode.get(nodeId).set(caller, callback);
     } else {
-      this.bindedNode.set(nodeId, new Map([
-        [caller, callback],
-      ]));
+      this.bindedNode.set(nodeId, new Map([[caller, callback]]));
       this._bindNode(nodeId);
     }
 
@@ -651,8 +661,13 @@ class GraphManagerService {
    * @returns
    * @memberof GraphManagerService
    */
-  moveChild(fromId: string, toId: string, childId: string,
-    relationName: string, relationType: string): Promise<boolean> {
+  async moveChild(
+    fromId: string,
+    toId: string,
+    childId: string,
+    relationName: string,
+    relationType: string
+  ): Promise<boolean> {
     if (!this.nodes.hasOwnProperty(fromId)) {
       return Promise.reject(`fromId: ${fromId} not found`);
     }
@@ -662,10 +677,17 @@ class GraphManagerService {
     if (!this.nodes.hasOwnProperty(childId)) {
       return Promise.reject(`childId: ${childId} not found`);
     }
-    return this.nodes[fromId].removeChild(this.nodes[childId], relationName, relationType)
-      .then(() => {
-        return this.nodes[toId].addChild(this.nodes[childId], relationName, relationType);
-      }).then(() => true);
+    await this.nodes[fromId].removeChild(
+      this.nodes[childId],
+      relationName,
+      relationType
+    );
+    await this.nodes[toId].addChild(
+      this.nodes[childId],
+      relationName,
+      relationType
+    );
+    return true;
   }
 
   /**
@@ -678,12 +700,14 @@ class GraphManagerService {
    * @returns
    * @memberof GraphManagerService
    */
-  moveChildInContext(fromId: string,
+  async moveChildInContext(
+    fromId: string,
     toId: string,
     childId: string,
     contextId: string,
     relationName: string,
-    relationType: string): Promise<boolean> {
+    relationType: string
+  ): Promise<boolean> {
     if (!this.nodes.hasOwnProperty(fromId)) {
       return Promise.reject(`fromId: ${fromId} not found`);
     }
@@ -694,11 +718,18 @@ class GraphManagerService {
       return Promise.reject(`childId: ${childId} not found`);
     }
 
-    return this.nodes[fromId].removeChild(this.nodes[childId], relationName, relationType)
-      .then(() => {
-        return this.nodes[toId].addChildInContext(this.nodes[childId], relationName,
-          relationType, this.nodes[contextId]);
-      }).then(() => true);
+    await this.nodes[fromId].removeChild(
+      this.nodes[childId],
+      relationName,
+      relationType
+    );
+    await this.nodes[toId].addChildInContext(
+      this.nodes[childId],
+      relationName,
+      relationType,
+      this.nodes[contextId]
+    );
+    return true;
   }
 
   /**
@@ -710,17 +741,27 @@ class GraphManagerService {
    * @param stop
    * @returns {Promise<boolean>}
    */
-  removeChild(nodeId: string, childId: string, relationName: string,
-    relationType: string, stop: boolean = false): Promise<boolean> {
+  async removeChild(
+    nodeId: string,
+    childId: string,
+    relationName: string,
+    relationType: string,
+    stop: boolean = false
+  ): Promise<boolean> {
     if (!this.nodes.hasOwnProperty(nodeId)) {
       return Promise.reject(Error('nodeId unknown.'));
     }
 
     if (!this.nodes.hasOwnProperty(childId) && !stop) {
       try {
-        return this.getChildren(nodeId, []).then(() => {
-          return this.removeChild(nodeId, childId, relationName, relationType, true);
-        });
+        await this.getChildren(nodeId, []);
+        return await this.removeChild(
+          nodeId,
+          childId,
+          relationName,
+          relationType,
+          true
+        );
       } catch (e) {
         console.error(e);
       }
@@ -729,15 +770,18 @@ class GraphManagerService {
       for (const callback of this.listenerOnNodeRemove.values()) {
         callback(nodeId);
       }
-      return this.nodes[nodeId].removeChild(this.nodes[childId], relationName, relationType).then(
-        () => {
-          console.log('remove child', this.nodes[childId]);
-          return true;
-        },
+      await this.nodes[nodeId].removeChild(
+        this.nodes[childId],
+        relationName,
+        relationType
       );
+      console.log('remove child', this.nodes[childId]);
+      return true;
     }
     return Promise.reject(
-      Error('childId unknown. It might already been removed from the parent node'),
+      Error(
+        'childId unknown. It might already been removed from the parent node'
+      )
     );
   }
 
@@ -749,7 +793,11 @@ class GraphManagerService {
    * @returns {Promise<SpinalContext>}
    * @memberof GraphManagerService
    */
-  addContext(name: string, type?: string, elt?: spinal.Model): Promise<SpinalContext<any>> {
+  addContext(
+    name: string,
+    type?: string,
+    elt?: spinal.Model
+  ): Promise<SpinalContext<any>> {
     const context = new SpinalContext(name, type, elt);
     this.nodes[context.info.id.get()] = context;
 
@@ -826,18 +874,24 @@ class GraphManagerService {
    * The node newly created is volatile
    * i.e it won't be store in the filesystem as long it's not added as child to another node
    * @param {{[key: string]: any}} info information of the node
-   * @param {spinal.Model} element element pointed by the node
+   * @param {spinal.Model} [element] element pointed by the node
    * @returns {string} return the child identifier
    * @memberof GraphManagerService
    */
-  createNode(info: { [key: string]: any }, element: spinal.Model): string {
+  createNode(info: { [key: string]: any }, element?: spinal.Model): string {
     const node = new SpinalNode(undefined, undefined, element);
     if (!info.hasOwnProperty('type')) {
       info['type'] = node.getType().get();
     }
     const nodeId = node.info.id.get();
     info['id'] = nodeId;
-    node.mod_attr('info', info);
+    for (const key in info) {
+      if (!node.info._attribute_names.includes(key)) {
+        node.info.add_attr(key, info[key]);
+      } else {
+        node.info[key].set(info[key]);
+      }
+    }
     this._addNode(node);
     return nodeId;
   }
@@ -852,9 +906,13 @@ class GraphManagerService {
    * @returns {Promise<SpinalNode<any>>}
    * @memberof GraphManagerService
    */
-  addChildInContext(parentId: string, childId: string, contextId: string,
-    relationName: string, relationType: string): Promise<SpinalNode<any>> {
-
+  addChildInContext(
+    parentId: string,
+    childId: string,
+    contextId: string,
+    relationName: string,
+    relationType: string
+  ): Promise<SpinalNode<any>> {
     if (!this.nodes.hasOwnProperty(parentId)) {
       return Promise.reject(Error(`Node parent id ${parentId} not found`));
     }
@@ -867,8 +925,12 @@ class GraphManagerService {
 
     const child = this.nodes[childId];
     const context = this.nodes[contextId];
-    return this.nodes[parentId].addChildInContext(child, relationName, relationType, context);
-
+    return this.nodes[parentId].addChildInContext(
+      child,
+      relationName,
+      relationType,
+      context
+    );
   }
 
   /**
@@ -881,16 +943,24 @@ class GraphManagerService {
    * @returns {Promise<boolean>} return true if the child could be added false otherwise.
    * @memberof GraphManagerService
    */
-  addChild(parentId: string, childId: string, relationName: string, relationType: string)
-    : Promise<boolean> {
+  async addChild(
+    parentId: string,
+    childId: string,
+    relationName: string,
+    relationType: string
+  ): Promise<boolean> {
     if (!this.nodes.hasOwnProperty(parentId)) {
       return Promise.resolve(false);
     }
     if (!this.nodes.hasOwnProperty(childId)) {
       return Promise.resolve(false);
     }
-    return this.nodes[parentId].addChild(this.nodes[childId], relationName, relationType)
-      .then(() => true);
+    await this.nodes[parentId].addChild(
+      this.nodes[childId],
+      relationName,
+      relationType
+    );
+    return true;
   }
 
   /**
@@ -904,8 +974,12 @@ class GraphManagerService {
    * to the node corresponding to the parentId successfully
    * @memberof GraphManagerService
    */
-  addChildAndCreateNode(parentId: string, node: SpinalNodeObject,
-    relationName: string, relationType: string): Promise<boolean> {
+  addChildAndCreateNode(
+    parentId: string,
+    node: SpinalNodeObject,
+    relationName: string,
+    relationType: string
+  ): Promise<boolean> {
     if (!node.hasOwnProperty('info')) {
       return Promise.reject(false);
     }
@@ -914,38 +988,33 @@ class GraphManagerService {
     return this.addChild(parentId, nodeId, relationName, relationType);
   }
 
-  isChild(parentId: string, childId: string, linkRelationName: string[]) {
+  async isChild(parentId: string, childId: string, linkRelationName: string[]) {
     if (!this.nodes.hasOwnProperty(parentId)) {
       return Promise.resolve(false);
     }
-    return this.nodes[parentId].getChildren(linkRelationName)
-      .then((children) => {
-        let res = false;
-        for (const child of children) {
-          this._addNode(child);
-          if (child.info.id.get() === childId) {
-            res = true;
-          }
-        }
-        return res;
-      });
+    const children = await this.nodes[parentId].getChildren(linkRelationName);
+    let res = false;
+    for (const child of children) {
+      this._addNode(child);
+      if (child.info.id.get() === childId) {
+        res = true;
+      }
+    }
+    return res;
   }
 
   /**
    * add a node to the set of node
-   * @private
    * @param {SpinalNode<any>} node
    * @memberof GraphManagerService
    */
-  private _addNode(node: SpinalNode<any>) {
+  _addNode(node: SpinalNode<any>) {
     if (!this.nodes.hasOwnProperty(node.getId().get())) {
       this.nodes[node.info.id.get()] = node;
 
       for (const callback of this.listenersOnNodeAdded.values()) {
         callback(node.info.id.get());
       }
-    } else {
-      this.setInfo(node.info.id.get());
     }
   }
 
@@ -957,7 +1026,6 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   private _areAllChildrenLoaded(nodeId: string): boolean {
-
     if (!this.nodes.hasOwnProperty(nodeId)) {
       return false;
     }
@@ -980,11 +1048,13 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   private _bindNode(nodeId: string): void {
-
     if (this.binders.has(nodeId) || !this.nodes.hasOwnProperty(nodeId)) {
       return;
     }
-    this.binders.set(nodeId, this.nodes[nodeId].bind(this._bindFunc.bind(this, nodeId)));
+    this.binders.set(
+      nodeId,
+      this.nodes[nodeId].bind(this._bindFunc.bind(this, nodeId))
+    );
   }
 
   /**
@@ -994,7 +1064,6 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   private _bindFunc(nodeId: string): void {
-
     this.setInfo(nodeId);
     if (this.bindedNode.has(nodeId)) {
       for (const callback of this.bindedNode.get(nodeId).values()) {
@@ -1011,7 +1080,6 @@ class GraphManagerService {
    * @memberof GraphManagerService
    */
   private _unBind(nodeId: string, binder: any): boolean {
-
     if (!this.bindedNode.has(nodeId)) {
       return false;
     }
@@ -1027,9 +1095,7 @@ class GraphManagerService {
     return res;
   }
 
-
   public hasChildInContext(nodeId: string, contextId: string) {
-
     if (contextId === nodeId) {
       return true;
     }
@@ -1047,7 +1113,6 @@ class GraphManagerService {
     return false;
   }
 
-
   /**
    * Return all parents for the relation names no matter the type of relation
    * @param {string} nodeId The node id whose parents are recovered
@@ -1056,22 +1121,22 @@ class GraphManagerService {
    * @throws {TypeError} If the relationNames are neither an array, a string or omitted
    * @throws {TypeError} If an element of relationNames is not a string
    */
-  public getParents(nodeId: string, relationNames: string | string[]): Promise<any> {
+  public async getParents(
+    nodeId: string,
+    relationNames: string | string[]
+  ): Promise<any> {
     let node = this.nodes[nodeId];
 
     if (node) {
-      return node.getParents(relationNames).then(result => {
-        const parents = result.filter(parent => parent instanceof SpinalNode);
-        return parents.map(parent => {
-          this._addNode(parent);
-          return this.getInfo(parent.getId().get());
-        })
+      const result = await node.getParents(relationNames);
+      const parents = result.filter((parent) => parent instanceof SpinalNode);
+      return parents.map((parent_1) => {
+        this._addNode(parent_1);
+        return this.getInfo(parent_1.getId().get());
       });
     }
-
   }
-
 }
 
 export default GraphManagerService;
-export { GraphManagerService, SpinalNodeRef, InfoModel, SpinalNodeObject };
+export { GraphManagerService };

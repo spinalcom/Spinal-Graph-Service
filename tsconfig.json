@@ -8,10 +8,16 @@
     "sourceMap": true,
     "moduleResolution": "node"
   },
-  "types": ["forge-viewer"],
+  "types": [
+    "forge-viewer"
+  ],
   "files": [
-    "./node_modules/spinal-core-connectorjs_type/declarations/SpinalModel.d.ts"
-    ],
+    "./node_modules/spinal-core-connectorjs_type/declarations/SpinalModel.d.ts",
+    "src/interfaces/SpinalNodeRef.ts",
+    "src/interfaces/InfoModel.ts",
+    "src/interfaces/SpinalNodeObject.ts",
+    "src/interfaces/SpinalNodeFindPredicateFunc.ts"
+  ],
   "include": [
     "src/**/*.ts"
   ],

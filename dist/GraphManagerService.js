@@ -1,28 +1,27 @@
 "use strict";
 /*
- * Copyright 2019 SpinalCom - www.spinalcom.com
+ * Copyright 2023 SpinalCom - www.spinalcom.com
  *
- *  This file is part of SpinalCore.
+ * This file is part of SpinalCore.
  *
- *  Please read all of the following terms and conditions
- *  of the Free Software license Agreement ("Agreement")
- *  carefully.
+ * Please read all of the following terms and conditions
+ * of the Free Software license Agreement ("Agreement")
+ * carefully.
  *
- *  This Agreement is a legally binding contract between
- *  the Licensee (as defined below) and SpinalCom that
- *  sets forth the terms and conditions that govern your
- *  use of the Program. By installing and/or using the
- *  Program, you agree to abide by all the terms and
- *  conditions stated or referenced herein.
+ * This Agreement is a legally binding contract between
+ * the Licensee (as defined below) and SpinalCom that
+ * sets forth the terms and conditions that govern your
+ * use of the Program. By installing and/or using the
+ * Program, you agree to abide by all the terms and
+ * conditions stated or referenced herein.
  *
- *  If you do not agree to abide by these terms and
- *  conditions, do not demonstrate your acceptance and do
- *  not install or use the Program.
- *  You should have received a copy of the license along
- *  with this file. If not, see
- *  <http://resources.spinalcom.com/licenses.pdf>.
+ * If you do not agree to abide by these terms and
+ * conditions, do not demonstrate your acceptance and do
+ * not install or use the Program.
+ * You should have received a copy of the license along
+ * with this file. If not, see
+ * <http://resources.spinalcom.com/licenses.pdf>.
  */
-// tslint:disable:function-name
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -33,10 +32,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GraphManagerService = void 0;
+// tslint:disable:function-name
 const spinal_model_graph_1 = require("spinal-model-graph");
 const qrcode = require("qrcode-generator");
 const q = require("q");
-const DEFAULT_PREDICATE = () => true;
+const SpinalNodeFindPredicateFunc_1 = require("./interfaces/SpinalNodeFindPredicateFunc");
+const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
 const G_ROOT = typeof window === 'undefined' ? global : window;
 /**
  *  @property {Map<string, Map<any, Callback>>} bindedNode
@@ -61,7 +63,8 @@ class GraphManagerService {
         this.graph = undefined;
         this.nodesInfo = {};
         if (typeof viewerEnv !== 'undefined') {
-            G_ROOT.spinal.spinalSystem.getModel()
+            G_ROOT.spinal.spinalSystem
+                .getModel()
                 .then((obj) => {
                 if (obj instanceof spinal_model_graph_1.SpinalGraph) {
                     this.setGraph(obj);
@@ -96,14 +99,15 @@ class GraphManagerService {
      * @memberof GraphManagerService
      */
     setGraph(graph) {
-        if (this.graph && typeof this.graph.getId === 'function' &&
-            this.nodes.hasOwnProperty(this.graph.getId().get())) {
-            delete this.nodes[this.graph.getId().get()];
-        }
-        this.graph = graph;
-        this.nodes[this.graph.getId().get()] = this.graph;
-        return this.getChildren(this.graph.getId().get(), [])
-            .then(() => {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.graph &&
+                typeof this.graph.getId === 'function' &&
+                this.nodes.hasOwnProperty(this.graph.getId().get())) {
+                delete this.nodes[this.graph.getId().get()];
+            }
+            this.graph = graph;
+            this.nodes[this.graph.getId().get()] = this.graph;
+            yield this.getChildren(this.graph.getId().get(), []);
             this.initProm.resolve(this.graph);
             return this.graph.getId().get();
         });
@@ -121,21 +125,27 @@ class GraphManagerService {
      * @param stop
      */
     findNode(id, stop = false) {
-        const promises = [];
-        if (this.nodes.hasOwnProperty(id)) {
-            return Promise.resolve(this.getInfo(id));
-        }
-        if (stop) {
-            Promise.resolve(undefined);
-        }
-        for (const key in this.nodes) {
-            if (this.nodes.hasOwnProperty(key)) {
-                promises.push(this.getChildren(this.nodes[key].getId().get(), []));
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.nodes.hasOwnProperty(id)) {
+                return this.getInfo(id);
             }
-        }
-        return Promise.all(promises).then(() => {
-            return this.findNode(id, true);
+            for (const key in this.nodesInfo) {
+                if (this.nodesInfo.hasOwnProperty(key) && this.haveChildId(key, id)) {
+                    const children = yield this.getChildren(key);
+                    for (const child of children) {
+                        if (child.id.get() === id)
+                            return child;
+                    }
+                }
+            }
+            return undefined;
         });
+    }
+    haveChildId(nodeId, searchId) {
+        const nodeRef = this.nodesInfo[nodeId];
+        if (!nodeRef)
+            return false;
+        return nodeRef.childrenIds.includes(searchId);
     }
     /**
      * Find all the nodes that validate the predicate
@@ -149,11 +159,12 @@ class GraphManagerService {
      * @return all node that validate the predicate
      */
     findNodes(startId, relationNames, predicate) {
-        let node = this.graph;
-        if (this.nodes.hasOwnProperty(startId)) {
-            node = this.nodes[startId];
-        }
-        return node.find(relationNames, predicate).then((found) => {
+        return __awaiter(this, void 0, void 0, function* () {
+            let node = this.graph;
+            if (this.nodes.hasOwnProperty(startId)) {
+                node = this.nodes[startId];
+            }
+            const found = yield node.find(relationNames, predicate);
             for (const n of found) {
                 this._addNode(n);
             }
@@ -175,27 +186,27 @@ class GraphManagerService {
         });
     }
     /**
-   * Recursively finds all the children nodes and classify them by type.
-   * @param {String} startId  starting point of the search if note found the
-   * search will start at the beginning of the graph
-   * @param {string|string[]} relationNames Array containing the relation names to follow
-   * @returns {Object<{types : string[], data : Object<string : SpinalNode[]>}>}
-   * @throws {TypeError} If the relationNames are neither an array, a string or omitted
-   * @throws {TypeError} If an element of relationNames is not a string
-   * @throws {TypeError} If the predicate is not a function
-   */
+     * Recursively finds all the children nodes and classify them by type.
+     * @param {String} startId  starting point of the search if note found the
+     * search will start at the beginning of the graph
+     * @param {string|string[]} relationNames Array containing the relation names to follow
+     * @returns {Object<{types : string[], data : Object<string : SpinalNode[]>}>}
+     * @throws {TypeError} If the relationNames are neither an array, a string or omitted
+     * @throws {TypeError} If an element of relationNames is not a string
+     * @throws {TypeError} If the predicate is not a function
+     */
     browseAnClassifyByType(startId, relationNames) {
         return __awaiter(this, void 0, void 0, function* () {
             let dataStructure = {
                 types: [],
-                data: {}
+                data: {},
             };
             yield this.findNodes(startId, relationNames, (node) => {
                 let type = node.getType().get();
                 if (dataStructure.types.indexOf(type) === -1) {
                     dataStructure.types.push(type);
                 }
-                if (typeof dataStructure.data[type] === "undefined") {
+                if (typeof dataStructure.data[type] === 'undefined') {
                     dataStructure.data[type] = [];
                 }
                 dataStructure.data[type].push(node.info);
@@ -207,36 +218,36 @@ class GraphManagerService {
     /**
      * Recursively finds all the children nodes in the context for which the predicate is true..
      * @param {string} startId starting point of the search if note found the
-   * search will start at the beginning of the graph
+     * search will start at the beginning of the graph
      * @param {string} contextId Context to use for the search
      * @param {findPredicate} predicate Function returning true if the node needs to be returned
      * @returns {Promise<Array<SpinalNode>>} The nodes that were found
      * @throws {TypeError} If context is not a SpinalContext
      * @throws {TypeError} If the predicate is not a function
      */
-    findInContext(startId, contextId, predicate = DEFAULT_PREDICATE) {
+    findInContext(startId, contextId, predicate = SpinalNodeFindPredicateFunc_1.DEFAULT_PREDICATE) {
         return __awaiter(this, void 0, void 0, function* () {
             let contextNode = this.getRealNode(contextId);
             let startNode = this.getRealNode(startId);
             if (contextNode && startNode) {
-                return startNode.findInContext(contextNode, predicate).then(found => {
+                return startNode.findInContext(contextNode, predicate).then((found) => {
                     if (found) {
-                        return found.map(el => el.info);
+                        return found.map((el) => el.info);
                     }
                 });
             }
         });
     }
     /**
-   * Recursively finds all the children nodes in the context for which the predicate is true..
-   * @param {string} startId starting point of the search if note found the
-  * search will start at the beginning of the graph
-   * @param {string} contextId Context to use for the search
-   * @param nodeType type of node to search
-   * @returns {Promise<Array<SpinalNode>>} The nodes that were found
-   * @throws {TypeError} If context is not a SpinalContext
-   * @throws {TypeError} If the predicate is not a function
-   */
+     * Recursively finds all the children nodes in the context for which the predicate is true..
+     * @param {string} startId starting point of the search if note found the
+     * search will start at the beginning of the graph
+     * @param {string} contextId Context to use for the search
+     * @param nodeType type of node to search
+     * @returns {Promise<Array<SpinalNode>>} The nodes that were found
+     * @throws {TypeError} If context is not a SpinalContext
+     * @throws {TypeError} If the predicate is not a function
+     */
     findInContextByType(startId, contextId, nodeType) {
         return this.findInContext(startId, contextId, (node) => {
             if (node.getType().get() === nodeType) {
@@ -247,27 +258,27 @@ class GraphManagerService {
         });
     }
     /**
-   * Recursively finds all the children nodes in the context and classify them by type.
-   * @param {string} startId starting point of the search if note found the
-  * search will start at the beginning of the graph
-   * @param {string} contextId Context to use for the search
-   * @returns {Object<{types : string[], data : Object<string : any[]>}>}
-   * @throws {TypeError} If the relationNames are neither an array, a string or omitted
-   * @throws {TypeError} If an element of relationNames is not a string
-   * @throws {TypeError} If the predicate is not a function
-   */
+     * Recursively finds all the children nodes in the context and classify them by type.
+     * @param {string} startId starting point of the search if note found the
+     * search will start at the beginning of the graph
+     * @param {string} contextId Context to use for the search
+     * @returns {Object<{types : string[], data : Object<string : any[]>}>}
+     * @throws {TypeError} If the relationNames are neither an array, a string or omitted
+     * @throws {TypeError} If an element of relationNames is not a string
+     * @throws {TypeError} If the predicate is not a function
+     */
     browseAndClassifyByTypeInContext(startId, contextId) {
         return __awaiter(this, void 0, void 0, function* () {
             let dataStructure = {
                 types: [],
-                data: {}
+                data: {},
             };
             yield this.findInContext(startId, contextId, (node) => {
                 let type = node.getType().get();
                 if (dataStructure.types.indexOf(type) === -1) {
                     dataStructure.types.push(type);
                 }
-                if (typeof dataStructure.data[type] === "undefined") {
+                if (typeof dataStructure.data[type] === 'undefined') {
                     dataStructure.data[type] = [];
                 }
                 dataStructure.data[type].push(node.info);
@@ -306,7 +317,6 @@ class GraphManagerService {
      * @returns {SpinalNodeRef | undefined}
      */
     getNode(id) {
-        console.warn('deprecated use getNodeAsync instead');
         if (this.nodes.hasOwnProperty(id)) {
             return this.getInfo(id);
         }
@@ -317,12 +327,14 @@ class GraphManagerService {
      * @returns {SpinalNodeRef | undefined}
      */
     getNodeAsync(id) {
-        return this.findNode(id)
-            .then((node) => {
-            return this.getInfo(node.id.get());
-        })
-            .catch(() => {
-            return undefined;
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const node = yield this.findNode(id);
+                return this.getInfo(node.id.get());
+            }
+            catch (_a) {
+                return undefined;
+            }
         });
     }
     /**
@@ -369,18 +381,18 @@ class GraphManagerService {
      * @memberof GraphManagerService
      */
     getChildren(id, relationNames = []) {
-        if (!this.nodes.hasOwnProperty(id)) {
-            return Promise.reject(Error(`Node id: ${id} not found`));
-        }
-        if (relationNames.length === 0) {
-            for (const [, relationMap] of this.nodes[id].children) {
-                if (relationMap && relationMap.keys) {
-                    relationNames.push(...relationMap.keys());
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.nodes.hasOwnProperty(id)) {
+                return Promise.reject(Error(`Node id: ${id} not found`));
+            }
+            if (relationNames.length === 0) {
+                for (const [, relationMap] of this.nodes[id].children) {
+                    if (relationMap && relationMap.keys) {
+                        relationNames.push(...relationMap.keys());
+                    }
                 }
             }
-        }
-        return this.nodes[id].getChildren(relationNames)
-            .then((children) => {
+            const children = yield this.nodes[id].getChildren(relationNames);
             return children.map((n) => {
                 this._addNode(n);
                 return this.getInfo(n.info.id.get());
@@ -395,11 +407,12 @@ class GraphManagerService {
      * @memberof GraphManagerService
      */
     getChildrenInContext(parentId, contextId) {
-        if (!this.nodes.hasOwnProperty(parentId) || !this.nodes.hasOwnProperty(contextId)) {
-            throw new Error('parentId or contextId not found');
-        }
-        return this.nodes[parentId].getChildrenInContext(this.nodes[contextId])
-            .then((children) => {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.nodes.hasOwnProperty(parentId) ||
+                !this.nodes.hasOwnProperty(contextId)) {
+                throw new Error('parentId or contextId not found');
+            }
+            const children = yield this.nodes[parentId].getChildrenInContext(this.nodes[contextId]);
             return children.map((n) => {
                 this._addNode(n);
                 return this.getInfo(n.info.id.get());
@@ -420,7 +433,13 @@ class GraphManagerService {
             return this.nodesInfo[nodeId];
         }
         const node = this.nodes[nodeId];
-        const res = node.info.deep_copy();
+        const res = new spinal_core_connectorjs_type_1.Model();
+        for (const key of node.info._attribute_names) {
+            if (Object.prototype.hasOwnProperty.call(node.info, key)) {
+                const element = node.info[key];
+                res.add_attr(key, element);
+            }
+        }
         res['childrenIds'] = node.getChildrenIds();
         res['contextIds'] = node.contextIds;
         res['element'] = node.element;
@@ -429,19 +448,37 @@ class GraphManagerService {
         return res;
     }
     /**
-     * Return the node info aggregated with its childrenIds, contextIds and element
+     * Update the node info aggregated with
+     * its childrenIds, contextIds and element
      * @param {string} nodeId
      * @returns {SpinalNodeRef}
      * @memberof GraphManagerService
      */
     setInfo(nodeId) {
         const node = this.nodes[nodeId];
-        const res = node.info.deep_copy();
-        res['childrenIds'] = node.getChildrenIds();
-        res['contextIds'] = node.contextIds;
-        res['element'] = node.element;
-        res['hasChildren'] = res['childrenIds'].length > 0;
-        this.nodesInfo[nodeId] = res;
+        if (node)
+            return console.error(`trying to setInfo of ${nodeId} but not registered.`);
+        let res = this.nodesInfo[nodeId];
+        if (!res) {
+            res = this.getInfo(nodeId);
+        }
+        else {
+            for (const key of node.info._attribute_names) {
+                if (Object.prototype.hasOwnProperty.call(node.info, key)) {
+                    const element = node.info[key];
+                    if (!res[key]) {
+                        res.add_attr(key, element);
+                    }
+                    else if (element !== res[key]) {
+                        res.mod_attr(key, element);
+                    }
+                }
+            }
+            res['childrenIds'] = node.getChildrenIds();
+            res['contextIds'] = node.contextIds;
+            res['element'] = node.element;
+            res['hasChildren'] = res['childrenIds'].length > 0;
+        }
     }
     /**
      * @param {string} nodeId
@@ -500,7 +537,8 @@ class GraphManagerService {
             return false;
         }
         for (const key in info) {
-            if (!this.nodes[nodeId].info.hasOwnProperty(key) && info.hasOwnProperty(key)) {
+            if (!this.nodes[nodeId].info.hasOwnProperty(key) &&
+                info.hasOwnProperty(key)) {
                 const tmp = {};
                 tmp[key] = info[key];
                 this.nodes[nodeId].info.add_attr(tmp);
@@ -531,9 +569,7 @@ class GraphManagerService {
             this.bindedNode.get(nodeId).set(caller, callback);
         }
         else {
-            this.bindedNode.set(nodeId, new Map([
-                [caller, callback],
-            ]));
+            this.bindedNode.set(nodeId, new Map([[caller, callback]]));
             this._bindNode(nodeId);
         }
         return this._unBind.bind(this, nodeId, caller);
@@ -548,19 +584,20 @@ class GraphManagerService {
      * @memberof GraphManagerService
      */
     moveChild(fromId, toId, childId, relationName, relationType) {
-        if (!this.nodes.hasOwnProperty(fromId)) {
-            return Promise.reject(`fromId: ${fromId} not found`);
-        }
-        if (!this.nodes.hasOwnProperty(toId)) {
-            return Promise.reject(`toId: ${toId} not found`);
-        }
-        if (!this.nodes.hasOwnProperty(childId)) {
-            return Promise.reject(`childId: ${childId} not found`);
-        }
-        return this.nodes[fromId].removeChild(this.nodes[childId], relationName, relationType)
-            .then(() => {
-            return this.nodes[toId].addChild(this.nodes[childId], relationName, relationType);
-        }).then(() => true);
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.nodes.hasOwnProperty(fromId)) {
+                return Promise.reject(`fromId: ${fromId} not found`);
+            }
+            if (!this.nodes.hasOwnProperty(toId)) {
+                return Promise.reject(`toId: ${toId} not found`);
+            }
+            if (!this.nodes.hasOwnProperty(childId)) {
+                return Promise.reject(`childId: ${childId} not found`);
+            }
+            yield this.nodes[fromId].removeChild(this.nodes[childId], relationName, relationType);
+            yield this.nodes[toId].addChild(this.nodes[childId], relationName, relationType);
+            return true;
+        });
     }
     /**
      * @param {string} fromId
@@ -573,19 +610,20 @@ class GraphManagerService {
      * @memberof GraphManagerService
      */
     moveChildInContext(fromId, toId, childId, contextId, relationName, relationType) {
-        if (!this.nodes.hasOwnProperty(fromId)) {
-            return Promise.reject(`fromId: ${fromId} not found`);
-        }
-        if (!this.nodes.hasOwnProperty(toId)) {
-            return Promise.reject(`toId: ${toId} not found`);
-        }
-        if (!this.nodes.hasOwnProperty(childId)) {
-            return Promise.reject(`childId: ${childId} not found`);
-        }
-        return this.nodes[fromId].removeChild(this.nodes[childId], relationName, relationType)
-            .then(() => {
-            return this.nodes[toId].addChildInContext(this.nodes[childId], relationName, relationType, this.nodes[contextId]);
-        }).then(() => true);
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.nodes.hasOwnProperty(fromId)) {
+                return Promise.reject(`fromId: ${fromId} not found`);
+            }
+            if (!this.nodes.hasOwnProperty(toId)) {
+                return Promise.reject(`toId: ${toId} not found`);
+            }
+            if (!this.nodes.hasOwnProperty(childId)) {
+                return Promise.reject(`childId: ${childId} not found`);
+            }
+            yield this.nodes[fromId].removeChild(this.nodes[childId], relationName, relationType);
+            yield this.nodes[toId].addChildInContext(this.nodes[childId], relationName, relationType, this.nodes[contextId]);
+            return true;
+        });
     }
     /**
      * Remove the child corresponding to childId from the node corresponding to parentId.
@@ -597,29 +635,29 @@ class GraphManagerService {
      * @returns {Promise<boolean>}
      */
     removeChild(nodeId, childId, relationName, relationType, stop = false) {
-        if (!this.nodes.hasOwnProperty(nodeId)) {
-            return Promise.reject(Error('nodeId unknown.'));
-        }
-        if (!this.nodes.hasOwnProperty(childId) && !stop) {
-            try {
-                return this.getChildren(nodeId, []).then(() => {
-                    return this.removeChild(nodeId, childId, relationName, relationType, true);
-                });
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.nodes.hasOwnProperty(nodeId)) {
+                return Promise.reject(Error('nodeId unknown.'));
             }
-            catch (e) {
-                console.error(e);
+            if (!this.nodes.hasOwnProperty(childId) && !stop) {
+                try {
+                    yield this.getChildren(nodeId, []);
+                    return yield this.removeChild(nodeId, childId, relationName, relationType, true);
+                }
+                catch (e) {
+                    console.error(e);
+                }
             }
-        }
-        if (this.nodes.hasOwnProperty(childId)) {
-            for (const callback of this.listenerOnNodeRemove.values()) {
-                callback(nodeId);
-            }
-            return this.nodes[nodeId].removeChild(this.nodes[childId], relationName, relationType).then(() => {
+            if (this.nodes.hasOwnProperty(childId)) {
+                for (const callback of this.listenerOnNodeRemove.values()) {
+                    callback(nodeId);
+                }
+                yield this.nodes[nodeId].removeChild(this.nodes[childId], relationName, relationType);
                 console.log('remove child', this.nodes[childId]);
                 return true;
-            });
-        }
-        return Promise.reject(Error('childId unknown. It might already been removed from the parent node'));
+            }
+            return Promise.reject(Error('childId unknown. It might already been removed from the parent node'));
+        });
     }
     /**
      * Add a context to the graph
@@ -700,7 +738,7 @@ class GraphManagerService {
      * The node newly created is volatile
      * i.e it won't be store in the filesystem as long it's not added as child to another node
      * @param {{[key: string]: any}} info information of the node
-     * @param {spinal.Model} element element pointed by the node
+     * @param {spinal.Model} [element] element pointed by the node
      * @returns {string} return the child identifier
      * @memberof GraphManagerService
      */
@@ -711,7 +749,14 @@ class GraphManagerService {
         }
         const nodeId = node.info.id.get();
         info['id'] = nodeId;
-        node.mod_attr('info', info);
+        for (const key in info) {
+            if (!node.info._attribute_names.includes(key)) {
+                node.info.add_attr(key, info[key]);
+            }
+            else {
+                node.info[key].set(info[key]);
+            }
+        }
         this._addNode(node);
         return nodeId;
     }
@@ -750,14 +795,16 @@ class GraphManagerService {
      * @memberof GraphManagerService
      */
     addChild(parentId, childId, relationName, relationType) {
-        if (!this.nodes.hasOwnProperty(parentId)) {
-            return Promise.resolve(false);
-        }
-        if (!this.nodes.hasOwnProperty(childId)) {
-            return Promise.resolve(false);
-        }
-        return this.nodes[parentId].addChild(this.nodes[childId], relationName, relationType)
-            .then(() => true);
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.nodes.hasOwnProperty(parentId)) {
+                return Promise.resolve(false);
+            }
+            if (!this.nodes.hasOwnProperty(childId)) {
+                return Promise.resolve(false);
+            }
+            yield this.nodes[parentId].addChild(this.nodes[childId], relationName, relationType);
+            return true;
+        });
     }
     /**
      *
@@ -778,11 +825,11 @@ class GraphManagerService {
         return this.addChild(parentId, nodeId, relationName, relationType);
     }
     isChild(parentId, childId, linkRelationName) {
-        if (!this.nodes.hasOwnProperty(parentId)) {
-            return Promise.resolve(false);
-        }
-        return this.nodes[parentId].getChildren(linkRelationName)
-            .then((children) => {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.nodes.hasOwnProperty(parentId)) {
+                return Promise.resolve(false);
+            }
+            const children = yield this.nodes[parentId].getChildren(linkRelationName);
             let res = false;
             for (const child of children) {
                 this._addNode(child);
@@ -795,7 +842,6 @@ class GraphManagerService {
     }
     /**
      * add a node to the set of node
-     * @private
      * @param {SpinalNode<any>} node
      * @memberof GraphManagerService
      */
@@ -805,9 +851,6 @@ class GraphManagerService {
             for (const callback of this.listenersOnNodeAdded.values()) {
                 callback(node.info.id.get());
             }
-        }
-        else {
-            this.setInfo(node.info.id.get());
         }
     }
     /**
@@ -899,16 +942,17 @@ class GraphManagerService {
      * @throws {TypeError} If an element of relationNames is not a string
      */
     getParents(nodeId, relationNames) {
-        let node = this.nodes[nodeId];
-        if (node) {
-            return node.getParents(relationNames).then(result => {
-                const parents = result.filter(parent => parent instanceof spinal_model_graph_1.SpinalNode);
-                return parents.map(parent => {
-                    this._addNode(parent);
-                    return this.getInfo(parent.getId().get());
+        return __awaiter(this, void 0, void 0, function* () {
+            let node = this.nodes[nodeId];
+            if (node) {
+                const result = yield node.getParents(relationNames);
+                const parents = result.filter((parent) => parent instanceof spinal_model_graph_1.SpinalNode);
+                return parents.map((parent_1) => {
+                    this._addNode(parent_1);
+                    return this.getInfo(parent_1.getId().get());
                 });
-            });
-        }
+            }
+        });
     }
 }
 exports.GraphManagerService = GraphManagerService;

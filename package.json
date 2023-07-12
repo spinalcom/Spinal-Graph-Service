@@ -1,12 +1,12 @@
 {
   "name": "spinal-env-viewer-graph-service",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
     "build": "rm -fr build && tsc",
     "dev": "rm -fr build && tsc --watch & nodemon build",
-    "docs": "./node_modules/.bin/typedoc --theme markdown --out docs",
+    "docs": "./node_modules/.bin/typedoc src/index.ts --theme markdown --out docs",
     "test": "jest",
     "test-config": "ts-jest config:init"
   },

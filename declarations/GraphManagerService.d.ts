@@ -1,22 +1,8 @@
-import { SpinalContext, SpinalGraph, SpinalNode, SpinalNodePointer } from 'spinal-model-graph';
+import { SpinalContext, SpinalGraph, SpinalNode } from 'spinal-model-graph';
 import * as q from 'q';
-interface SpinalNodeRef extends spinal.Model {
-    childrenIds: string[];
-    contextIds: string[];
-    element: SpinalNodePointer<spinal.Model>;
-    hasChildren: boolean;
-    [key: string]: any;
-}
-interface InfoModel extends spinal.Model {
-    id: string | spinal.Str;
-    [key: string]: any;
-}
-interface SpinalNodeObject {
-    info: InfoModel;
-    element?: spinal.Model;
-    [key: string]: any;
-}
-declare type SpinalNodeFindPredicateFunc = (node: SpinalNode<any>) => boolean;
+import type { SpinalNodeRef } from './interfaces/SpinalNodeRef';
+import type { SpinalNodeObject } from './interfaces/SpinalNodeObject';
+import { type SpinalNodeFindPredicateFunc } from './interfaces/SpinalNodeFindPredicateFunc';
 /**
  * @type (node: string | SpinalNodeRef) => any
  */
@@ -32,7 +18,7 @@ declare type callback = (node: string | SpinalNodeRef) => any;
  */
 declare class GraphManagerService {
     bindedNode: Map<string, Map<any, callback>>;
-    binders: Map<String, spinal.BindProcess>;
+    binders: Map<String, spinal.Process>;
     listenersOnNodeAdded: Map<any, callback>;
     listenerOnNodeRemove: Map<any, callback>;
     initialized: Promise<boolean>;
@@ -72,6 +58,7 @@ declare class GraphManagerService {
      * @param stop
      */
     findNode(id: string, stop?: boolean): Promise<SpinalNodeRef>;
+    haveChildId(nodeId: string, searchId: string): boolean;
     /**
      * Find all the nodes that validate the predicate
      *
@@ -95,20 +82,20 @@ declare class GraphManagerService {
      */
     findNodesByType(startId: string, relationNames: string[], nodeType: string): Promise<any>;
     /**
-   * Recursively finds all the children nodes and classify them by type.
-   * @param {String} startId  starting point of the search if note found the
-   * search will start at the beginning of the graph
-   * @param {string|string[]} relationNames Array containing the relation names to follow
-   * @returns {Object<{types : string[], data : Object<string : SpinalNode[]>}>}
-   * @throws {TypeError} If the relationNames are neither an array, a string or omitted
-   * @throws {TypeError} If an element of relationNames is not a string
-   * @throws {TypeError} If the predicate is not a function
-   */
+     * Recursively finds all the children nodes and classify them by type.
+     * @param {String} startId  starting point of the search if note found the
+     * search will start at the beginning of the graph
+     * @param {string|string[]} relationNames Array containing the relation names to follow
+     * @returns {Object<{types : string[], data : Object<string : SpinalNode[]>}>}
+     * @throws {TypeError} If the relationNames are neither an array, a string or omitted
+     * @throws {TypeError} If an element of relationNames is not a string
+     * @throws {TypeError} If the predicate is not a function
+     */
     browseAnClassifyByType(startId: string, relationNames: string[]): Promise<any>;
     /**
      * Recursively finds all the children nodes in the context for which the predicate is true..
      * @param {string} startId starting point of the search if note found the
-   * search will start at the beginning of the graph
+     * search will start at the beginning of the graph
      * @param {string} contextId Context to use for the search
      * @param {findPredicate} predicate Function returning true if the node needs to be returned
      * @returns {Promise<Array<SpinalNode>>} The nodes that were found
@@ -117,26 +104,26 @@ declare class GraphManagerService {
      */
     findInContext(startId: string, contextId: string, predicate?: SpinalNodeFindPredicateFunc): Promise<any>;
     /**
-   * Recursively finds all the children nodes in the context for which the predicate is true..
-   * @param {string} startId starting point of the search if note found the
-  * search will start at the beginning of the graph
-   * @param {string} contextId Context to use for the search
-   * @param nodeType type of node to search
-   * @returns {Promise<Array<SpinalNode>>} The nodes that were found
-   * @throws {TypeError} If context is not a SpinalContext
-   * @throws {TypeError} If the predicate is not a function
-   */
+     * Recursively finds all the children nodes in the context for which the predicate is true..
+     * @param {string} startId starting point of the search if note found the
+     * search will start at the beginning of the graph
+     * @param {string} contextId Context to use for the search
+     * @param nodeType type of node to search
+     * @returns {Promise<Array<SpinalNode>>} The nodes that were found
+     * @throws {TypeError} If context is not a SpinalContext
+     * @throws {TypeError} If the predicate is not a function
+     */
     findInContextByType(startId: string, contextId: string, nodeType: string): Promise<any>;
     /**
-   * Recursively finds all the children nodes in the context and classify them by type.
-   * @param {string} startId starting point of the search if note found the
-  * search will start at the beginning of the graph
-   * @param {string} contextId Context to use for the search
-   * @returns {Object<{types : string[], data : Object<string : any[]>}>}
-   * @throws {TypeError} If the relationNames are neither an array, a string or omitted
-   * @throws {TypeError} If an element of relationNames is not a string
-   * @throws {TypeError} If the predicate is not a function
-   */
+     * Recursively finds all the children nodes in the context and classify them by type.
+     * @param {string} startId starting point of the search if note found the
+     * search will start at the beginning of the graph
+     * @param {string} contextId Context to use for the search
+     * @returns {Object<{types : string[], data : Object<string : any[]>}>}
+     * @throws {TypeError} If the relationNames are neither an array, a string or omitted
+     * @throws {TypeError} If an element of relationNames is not a string
+     * @throws {TypeError} If the predicate is not a function
+     */
     browseAndClassifyByTypeInContext(startId: string, contextId: string): Promise<any>;
     generateQRcode(nodeId: string): string;
     /**
@@ -210,7 +197,8 @@ declare class GraphManagerService {
      */
     getInfo(nodeId: string): SpinalNodeRef;
     /**
-     * Return the node info aggregated with its childrenIds, contextIds and element
+     * Update the node info aggregated with
+     * its childrenIds, contextIds and element
      * @param {string} nodeId
      * @returns {SpinalNodeRef}
      * @memberof GraphManagerService
@@ -334,13 +322,13 @@ declare class GraphManagerService {
      * The node newly created is volatile
      * i.e it won't be store in the filesystem as long it's not added as child to another node
      * @param {{[key: string]: any}} info information of the node
-     * @param {spinal.Model} element element pointed by the node
+     * @param {spinal.Model} [element] element pointed by the node
      * @returns {string} return the child identifier
      * @memberof GraphManagerService
      */
     createNode(info: {
         [key: string]: any;
-    }, element: spinal.Model): string;
+    }, element?: spinal.Model): string;
     /**
      * d
      * @param {string} parentId
@@ -378,11 +366,10 @@ declare class GraphManagerService {
     isChild(parentId: string, childId: string, linkRelationName: string[]): Promise<boolean>;
     /**
      * add a node to the set of node
-     * @private
      * @param {SpinalNode<any>} node
      * @memberof GraphManagerService
      */
-    private _addNode;
+    _addNode(node: SpinalNode<any>): void;
     /**
      * Check if all children from a node are loaded
      * @private
@@ -426,4 +413,4 @@ declare class GraphManagerService {
     getParents(nodeId: string, relationNames: string | string[]): Promise<any>;
 }
 export default GraphManagerService;
-export { GraphManagerService, SpinalNodeRef, InfoModel, SpinalNodeObject };
+export { GraphManagerService };
