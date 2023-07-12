@@ -2,4 +2,4 @@
 
 Service warper of the spinal-model-graph.
 
-## [Documentation](./docs/globals.md)
+## [Documentation](./docs/modules.md)
