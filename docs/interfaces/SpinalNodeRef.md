@@ -135,7 +135,7 @@ ___
 
 #### Defined in
 
-src/interfaces/SpinalNodeRef.ts:29
+[src/interfaces/SpinalNodeRef.ts:29](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/interfaces/SpinalNodeRef.ts#L29)
 
 ___
 
@@ -145,7 +145,7 @@ ___
 
 #### Defined in
 
-src/interfaces/SpinalNodeRef.ts:30
+[src/interfaces/SpinalNodeRef.ts:30](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/interfaces/SpinalNodeRef.ts#L30)
 
 ___
 
@@ -155,7 +155,7 @@ ___
 
 #### Defined in
 
-src/interfaces/SpinalNodeRef.ts:31
+[src/interfaces/SpinalNodeRef.ts:31](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/interfaces/SpinalNodeRef.ts#L31)
 
 ___
 
@@ -165,7 +165,7 @@ ___
 
 #### Defined in
 
-src/interfaces/SpinalNodeRef.ts:32
+[src/interfaces/SpinalNodeRef.ts:32](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/interfaces/SpinalNodeRef.ts#L32)
 
 ___
 

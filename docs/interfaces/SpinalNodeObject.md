@@ -21,7 +21,7 @@
 
 #### Defined in
 
-src/interfaces/SpinalNodeObject.ts:30
+[src/interfaces/SpinalNodeObject.ts:30](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/interfaces/SpinalNodeObject.ts#L30)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-src/interfaces/SpinalNodeObject.ts:29
+[src/interfaces/SpinalNodeObject.ts:29](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/interfaces/SpinalNodeObject.ts#L29)

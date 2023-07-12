@@ -521,7 +521,7 @@ class GraphManagerService {
    */
   setInfo(nodeId: string): void {
     const node = this.nodes[nodeId];
-    if (node)
+    if (!node)
       return console.error(
         `trying to setInfo of ${nodeId} but not registered.`
       );

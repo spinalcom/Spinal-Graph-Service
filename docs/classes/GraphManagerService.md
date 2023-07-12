@@ -87,7 +87,7 @@
 
 #### Defined in
 
-[src/GraphManagerService.ts:67](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L67)
+[src/GraphManagerService.ts:67](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L67)
 
 ## Properties
 
@@ -97,7 +97,7 @@
 
 #### Defined in
 
-[src/GraphManagerService.ts:55](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L55)
+[src/GraphManagerService.ts:55](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L55)
 
 ___
 
@@ -107,7 +107,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:56](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L56)
+[src/GraphManagerService.ts:56](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L56)
 
 ___
 
@@ -117,7 +117,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:62](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L62)
+[src/GraphManagerService.ts:62](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L62)
 
 ___
 
@@ -127,7 +127,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:63](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L63)
+[src/GraphManagerService.ts:63](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L63)
 
 ___
 
@@ -137,7 +137,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:59](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L59)
+[src/GraphManagerService.ts:59](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L59)
 
 ___
 
@@ -147,7 +147,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:58](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L58)
+[src/GraphManagerService.ts:58](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L58)
 
 ___
 
@@ -157,7 +157,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:57](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L57)
+[src/GraphManagerService.ts:57](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L57)
 
 ___
 
@@ -171,7 +171,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:60](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L60)
+[src/GraphManagerService.ts:60](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L60)
 
 ___
 
@@ -185,7 +185,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:61](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L61)
+[src/GraphManagerService.ts:61](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L61)
 
 ## Methods
 
@@ -205,7 +205,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:1011](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L1011)
+[src/GraphManagerService.ts:1011](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L1011)
 
 ___
 
@@ -225,7 +225,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:1028](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L1028)
+[src/GraphManagerService.ts:1028](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L1028)
 
 ___
 
@@ -245,7 +245,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:1066](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L1066)
+[src/GraphManagerService.ts:1066](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L1066)
 
 ___
 
@@ -265,7 +265,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:1050](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L1050)
+[src/GraphManagerService.ts:1050](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L1050)
 
 ___
 
@@ -286,7 +286,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:1082](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L1082)
+[src/GraphManagerService.ts:1082](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L1082)
 
 ___
 
@@ -309,7 +309,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:946](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L946)
+[src/GraphManagerService.ts:946](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L946)
 
 ___
 
@@ -332,7 +332,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:977](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L977)
+[src/GraphManagerService.ts:977](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L977)
 
 ___
 
@@ -356,7 +356,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:909](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L909)
+[src/GraphManagerService.ts:909](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L909)
 
 ___
 
@@ -378,7 +378,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:796](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L796)
+[src/GraphManagerService.ts:796](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L796)
 
 ___
 
@@ -400,7 +400,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:636](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L636)
+[src/GraphManagerService.ts:636](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L636)
 
 ___
 
@@ -421,7 +421,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:218](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L218)
+[src/GraphManagerService.ts:218](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L218)
 
 ___
 
@@ -442,7 +442,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:308](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L308)
+[src/GraphManagerService.ts:308](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L308)
 
 ___
 
@@ -463,7 +463,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:881](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L881)
+[src/GraphManagerService.ts:881](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L881)
 
 ___
 
@@ -485,7 +485,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:256](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L256)
+[src/GraphManagerService.ts:256](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L256)
 
 ___
 
@@ -507,7 +507,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:283](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L283)
+[src/GraphManagerService.ts:283](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L283)
 
 ___
 
@@ -528,7 +528,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:140](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L140)
+[src/GraphManagerService.ts:140](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L140)
 
 ___
 
@@ -550,7 +550,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:173](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L173)
+[src/GraphManagerService.ts:173](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L173)
 
 ___
 
@@ -572,7 +572,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:198](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L198)
+[src/GraphManagerService.ts:198](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L198)
 
 ___
 
@@ -592,7 +592,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:336](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L336)
+[src/GraphManagerService.ts:336](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L336)
 
 ___
 
@@ -613,7 +613,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:434](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L434)
+[src/GraphManagerService.ts:434](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L434)
 
 ___
 
@@ -633,7 +633,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:554](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L554)
+[src/GraphManagerService.ts:554](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L554)
 
 ___
 
@@ -654,7 +654,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:464](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L464)
+[src/GraphManagerService.ts:464](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L464)
 
 ___
 
@@ -674,7 +674,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:812](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L812)
+[src/GraphManagerService.ts:812](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L812)
 
 ___
 
@@ -694,7 +694,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:827](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L827)
+[src/GraphManagerService.ts:827](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L827)
 
 ___
 
@@ -708,7 +708,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:392](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L392)
+[src/GraphManagerService.ts:392](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L392)
 
 ___
 
@@ -728,7 +728,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:490](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L490)
+[src/GraphManagerService.ts:490](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L490)
 
 ___
 
@@ -748,7 +748,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:368](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L368)
+[src/GraphManagerService.ts:368](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L368)
 
 ___
 
@@ -768,7 +768,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:379](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L379)
+[src/GraphManagerService.ts:379](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L379)
 
 ___
 
@@ -788,7 +788,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:844](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L844)
+[src/GraphManagerService.ts:844](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L844)
 
 ___
 
@@ -802,7 +802,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:350](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L350)
+[src/GraphManagerService.ts:350](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L350)
 
 ___
 
@@ -816,7 +816,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:359](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L359)
+[src/GraphManagerService.ts:359](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L359)
 
 ___
 
@@ -837,7 +837,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:1124](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L1124)
+[src/GraphManagerService.ts:1124](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L1124)
 
 ___
 
@@ -857,7 +857,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:402](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L402)
+[src/GraphManagerService.ts:402](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L402)
 
 ___
 
@@ -877,7 +877,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:415](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L415)
+[src/GraphManagerService.ts:415](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L415)
 
 ___
 
@@ -898,7 +898,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:1098](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L1098)
+[src/GraphManagerService.ts:1098](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L1098)
 
 ___
 
@@ -919,7 +919,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:156](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L156)
+[src/GraphManagerService.ts:156](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L156)
 
 ___
 
@@ -941,7 +941,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:991](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L991)
+[src/GraphManagerService.ts:991](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L991)
 
 ___
 
@@ -962,7 +962,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:566](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L566)
+[src/GraphManagerService.ts:566](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L566)
 
 ___
 
@@ -983,7 +983,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:577](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L577)
+[src/GraphManagerService.ts:577](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L577)
 
 ___
 
@@ -1004,7 +1004,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:606](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L606)
+[src/GraphManagerService.ts:606](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L606)
 
 ___
 
@@ -1028,7 +1028,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:664](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L664)
+[src/GraphManagerService.ts:664](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L664)
 
 ___
 
@@ -1053,7 +1053,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:703](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L703)
+[src/GraphManagerService.ts:703](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L703)
 
 ___
 
@@ -1077,7 +1077,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:744](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L744)
+[src/GraphManagerService.ts:744](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L744)
 
 ___
 
@@ -1097,7 +1097,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:863](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L863)
+[src/GraphManagerService.ts:863](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L863)
 
 ___
 
@@ -1117,7 +1117,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:112](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L112)
+[src/GraphManagerService.ts:112](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L112)
 
 ___
 
@@ -1137,7 +1137,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:96](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L96)
+[src/GraphManagerService.ts:96](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L96)
 
 ___
 
@@ -1157,7 +1157,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:522](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L522)
+[src/GraphManagerService.ts:522](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L522)
 
 ___
 
@@ -1177,7 +1177,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:587](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L587)
+[src/GraphManagerService.ts:587](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L587)
 
 ___
 
@@ -1197,7 +1197,7 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:596](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L596)
+[src/GraphManagerService.ts:596](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L596)
 
 ___
 
@@ -1211,4 +1211,4 @@ ___
 
 #### Defined in
 
-[src/GraphManagerService.ts:131](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/GraphManagerService.ts#L131)
+[src/GraphManagerService.ts:131](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/GraphManagerService.ts#L131)

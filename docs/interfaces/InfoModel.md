@@ -132,7 +132,7 @@ ___
 
 #### Defined in
 
-src/interfaces/InfoModel.ts:27
+[src/interfaces/InfoModel.ts:27](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/interfaces/InfoModel.ts#L27)
 
 ___
 

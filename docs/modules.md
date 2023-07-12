@@ -57,7 +57,7 @@
 
 #### Defined in
 
-src/interfaces/SpinalNodeFindPredicateFunc.ts:27
+[src/interfaces/SpinalNodeFindPredicateFunc.ts:27](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/interfaces/SpinalNodeFindPredicateFunc.ts#L27)
 
 ## Variables
 
@@ -97,7 +97,7 @@ ___
 
 #### Defined in
 
-[src/index.ts:63](https://github.com/spinalcom/Spinal-Graph-Service/blob/858cd3c/src/index.ts#L63)
+[src/index.ts:63](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/index.ts#L63)
 
 ## Functions
 
@@ -117,4 +117,4 @@ ___
 
 #### Defined in
 
-src/interfaces/SpinalNodeFindPredicateFunc.ts:28
+[src/interfaces/SpinalNodeFindPredicateFunc.ts:28](https://github.com/spinalcom/Spinal-Graph-Service/blob/7905ada/src/interfaces/SpinalNodeFindPredicateFunc.ts#L28)
