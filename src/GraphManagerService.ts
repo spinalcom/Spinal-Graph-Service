@@ -775,7 +775,6 @@ class GraphManagerService {
         relationName,
         relationType
       );
-      console.log('remove child', this.nodes[childId]);
       return true;
     }
     return Promise.reject(

@@ -653,7 +653,6 @@ class GraphManagerService {
                     callback(nodeId);
                 }
                 yield this.nodes[nodeId].removeChild(this.nodes[childId], relationName, relationType);
-                console.log('remove child', this.nodes[childId]);
                 return true;
             }
             return Promise.reject(Error('childId unknown. It might already been removed from the parent node'));
